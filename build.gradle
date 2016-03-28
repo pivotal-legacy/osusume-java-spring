@@ -27,9 +27,8 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.springframework:spring-jdbc")
-    compile('org.postgresql:postgresql')
     compile("org.springframework.boot:spring-boot-starter-jdbc")
+    compile('org.postgresql:postgresql')
 }
 
 task wrapper(type: Wrapper) {

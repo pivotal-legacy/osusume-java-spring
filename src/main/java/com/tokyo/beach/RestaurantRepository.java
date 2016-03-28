@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface RestaurantRepository {
 
-    public List<Restaurant> getAll();
+    List<Restaurant> getAll();
 
-    public Restaurant createRestaurant(NewRestaurant restaurant);
+    Restaurant createRestaurant(NewRestaurant restaurant);
 }
 
