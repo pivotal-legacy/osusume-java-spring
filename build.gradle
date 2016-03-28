@@ -11,7 +11,6 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 
 jar {
@@ -31,20 +30,6 @@ dependencies {
     compile("org.springframework:spring-jdbc")
     compile('org.postgresql:postgresql')
     compile("org.springframework.boot:spring-boot-starter-jdbc")
-
-
-    testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('junit:junit:4.+')
-	testCompile("com.jayway.jsonpath:json-path:2.0.0")
-	testCompile("com.jayway.jsonpath:json-path-assert:2.0.0")
-}
-
-
-eclipse {
-	classpath {
-		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	}
 }
 
 task wrapper(type: Wrapper) {
