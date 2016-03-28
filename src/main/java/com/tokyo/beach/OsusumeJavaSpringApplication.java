@@ -6,7 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class OsusumeJavaSpringApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(OsusumeJavaSpringApplication.class, args);
-	}
+
+    public static void main(String[] args) {
+        SpringApplication.run(OsusumeJavaSpringApplication.class, args);
+    }
 }

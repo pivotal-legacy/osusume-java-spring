@@ -10,6 +10,7 @@ import java.util.*;
 @RequestMapping("/api/restaurants")
 public class RestaurantsController {
     private final RestaurantRepository restaurantRepository;
+
     @Autowired
     public RestaurantsController(RestaurantRepository repo) {
         this.restaurantRepository = repo;
@@ -17,6 +18,12 @@ public class RestaurantsController {
 
     @RequestMapping(value="", method = RequestMethod.GET)
     public List<Restaurant> getAll() {
-        return restaurantRepository.selectAll();
+        return restaurantRepository.getAll();
+    }
+
+    @RequestMapping(value="", method = RequestMethod.POST)
+    public void create(@RequestBody NewRestaurant newRestaurant) {
+        System.out.println("name = " + newRestaurant.getName());
+
     }
 }
