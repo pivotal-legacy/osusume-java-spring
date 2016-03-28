@@ -1,8 +1,22 @@
 package com.tokyo.beach;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.*;
+
+@RestController
+@RequestMapping("/api/restaurants")
 public class RestaurantsController {
-    public Restaurant[] getAll() {
-        Restaurant[] retValue = {new Restaurant(1, "Afuri")};
-        return retValue;
+    private final RestaurantRepository restaurantRepository;
+    @Autowired
+    public RestaurantsController(RestaurantRepository repo) {
+        this.restaurantRepository = repo;
+    }
+
+    @RequestMapping(value="", method = RequestMethod.GET)
+    public List<Restaurant> getAll() {
+        return restaurantRepository.selectAll();
     }
 }
