@@ -9,6 +9,7 @@ public class Restaurant {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public int getId() {
         return id;
     }

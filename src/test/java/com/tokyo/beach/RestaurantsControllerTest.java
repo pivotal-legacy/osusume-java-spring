@@ -1,32 +1,39 @@
 package com.tokyo.beach;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
-
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.*;
-import org.springframework.test.web.servlet.request.*;
-import org.springframework.test.web.servlet.result.*;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
 public class RestaurantsControllerTest {
+    RestaurantRepository mockRestaurantRepository;
+    RestaurantsController restaurantsController;
+    MockMvc mockMvc;
+
+    @Before
+    public void setUp() {
+        mockRestaurantRepository = mock(RestaurantRepository.class);
+        restaurantsController = new RestaurantsController(mockRestaurantRepository);
+        mockMvc = MockMvcBuilders.standaloneSetup(restaurantsController)
+                .build();
+    }
+
     @Test
     public void testGettingAListOfRestaurants() throws Exception {
-        RestaurantRepository mockRestaurantRepository = mock(RestaurantRepository.class);
         when(mockRestaurantRepository.getAll()).thenReturn(
-            Arrays.asList(
+            Collections.singletonList(
                     new Restaurant(1, "Afuri")
             )
         );
-        RestaurantsController restaurantsController = new RestaurantsController(mockRestaurantRepository);
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(restaurantsController)
-                .build();
 
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/api/restaurants"));
@@ -39,26 +46,18 @@ public class RestaurantsControllerTest {
 
     @Test
     public void testCreatingARestaurant() throws Exception {
-        RestaurantRepository mockRestaurantRepository = mock(RestaurantRepository.class);
         NewRestaurant afuriNewRestaurant = new NewRestaurant("Afuri");
         when(mockRestaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
                 new Restaurant(1, "Afuri")
         );
-        RestaurantsController restaurantsController = new RestaurantsController(mockRestaurantRepository);
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(restaurantsController)
-                .build();
+
 
 
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/api/restaurants")
-                .content(afuriNewRestaurant.toString())
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-//        .content(newUser.toString()) // <-- sets the request content !
-//                .accept(MediaType.APPLICATION_JSON)
-//                .andExpect(status().isOk());
+                .contentType("application/json")
+                .content("{\"name\":\"Afuri\"}"));
 
 
-
+        result.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 }

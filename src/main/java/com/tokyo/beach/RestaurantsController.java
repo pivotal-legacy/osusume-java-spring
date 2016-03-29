@@ -1,10 +1,10 @@
 package com.tokyo.beach;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -22,8 +22,8 @@ public class RestaurantsController {
     }
 
     @RequestMapping(value="", method = RequestMethod.POST)
-    public void create(@RequestBody NewRestaurant newRestaurant) {
-        System.out.println("name = " + newRestaurant.getName());
-
+    @ResponseStatus(HttpStatus.CREATED)
+    public Restaurant create(@RequestBody NewRestaurant newRestaurant) {
+        return restaurantRepository.createRestaurant(newRestaurant);
     }
 }
