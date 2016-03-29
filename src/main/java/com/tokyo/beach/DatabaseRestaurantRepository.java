@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 @SuppressWarnings("ALL")
@@ -29,8 +30,11 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
 
     @Override
     public Restaurant createRestaurant(NewRestaurant newRestaurant) {
-        String sql = "INSERT INTO restaurant (name) VALUES ('" + newRestaurant.getName() + "') RETURNING id, name";
-        return jdbcTemplate.queryForObject(sql, new RowMapper<Restaurant>() {
+        Object[] args = { newRestaurant.getName() };
+        int[] types = { Types.VARCHAR };
+
+        return jdbcTemplate.queryForObject("INSERT INTO restaurant (name) " +
+                                            "VALUES (?) RETURNING id, name", args, types, new RowMapper<Restaurant>() {
             public Restaurant mapRow(ResultSet result, int rowNum) throws SQLException {
                 String name = result.getString("name");
                 int id = result.getInt("id");

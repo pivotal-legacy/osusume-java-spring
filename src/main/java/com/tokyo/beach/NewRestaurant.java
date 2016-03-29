@@ -14,4 +14,8 @@ public class NewRestaurant {
     public String getName() {
         return name;
     }
+
+    public String toString() {
+        return getName();
+    }
 }

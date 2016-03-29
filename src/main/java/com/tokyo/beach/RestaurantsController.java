@@ -23,7 +23,7 @@ public class RestaurantsController {
 
     @RequestMapping(value="", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Restaurant create(@RequestBody NewRestaurant newRestaurant) {
-        return restaurantRepository.createRestaurant(newRestaurant);
+    public Restaurant create(@RequestBody NewRestaurantWrapper restaurantWrapper) {
+        return restaurantRepository.createRestaurant(restaurantWrapper.getRestaurant());
     }
 }
