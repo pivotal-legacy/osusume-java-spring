@@ -17,7 +17,9 @@ public class DatabaseRestaurantRepositoryTest {
     @Test
     public void testGetAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
+
         try {
+
             Integer id = jdbcTemplate.queryForObject(
                     "INSERT INTO restaurant (name)" +
                             "VALUES ('Afuri')" +

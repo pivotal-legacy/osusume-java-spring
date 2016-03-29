@@ -22,6 +22,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     @Override
     public List<Restaurant> getAll() {
         return jdbcTemplate.query("SELECT * FROM restaurant", (rs, rowNum) -> {
+
             return new Restaurant(rs.getInt("id"), rs.getString("name"));
         });
     }

@@ -36,7 +36,7 @@ public class RestaurantsControllerTest {
         );
 
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/api/restaurants"));
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/restaurants"));
 
 
         result.andExpect(MockMvcResultMatchers.status().isOk());
@@ -53,7 +53,7 @@ public class RestaurantsControllerTest {
 
 
 
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/api/restaurants")
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/restaurants")
                 .contentType("application/json")
                 .content("{\"name\":\"Afuri\"}"));
 
