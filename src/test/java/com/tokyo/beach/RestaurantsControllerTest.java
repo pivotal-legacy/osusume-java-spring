@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
@@ -31,13 +32,16 @@ public class RestaurantsControllerTest {
     public void testGettingAListOfRestaurants() throws Exception {
         when(mockRestaurantRepository.getAll()).thenReturn(
             Collections.singletonList(
-                    new Restaurant(1,
+                    new Restaurant(
+                            1,
                             "Afuri",
                             "Roppongi",
                             false,
                             true,
                             false,
-                            "")
+                            "",
+                            null
+                    )
             )
         );
 
@@ -52,21 +56,27 @@ public class RestaurantsControllerTest {
 
     @Test
     public void testCreatingARestaurant() throws Exception {
-        NewRestaurant afuriNewRestaurant = new NewRestaurant("Afuri",
+        ArrayList<NewPhotoUrl> afuriNewPhotoUrls = new ArrayList<>();
+        NewRestaurant afuriNewRestaurant = new NewRestaurant(
+                "Afuri",
                 "Roppongi",
                 false,
                 true,
                 false,
-                "");
-
+                "",
+                afuriNewPhotoUrls
+        );
         when(mockRestaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
-                new Restaurant(1,
+                new Restaurant(
+                        1,
                         "Afuri",
                         "Roppongi",
                         false,
                         true,
                         false,
-                        "")
+                        "",
+                        null
+                )
         );
 
 

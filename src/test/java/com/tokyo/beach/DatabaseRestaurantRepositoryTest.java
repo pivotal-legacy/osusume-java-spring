@@ -28,16 +28,26 @@ public class DatabaseRestaurantRepositoryTest {
     @After
     public void tearDown() {
         jdbcTemplate.update("DELETE FROM restaurant");
+        jdbcTemplate.update("DELETE FROM photo_url");
     }
 
     @Test
-    public void testGetAll() {
-        Integer id = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
+    public void testGetAllWithPhotoUrls() {
+        Integer restaurantId = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant " +
+                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
                         "VALUES ('Afuri', 'Roppongi', false, true, false, '')" +
                         "RETURNING *",
                 ((rs, rowNum) -> {
                     return rs.getInt("id");
+                })
+        );
+        Integer photoUrlId = jdbcTemplate.queryForObject(
+                "INSERT INTO photo_url (url, restaurant_id) " +
+                        "VALUES ('url'," + restaurantId + ") " +
+                        "RETURNING restaurant_id",
+                ((rs, rowNum) -> {
+                    return rs.getInt("restaurant_id");
                 })
         );
 
@@ -45,48 +55,147 @@ public class DatabaseRestaurantRepositoryTest {
         List<Restaurant> restaurants = restaurantRepository.getAll();
 
 
+        PhotoUrl expectedPhotoUrl = new PhotoUrl(photoUrlId, "url", restaurantId);
+        List<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>(){{ add(expectedPhotoUrl); }};
         Restaurant expectedRestaurant = new Restaurant(
-                id,
+                restaurantId,
                 "Afuri",
                 "Roppongi",
                 false,
                 true,
                 false,
-                ""
+                "",
+                photoUrls
+        );
+        assertThat(restaurants, is(Collections.singletonList(expectedRestaurant)));
+    }
+
+    @Test
+    public void testGetAllWithoutPhotoUrls() {
+        Integer restaurantId = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant " +
+                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
+                        "VALUES ('Afuri', 'Roppongi', false, true, false, '')" +
+                        "RETURNING *",
+                ((rs, rowNum) -> {
+                    return rs.getInt("id");
+                })
+        );
+
+        List<Restaurant> restaurants = restaurantRepository.getAll();
+
+
+        Restaurant expectedRestaurant = new Restaurant(
+                restaurantId,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                new ArrayList()
         );
         assertThat(restaurants, is(Collections.singletonList(expectedRestaurant)));
     }
 
     @SuppressWarnings("Convert2MethodRef")
     @Test
-    public void testCreateRestaurant() throws Exception {
+    public void testCreateRestaurantWithoutPhotoUrls() throws Exception {
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
-                                            "KFC",
-                                            "Shibuya",
-                                            Boolean.TRUE,
-                                            Boolean.TRUE,
-                                            Boolean.TRUE,
-                                            "Notes"
-                                        );
+                "KFC",
+                "Shibuya",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                "Notes",
+                new ArrayList<>()
+        );
 
 
         restaurantRepository.createRestaurant(kfcNewRestaurant);
 
 
-        final List<Restaurant> actualRestaurantList = new ArrayList<>();
-        jdbcTemplate.query(
+        List<Restaurant> actualRestaurantList = jdbcTemplate.query(
                 "SELECT * FROM restaurant WHERE name = 'KFC'",
                 (rs, rowNum) -> new Restaurant(
-                                    rs.getInt("id"),
-                                    rs.getString("name"),
-                                    rs.getString("address"),
-                                    rs.getBoolean("offers_english_menu"),
-                                    rs.getBoolean("walk_ins_ok"),
-                                    rs.getBoolean("accepts_credit_cards"),
-                                    rs.getString("notes")
-                                )
-        ).forEach(restaurant -> actualRestaurantList.add(restaurant));
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("address"),
+                        rs.getBoolean("offers_english_menu"),
+                        rs.getBoolean("walk_ins_ok"),
+                        rs.getBoolean("accepts_credit_cards"),
+                        rs.getString("notes"),
+                        new ArrayList()
+                )
+        );
+
+        for(Restaurant restaurant: actualRestaurantList) {
+            List<PhotoUrl> photoUrls = jdbcTemplate.query(
+                    "SELECT * FROM photo_url WHERE restaurant_id = ?",
+                    new Object[]{ restaurant.getId() },
+                    (rs, rowNum) ->{
+                        return new PhotoUrl(
+                                rs.getInt("id"),
+                                rs.getString("url"),
+                                restaurant.getId()
+                        );
+                    }
+            );
+            restaurant.setPhotoUrlList(photoUrls);
+        }
         assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
+        assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(0));
+    }
+
+    @SuppressWarnings("Convert2MethodRef")
+    @Test
+    public void testCreateRestaurantWithPhotoUrls() throws Exception {
+        ArrayList<NewPhotoUrl> photoUrls = new ArrayList<>();
+        photoUrls.add( new NewPhotoUrl("url") );
+        NewRestaurant kfcNewRestaurant = new NewRestaurant(
+                "KFC",
+                "Shibuya",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                "Notes",
+                photoUrls
+        );
+
+
+        restaurantRepository.createRestaurant(kfcNewRestaurant);
+
+
+        List<Restaurant> actualRestaurantList = jdbcTemplate.query(
+                "SELECT * FROM restaurant WHERE name = 'KFC'",
+                (rs, rowNum) -> new Restaurant(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("address"),
+                        rs.getBoolean("offers_english_menu"),
+                        rs.getBoolean("walk_ins_ok"),
+                        rs.getBoolean("accepts_credit_cards"),
+                        rs.getString("notes"),
+                        new ArrayList()
+                )
+        );
+
+        for(Restaurant restaurant: actualRestaurantList) {
+            List<PhotoUrl> actualPhotoUrls = jdbcTemplate.query(
+                    "SELECT * FROM photo_url WHERE restaurant_id = ?",
+                    new Object[]{ restaurant.getId() },
+                    (rs, rowNum) ->{
+                        return new PhotoUrl(
+                                rs.getInt("id"),
+                                rs.getString("url"),
+                                restaurant.getId()
+                        );
+                    }
+            );
+            restaurant.setPhotoUrlList(actualPhotoUrls);
+        }
+        assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
+        assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(1));
     }
 
     private DataSource buildDataSource() {

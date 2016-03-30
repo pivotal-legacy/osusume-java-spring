@@ -3,6 +3,7 @@ package com.tokyo.beach;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Types;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class NewRestaurant {
@@ -21,6 +22,9 @@ public class NewRestaurant {
 
     private String notes;
 
+    @JsonProperty("photo_urls")
+    private List<NewPhotoUrl> photoUrls;
+
     public NewRestaurant() {}
 
     public NewRestaurant(String name,
@@ -28,13 +32,15 @@ public class NewRestaurant {
                          Boolean offersEnglishMenu,
                          Boolean walkInsOk,
                          Boolean acceptsCreditCards,
-                         String notes) {
+                         String notes,
+                         List<NewPhotoUrl> photoUrls) {
         this.name = name;
         this.address = address;
         this.offersEnglishMenu = offersEnglishMenu;
         this.walkInsOk = walkInsOk;
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
+        this.photoUrls = photoUrls;
     }
 
     public String getName() {
@@ -59,6 +65,10 @@ public class NewRestaurant {
 
     public String getNotes() {
         return notes;
+    }
+
+    public List<NewPhotoUrl> getPhotoUrls() {
+        return photoUrls;
     }
 
     public String toString() {
