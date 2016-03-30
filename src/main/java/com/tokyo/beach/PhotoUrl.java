@@ -1,9 +1,15 @@
 package com.tokyo.beach;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @SuppressWarnings("unused")
 public class PhotoUrl {
+    @JsonIgnore
     private int id;
+
     private String url;
+
+    @JsonIgnore
     private int restaurantId;
 
     public PhotoUrl() {}

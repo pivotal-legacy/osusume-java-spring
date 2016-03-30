@@ -1,5 +1,7 @@
 package com.tokyo.beach;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -8,10 +10,18 @@ public class Restaurant {
     private final int id;
     private final String name;
     private String address;
+
+    @JsonProperty("offers_english_menu")
     private Boolean offersEnglishMenu;
+
+    @JsonProperty("walk_ins_ok")
     private Boolean walkInsOk;
+
+    @JsonProperty("accepts_credit_cards")
     private Boolean acceptsCreditCards;
     private String notes;
+
+    @JsonProperty("photo_urls")
     private List<PhotoUrl> photoUrlList;
 
     public Restaurant(int id,
@@ -59,7 +69,6 @@ public class Restaurant {
     public String getNotes() {
         return notes;
     }
-
 
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrlList;
