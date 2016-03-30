@@ -1,7 +1,5 @@
 package com.tokyo.beach;
 
-import java.sql.ResultSet;
-
 @SuppressWarnings("unused")
 
 public class Restaurant {

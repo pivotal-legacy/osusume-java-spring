@@ -71,7 +71,7 @@ public class NewRestaurant {
     }
 
     public Object[] getParameter() {
-        Object[] params = {
+        return new Object[]{
                 getName(),
                 getAddress(),
                 getOffersEnglishMenu(),
@@ -79,11 +79,10 @@ public class NewRestaurant {
                 getAcceptsCreditCards(),
                 getNotes()
         };
-        return params;
-    }
+     }
 
     public int[] getTypes() {
-        int[] types =  {
+        return new int[]{
                 Types.VARCHAR,
                 Types.VARCHAR,
                 Types.BOOLEAN,
@@ -91,6 +90,5 @@ public class NewRestaurant {
                 Types.BOOLEAN,
                 Types.VARCHAR
         };
-        return types;
     }
 }
