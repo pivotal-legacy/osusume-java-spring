@@ -31,7 +31,13 @@ public class RestaurantsControllerTest {
     public void testGettingAListOfRestaurants() throws Exception {
         when(mockRestaurantRepository.getAll()).thenReturn(
             Collections.singletonList(
-                    new Restaurant(1, "Afuri")
+                    new Restaurant(1,
+                            "Afuri",
+                            "Roppongi",
+                            false,
+                            true,
+                            false,
+                            "")
             )
         );
 
@@ -46,9 +52,21 @@ public class RestaurantsControllerTest {
 
     @Test
     public void testCreatingARestaurant() throws Exception {
-        NewRestaurant afuriNewRestaurant = new NewRestaurant("Afuri");
+        NewRestaurant afuriNewRestaurant = new NewRestaurant("Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "");
+
         when(mockRestaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
-                new Restaurant(1, "Afuri")
+                new Restaurant(1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "")
         );
 
 

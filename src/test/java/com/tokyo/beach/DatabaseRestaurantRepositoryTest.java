@@ -33,8 +33,8 @@ public class DatabaseRestaurantRepositoryTest {
     @Test
     public void testGetAll() {
         Integer id = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name)" +
-                        "VALUES ('Afuri')" +
+                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
+                        "VALUES ('Afuri', 'Roppongi', false, true, false, '')" +
                         "RETURNING *",
                 ((rs, rowNum) -> {
                     return rs.getInt("id");
@@ -45,19 +45,46 @@ public class DatabaseRestaurantRepositoryTest {
         List<Restaurant> restaurants = restaurantRepository.getAll();
 
 
-        assertThat(restaurants, is(Collections.singletonList(new Restaurant(id, "Afuri"))));
+        Restaurant expectedRestaurant = new Restaurant(
+                id,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                ""
+        );
+        assertThat(restaurants, is(Collections.singletonList(expectedRestaurant)));
     }
 
     @SuppressWarnings("Convert2MethodRef")
     @Test
     public void testCreateRestaurant() throws Exception {
-        restaurantRepository.createRestaurant(new NewRestaurant("KFC"));
+        NewRestaurant kfcNewRestaurant = new NewRestaurant(
+                                            "KFC",
+                                            "Shibuya",
+                                            Boolean.TRUE,
+                                            Boolean.TRUE,
+                                            Boolean.TRUE,
+                                            "Notes"
+                                        );
+
+
+        restaurantRepository.createRestaurant(kfcNewRestaurant);
 
 
         final List<Restaurant> actualRestaurantList = new ArrayList<>();
         jdbcTemplate.query(
                 "SELECT * FROM restaurant WHERE name = 'KFC'",
-                (rs, rowNum) -> new Restaurant(rs.getInt("id"), rs.getString("name"))
+                (rs, rowNum) -> new Restaurant(
+                                    rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getString("address"),
+                                    rs.getBoolean("offers_english_menu"),
+                                    rs.getBoolean("walk_ins_ok"),
+                                    rs.getBoolean("accepts_credit_cards"),
+                                    rs.getString("notes")
+                                )
         ).forEach(restaurant -> actualRestaurantList.add(restaurant));
         assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
     }
