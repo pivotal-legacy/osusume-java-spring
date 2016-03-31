@@ -1,4 +1,4 @@
-package com.tokyo.beach.logon;
+package com.tokyo.beach.application.logon;
 
 public class LogonCredentials {
 

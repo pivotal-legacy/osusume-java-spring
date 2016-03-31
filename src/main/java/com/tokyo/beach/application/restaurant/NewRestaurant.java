@@ -1,7 +1,7 @@
-package com.tokyo.beach.restaurant;
+package com.tokyo.beach.application.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tokyo.beach.photos.NewPhotoUrl;
+import com.tokyo.beach.application.photos.NewPhotoUrl;
 
 import java.sql.Types;
 import java.util.List;

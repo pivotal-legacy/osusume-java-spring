@@ -1,6 +1,10 @@
 package com.tokyo.beach.user;
 
-import com.tokyo.beach.session.TokenGenerator;
+import com.tokyo.beach.application.user.DatabaseUser;
+import com.tokyo.beach.application.user.UserController;
+import com.tokyo.beach.application.user.UserRepository;
+import com.tokyo.beach.application.session.TokenGenerator;
+import com.tokyo.beach.application.token.UserSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,23 +31,47 @@ public class UserControllerTest {
                 .build();
     }
 
-//    @Test
-//    public void login_acceptsUserNameAndPassword_andReturnsToken() throws Exception {
-//        when(tokenGenerator.nextToken())
-//                .thenReturn("abcde12345");
-//
-//        mvc.perform(MockMvcRequestBuilders.post("/auth/session")
-//                .contentType("application/json;charset=UTF-8")
-//                .content("{\"email\":\"jmiller\",\"password\":\"mypassword\"}")
-//                .accept("application/json;charset=UTF-8")
-//        )
-//                .andExpect(status().isAccepted())
-//                .andExpect(content().contentType("application/json;charset=UTF-8"))
-//                .andExpect(content().string("{\"token\":\"abcde12345\"}"));
-//    }
+    @Test
+    public void test_postToAuthSession_returnsAcceptedHttpStatus() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/auth/session")
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .accept("application/json;charset=UTF-8")
+        )
+                .andExpect(status().isAccepted());
+    }
 
     @Test
-    public void postToUser_returnsCreatedHttpStatus() throws Exception {
+    public void test_postToAuthSession_invokesUserRepoLogonMethod() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post("/auth/session")
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .accept("application/json;charset=UTF-8")
+        );
+
+        verify(userRepository, times(1)).logon(tokenGenerator, "jmiller@gmail.com", "mypassword");
+    }
+
+    @Test
+    public void test_postToAuthSession_returnsValidSession() throws Exception {
+        when(tokenGenerator.nextToken())
+                .thenReturn("abcde12345");
+
+        UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
+        when(userRepository.logon(tokenGenerator, "jmiller@gmail.com", "mypassword"))
+                .thenReturn(userSession);
+
+        mvc.perform(MockMvcRequestBuilders.post("/auth/session")
+                .contentType("application/json;charset=UTF-8")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .accept("application/json;charset=UTF-8")
+        )
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("{\"email\":\"jmiller@gmail.com\",\"token\":\"abcde12345\"}"));
+    }
+
+    @Test
+    public void test_postToUser_returnsCreatedHttpStatus() throws Exception {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
 
@@ -56,10 +84,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void postToUser_invokesUserRepoCreateMethod() throws Exception {
-        when(tokenGenerator.nextToken())
-                .thenReturn("abcde12345");
-
+    public void test_postToUser_invokesUserRepoCreateMethod() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType("application/json;charset=UTF8")
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
@@ -70,7 +95,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void postToUser_returnsToken() throws Exception {
+    public void test_postToUser_returnsToken() throws Exception {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
         when(userRepository.create("jmiller@gmail.com", "mypassword"))

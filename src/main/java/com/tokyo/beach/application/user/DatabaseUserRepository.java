@@ -1,5 +1,7 @@
-package com.tokyo.beach.user;
+package com.tokyo.beach.application.user;
 
+import com.tokyo.beach.application.session.TokenGenerator;
+import com.tokyo.beach.application.token.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -18,9 +20,9 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public DatabaseUser logon(String email, String password) {
-
-        return new DatabaseUser(1, email);
+    public UserSession logon(TokenGenerator generator, String email, String password) {
+        UserSession session = new UserSession(generator, "mcpivot@gmail.com");
+        return session;
     }
 
 

@@ -1,7 +1,10 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.photos.NewPhotoUrl;
-import com.tokyo.beach.photos.PhotoUrl;
+import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
+import com.tokyo.beach.application.restaurant.NewRestaurant;
+import com.tokyo.beach.application.restaurant.Restaurant;
+import com.tokyo.beach.application.photos.NewPhotoUrl;
+import com.tokyo.beach.application.photos.PhotoUrl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

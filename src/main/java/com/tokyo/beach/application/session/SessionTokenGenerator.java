@@ -1,4 +1,4 @@
-package com.tokyo.beach.session;
+package com.tokyo.beach.application.session;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

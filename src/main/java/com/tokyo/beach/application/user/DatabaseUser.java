@@ -1,4 +1,4 @@
-package com.tokyo.beach.user;
+package com.tokyo.beach.application.user;
 
 public class DatabaseUser {
 

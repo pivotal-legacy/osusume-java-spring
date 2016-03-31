@@ -1,11 +1,11 @@
-package com.tokyo.beach.user;
+package com.tokyo.beach.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import com.tokyo.beach.logon.LogonCredentials;
-import com.tokyo.beach.session.TokenGenerator;
-import com.tokyo.beach.token.TokenWrapper;
+import com.tokyo.beach.application.logon.LogonCredentials;
+import com.tokyo.beach.application.session.TokenGenerator;
+import com.tokyo.beach.application.token.UserSession;
 
 @RestController
 public class UserController {
@@ -25,14 +25,11 @@ public class UserController {
     @RequestMapping(value = "/auth/session", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
-    public TokenWrapper login(@RequestBody LogonCredentials credentials) {
+    public UserSession login(@RequestBody LogonCredentials credentials) {
 
         System.out.println("credentials = " + credentials);
 
-//        userRepository.
-        // User Repo - Login
-
-        return new TokenWrapper(tokenGenerator);
+        return userRepository.logon(tokenGenerator, credentials.getEmail(), credentials.getPassword());
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)

@@ -1,8 +1,8 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.photos.NewPhotoUrl;
-import com.tokyo.beach.photos.PhotoUrl;
-import com.tokyo.beach.restaurant.*;
+import com.tokyo.beach.application.restaurant.*;
+import com.tokyo.beach.application.photos.NewPhotoUrl;
+import com.tokyo.beach.application.photos.PhotoUrl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;

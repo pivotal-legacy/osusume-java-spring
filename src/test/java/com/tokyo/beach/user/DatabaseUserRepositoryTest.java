@@ -1,8 +1,8 @@
 package osusume.User;
 
-import com.tokyo.beach.logon.LogonCredentials;
-import com.tokyo.beach.user.DatabaseUser;
-import com.tokyo.beach.user.DatabaseUserRepository;
+import com.tokyo.beach.application.logon.LogonCredentials;
+import com.tokyo.beach.application.user.DatabaseUser;
+import com.tokyo.beach.application.user.DatabaseUserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -57,7 +57,7 @@ public class DatabaseUserRepositoryTest {
 
     private DataSource buildDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume_localtest");
+        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
         return dataSource;
     }
 }

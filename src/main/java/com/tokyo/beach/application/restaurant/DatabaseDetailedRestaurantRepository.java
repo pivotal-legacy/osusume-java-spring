@@ -1,6 +1,6 @@
-package com.tokyo.beach.restaurant;
+package com.tokyo.beach.application.restaurant;
 
-import com.tokyo.beach.photos.PhotoUrl;
+import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
