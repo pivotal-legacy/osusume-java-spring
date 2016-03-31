@@ -6,13 +6,9 @@ import com.tokyo.beach.user.UserController;
 import com.tokyo.beach.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import javax.sql.DataSource;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -20,13 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest {
     private MockMvc mvc;
-    private JdbcTemplate jdbcTemplate;
     private UserRepository userRepository;
     private TokenGenerator tokenGenerator;
 
     @Before
     public void setUp() throws Exception {
-        jdbcTemplate = new JdbcTemplate(buildDataSource());
         userRepository = mock(UserRepository.class);
         tokenGenerator = mock(TokenGenerator.class);
         mvc = MockMvcBuilders.standaloneSetup(new UserController(
@@ -92,13 +86,5 @@ public class UserControllerTest {
         )
                 .andExpect(content().contentType("application/json;charset=UTF8"))
                 .andExpect(content().string("{\"id\":6,\"email\":\"jmiller@gmail.com\"}"));
-    }
-
-
-
-    private DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume_localtest");
-        return dataSource;
     }
 }

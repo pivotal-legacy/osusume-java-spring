@@ -28,7 +28,7 @@ public class DatabaseUserRepositoryTest {
     @Test
     public void userRepo_createsUserWithCredentials() throws Exception {
         try {
-            LogonCredentials credentials = new LogonCredentials("Joe", "myPassword123");
+            LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "myPassword123");
 
             String sql = "SELECT count(*) FROM USERS WHERE email = ?";
             int count = this.jdbcTemplate.queryForObject(
@@ -49,21 +49,11 @@ public class DatabaseUserRepositoryTest {
             );
             assertThat(count, is(1));
             assertThat(user.getId().intValue(), is(greaterThan(0)));
-            assertThat(user.getEmail(), is("Joe"));
+            assertThat(user.getEmail(), is("jmiller@gmail.com"));
         } finally {
             this.jdbcTemplate.update("TRUNCATE TABLE users");
         }
     }
-
-
-    // Cannot create user if required fields (email or password) are missing.
-
-
-    // Cannot create user if email is already taken
-
-
-    // what other tests are needed?
-
 
     private DataSource buildDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
