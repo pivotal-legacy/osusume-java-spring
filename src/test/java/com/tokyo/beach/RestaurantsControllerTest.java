@@ -1,7 +1,7 @@
 package com.tokyo.beach;
 
-import com.tokyo.beach.photourl.NewPhotoUrl;
-import com.tokyo.beach.photourl.PhotoUrl;
+import com.tokyo.beach.photos.NewPhotoUrl;
+import com.tokyo.beach.photos.PhotoUrl;
 import com.tokyo.beach.restaurant.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
@@ -121,7 +122,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void testGetRestaurantWithPhotoUrls() throws Exception {
-        ArrayList<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>();
+        List<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>();
         photoUrls.add(new PhotoUrl(1, "Url1", 1));
         photoUrls.add(new PhotoUrl(2, "Url2", 1));
         when(mockDetailedRestaurantRepository.getRestaurant("1")).thenReturn(

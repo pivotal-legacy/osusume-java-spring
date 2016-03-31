@@ -1,7 +1,7 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.photourl.NewPhotoUrl;
-import com.tokyo.beach.photourl.PhotoUrl;
+import com.tokyo.beach.photos.NewPhotoUrl;
+import com.tokyo.beach.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

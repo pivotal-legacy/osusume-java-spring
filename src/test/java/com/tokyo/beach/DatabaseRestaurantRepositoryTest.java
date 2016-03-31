@@ -1,7 +1,7 @@
 package com.tokyo.beach;
 
-import com.tokyo.beach.photourl.NewPhotoUrl;
-import com.tokyo.beach.photourl.PhotoUrl;
+import com.tokyo.beach.photos.NewPhotoUrl;
+import com.tokyo.beach.photos.PhotoUrl;
 import com.tokyo.beach.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurant.Restaurant;
