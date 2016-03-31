@@ -1,4 +1,4 @@
-package com.tokyo.beach;
+package com.tokyo.beach.photourl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

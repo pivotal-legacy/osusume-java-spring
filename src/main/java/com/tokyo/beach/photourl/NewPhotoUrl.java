@@ -1,4 +1,4 @@
-package com.tokyo.beach;
+package com.tokyo.beach.photourl;
 
 @SuppressWarnings("unused")
 public class NewPhotoUrl {

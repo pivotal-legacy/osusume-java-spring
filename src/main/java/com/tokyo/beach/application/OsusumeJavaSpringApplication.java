@@ -1,4 +1,4 @@
-package com.tokyo.beach;
+package com.tokyo.beach.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
