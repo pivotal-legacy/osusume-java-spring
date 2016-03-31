@@ -1,9 +1,6 @@
-package controller;
+package com.tokyo.beach.user;
 
 import com.tokyo.beach.session.TokenGenerator;
-import com.tokyo.beach.user.DatabaseUser;
-import com.tokyo.beach.user.UserController;
-import com.tokyo.beach.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
