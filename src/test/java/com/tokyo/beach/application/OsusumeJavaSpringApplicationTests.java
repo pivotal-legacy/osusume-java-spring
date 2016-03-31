@@ -1,4 +1,4 @@
-package com.tokyo.beach;
+package com.tokyo.beach.application;
 
 import com.tokyo.beach.application.OsusumeJavaSpringApplication;
 import org.junit.Test;

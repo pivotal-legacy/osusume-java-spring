@@ -20,11 +20,7 @@ public class DatabaseUserRepository implements UserRepository {
     @Override
     public DatabaseUser logon(String email, String password) {
 
-        return new DatabaseUser(
-                1,
-                email,
-                password
-        );
+        return new DatabaseUser(1, email);
     }
 
 
@@ -42,10 +38,6 @@ public class DatabaseUserRepository implements UserRepository {
 
         Number id = insert.executeAndReturnKey(params);
 
-        return new DatabaseUser(
-                id,
-                email,
-                password
-        );
+        return new DatabaseUser(id, email);
     }
 }

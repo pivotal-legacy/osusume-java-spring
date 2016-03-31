@@ -38,13 +38,8 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public TokenWrapper registerUser(@RequestBody LogonCredentials credentials) {
-
-        System.out.println("credentials = " + credentials);
-
-        // User Repo - Create
-
-        return new TokenWrapper(tokenGenerator);
+    public DatabaseUser registerUser(@RequestBody LogonCredentials credentials) {
+        return userRepository.create(credentials.getEmail(), credentials.getPassword());
     }
 
 }

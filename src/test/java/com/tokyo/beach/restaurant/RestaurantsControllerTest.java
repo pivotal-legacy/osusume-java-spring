@@ -1,4 +1,4 @@
-package com.tokyo.beach;
+package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.photos.NewPhotoUrl;
 import com.tokyo.beach.photos.PhotoUrl;
