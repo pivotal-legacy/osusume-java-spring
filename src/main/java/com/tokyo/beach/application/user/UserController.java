@@ -7,6 +7,8 @@ import com.tokyo.beach.application.logon.LogonCredentials;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.token.UserSession;
 
+import java.util.Optional;
+
 @RestController
 public class UserController {
 
@@ -26,10 +28,13 @@ public class UserController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public UserSession login(@RequestBody LogonCredentials credentials) {
+        Optional<UserSession> userSessionOptional = userRepository.logon(tokenGenerator, credentials.getEmail(), credentials.getPassword());
 
-        System.out.println("credentials = " + credentials);
+        if (userSessionOptional.isPresent()) {
+            return userSessionOptional.get();
+        }
 
-        return userRepository.logon(tokenGenerator, credentials.getEmail(), credentials.getPassword());
+        return new UserSession(tokenGenerator, "thisshouldbe@anerror.com");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
