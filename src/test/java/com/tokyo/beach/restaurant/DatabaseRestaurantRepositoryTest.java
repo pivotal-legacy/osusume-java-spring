@@ -56,7 +56,6 @@ public class DatabaseRestaurantRepositoryTest {
                 })
         );
 
-
         List<Restaurant> restaurants = restaurantRepository.getAll();
 
 

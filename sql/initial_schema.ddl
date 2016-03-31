@@ -20,6 +20,14 @@ create table photo_url (
 );
 
 
+-- CUISINE Table
+
+create table cuisine (
+  id serial primary key,
+  name varchar(255) not null
+);
+
+
 -- USERS Table
 
 CREATE TABLE users (

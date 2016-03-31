@@ -54,7 +54,6 @@ public class Restaurant {
         return walkInsOk;
     }
 
-
     public String getName() {
         return name;
     }
