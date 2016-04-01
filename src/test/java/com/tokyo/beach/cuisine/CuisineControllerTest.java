@@ -3,11 +3,13 @@ package com.tokyo.beach.cuisine;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineController;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
+import com.tokyo.beach.application.cuisine.NewCuisine;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
@@ -60,5 +62,22 @@ public class CuisineControllerTest {
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.id", equalTo(1)));
         result.andExpect(jsonPath("$.name", equalTo("Japanese")));
+    }
+
+    @Test
+    public void testCreateACuisine() throws Exception {
+        NewCuisine newCuisine = new NewCuisine("Japanese");
+        when(mockCuisineRepository.createCuisine(newCuisine)).thenReturn(
+                new Cuisine(
+                        1,
+                        "Japanese"
+                )
+        );
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.post("/cuisines")
+            .contentType("application/json")
+            .content("{\"name\":\"Japanese\"}"));
+
+        result.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 }

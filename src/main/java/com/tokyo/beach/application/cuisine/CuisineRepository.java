@@ -5,4 +5,5 @@ import java.util.List;
 public interface CuisineRepository {
     List<Cuisine> getAll();
     Cuisine getCuisine(String id);
+    Cuisine createCuisine(NewCuisine newCuisine);
 }

@@ -1,9 +1,8 @@
 package com.tokyo.beach.application.cuisine;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,5 +26,11 @@ public class CuisineController {
     @RequestMapping(value="{id}", method=GET)
     public Cuisine getCuisine(@PathVariable String id) {
         return cuisineRepository.getCuisine(id);
+    }
+
+    @RequestMapping(value="", method= RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Cuisine create(@RequestBody NewCuisine newCuisine) {
+        return cuisineRepository.createCuisine(newCuisine);
     }
 }

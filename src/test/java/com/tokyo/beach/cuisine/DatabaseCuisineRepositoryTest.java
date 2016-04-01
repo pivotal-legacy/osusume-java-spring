@@ -3,6 +3,7 @@ package com.tokyo.beach.cuisine;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
+import com.tokyo.beach.application.cuisine.NewCuisine;
 import org.junit.After;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -66,6 +67,27 @@ public class DatabaseCuisineRepositoryTest {
         Cuisine expectedCuisine = new Cuisine(cuisineId, "Japanese");
 
         assertThat(cuisine, is(expectedCuisine));
+    }
+
+    @Test
+    public void testCreateCuisine() {
+        NewCuisine newCuisine = new NewCuisine("Japanese");
+
+        CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
+
+        cuisineRepository.createCuisine(newCuisine);
+
+        int count = jdbcTemplate.queryForObject("SELECT count(*) from cuisine", Integer.class);
+
+        Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * from cuisine where name=?",
+                new Object[]{"Japanese"},
+                (rs, rowNum) -> {
+                    return new Cuisine(rs.getInt("id"), rs.getString("name"));
+                }
+        );
+
+        assertThat(count, is(1));
+        assertThat(actualCuisine.getName(), is("Japanese"));
     }
 
     private static DataSource buildDataSource() {

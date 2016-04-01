@@ -37,4 +37,18 @@ public class DatabaseCuisineRepository implements CuisineRepository {
                     );
                 });
     }
+
+    @Override
+    public Cuisine createCuisine(NewCuisine newCuisine) {
+        return jdbcTemplate.queryForObject(
+                "INSERT INTO cuisine (name) VALUES (?) RETURNING *",
+                new Object[]{newCuisine.getName()}, new int[]{Types.VARCHAR},
+                (rs, rowNum) -> {
+                    return new Cuisine(
+                            rs.getInt("id"),
+                            rs.getString("name")
+                    );
+                }
+        );
+    }
 }
