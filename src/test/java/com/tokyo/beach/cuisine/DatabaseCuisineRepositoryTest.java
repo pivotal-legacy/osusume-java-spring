@@ -50,6 +50,24 @@ public class DatabaseCuisineRepositoryTest {
 
     }
 
+    @Test
+    public void testGetCuisine() {
+        Integer cuisineId = jdbcTemplate.queryForObject(
+                "INSERT INTO cuisine " +
+                        "(name) " +
+                        "VALUES ('Japanese') " +
+                        "RETURNING id",
+                (rs, rowNum) -> rs.getInt("id")
+        );
+
+        CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
+
+        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId));
+        Cuisine expectedCuisine = new Cuisine(cuisineId, "Japanese");
+
+        assertThat(cuisine, is(expectedCuisine));
+    }
+
     private static DataSource buildDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");

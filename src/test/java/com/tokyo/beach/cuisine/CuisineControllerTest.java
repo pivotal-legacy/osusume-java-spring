@@ -3,6 +3,7 @@ package com.tokyo.beach.cuisine;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineController;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -18,11 +19,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CuisineControllerTest {
+    DatabaseCuisineRepository mockCuisineRepository;
+    CuisineController cuisineController;
+    MockMvc mockMvc;
+
+    @Before
+    public void setup() {
+        mockCuisineRepository = mock(DatabaseCuisineRepository.class);
+        cuisineController = new CuisineController(mockCuisineRepository);
+        mockMvc = MockMvcBuilders.standaloneSetup(cuisineController).build();
+    }
     @Test
     public void testGetAllCuisines() throws Exception {
-        DatabaseCuisineRepository mockCuisineRepository = mock(DatabaseCuisineRepository.class);
-        CuisineController cuisineController = new CuisineController(mockCuisineRepository);
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(cuisineController).build();
+
 
         when(mockCuisineRepository.getAll()).thenReturn(
                 Arrays.asList(
@@ -38,5 +47,18 @@ public class CuisineControllerTest {
         result.andExpect(jsonPath("$[0].name", equalTo("Japanese")));
         result.andExpect(jsonPath("$[1].id", equalTo(2)));
         result.andExpect(jsonPath("$[1].name", equalTo("Spanish")));
+    }
+
+    @Test
+    public void testGetCuisine() throws Exception {
+        when(mockCuisineRepository.getCuisine("1")).thenReturn(
+                new Cuisine(1, "Japanese")
+        );
+
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders.get("/cuisines/1"));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.id", equalTo(1)));
+        result.andExpect(jsonPath("$.name", equalTo("Japanese")));
     }
 }

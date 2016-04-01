@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.List;
 
 @Repository
@@ -23,5 +24,17 @@ public class DatabaseCuisineRepository implements CuisineRepository {
                     rs.getString("name")
             );
         });
+    }
+
+    @Override
+    public Cuisine getCuisine(String id) {
+        return jdbcTemplate.queryForObject("SELECT * FROM cuisine where id=?",
+                new Object[]{id}, new int[]{Types.INTEGER},
+                (rs, rowNum) -> {
+                    return new Cuisine(
+                            rs.getInt("id"),
+                            rs.getString("name")
+                    );
+                });
     }
 }
