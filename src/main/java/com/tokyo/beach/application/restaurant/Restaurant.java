@@ -3,6 +3,7 @@ package com.tokyo.beach.application.restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.application.photos.PhotoUrl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -107,5 +108,18 @@ public class Restaurant {
         }
 
         return true;
+    }
+
+    public static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
+        return new Restaurant(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getAddress(),
+                restaurant.getOffersEnglishMenu(),
+                restaurant.getWalkInsOk(),
+                restaurant.getAcceptsCreditCards(),
+                restaurant.getNotes(),
+                urls
+        );
     }
 }
