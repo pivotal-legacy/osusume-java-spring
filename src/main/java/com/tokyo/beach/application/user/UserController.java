@@ -1,11 +1,12 @@
 package com.tokyo.beach.application.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import com.tokyo.beach.application.RestControllerException;
 import com.tokyo.beach.application.logon.LogonCredentials;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.token.UserSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class UserController {
             return userSessionOptional.get();
         }
 
-        return new UserSession(tokenGenerator, "thisshouldbe@anerror.com");
+        throw new RestControllerException("Invalid email or password.");
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)

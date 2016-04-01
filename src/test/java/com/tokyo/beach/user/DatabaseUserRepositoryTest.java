@@ -34,11 +34,11 @@ public class DatabaseUserRepositoryTest {
     }
 
     @Test
-    public void userRepo_createsUserWithCredentials() throws Exception {
+    public void test_create_insertsUserCredentialsIntoDB() throws Exception {
         try {
             LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "myPassword123");
 
-            String sql = "SELECT count(*) FROM USERS WHERE email = ?";
+            String sql = "SELECT count(*) FROM users WHERE email = ?";
             int count = this.jdbcTemplate.queryForObject(
                     sql, new Object[]{credentials.getEmail()}, Integer.class
             );
