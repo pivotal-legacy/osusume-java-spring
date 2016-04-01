@@ -80,26 +80,4 @@ public class NewRestaurant {
                 "acceptsCreditCards: " + getAcceptsCreditCards() + ",\n" +
                 "notes: " + getNotes();
     }
-
-    public Object[] getParameter() {
-        return new Object[]{
-                getName(),
-                getAddress(),
-                getOffersEnglishMenu(),
-                getWalkInsOk(),
-                getAcceptsCreditCards(),
-                getNotes()
-        };
-     }
-
-    public int[] getTypes() {
-        return new int[]{
-                Types.VARCHAR,
-                Types.VARCHAR,
-                Types.BOOLEAN,
-                Types.BOOLEAN,
-                Types.BOOLEAN,
-                Types.VARCHAR
-        };
-    }
 }

@@ -31,11 +31,9 @@ public class UserController {
     public UserSession login(@RequestBody LogonCredentials credentials) {
         Optional<UserSession> userSessionOptional = userRepository.logon(tokenGenerator, credentials.getEmail(), credentials.getPassword());
 
-        if (userSessionOptional.isPresent()) {
-            return userSessionOptional.get();
-        }
-
-        throw new RestControllerException("Invalid email or password.");
+        return userSessionOptional.orElseThrow(
+                () -> new RestControllerException("Invalid email or password.")
+        );
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)

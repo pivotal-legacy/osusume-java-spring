@@ -8,6 +8,7 @@ import com.tokyo.beach.application.user.UserController;
 import com.tokyo.beach.application.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -15,8 +16,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerTest {
@@ -43,7 +46,7 @@ public class UserControllerTest {
                 .thenReturn(Optional.of(userSession));
 
         mvc.perform(MockMvcRequestBuilders.post("/auth/session")
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF-8")
         )
@@ -56,7 +59,7 @@ public class UserControllerTest {
                 .thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.post("/auth/session")
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF-8")
         );
@@ -74,12 +77,13 @@ public class UserControllerTest {
                 .thenReturn(Optional.of(userSession));
 
         mvc.perform(MockMvcRequestBuilders.post("/auth/session")
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF-8")
         )
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(content().string("{\"email\":\"jmiller@gmail.com\",\"token\":\"abcde12345\"}"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.email", is("jmiller@gmail.com")))
+                .andExpect(jsonPath("$.token", is("abcde12345")));
     }
 
     @Test
@@ -90,7 +94,7 @@ public class UserControllerTest {
                 .thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.post("/auth/session")
-                .contentType("application/json;charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"not valid\",\"password\":\"not valid\"}")
                 .accept("application/json;charset=UTF-8")
         )
@@ -104,7 +108,7 @@ public class UserControllerTest {
                 .thenReturn("abcde12345");
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType("application/json;charset=UTF8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF8")
         )
@@ -114,7 +118,7 @@ public class UserControllerTest {
     @Test
     public void test_postToUser_invokesUserRepoCreateMethod() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType("application/json;charset=UTF8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF8")
         );
@@ -130,11 +134,11 @@ public class UserControllerTest {
                 .thenReturn(new DatabaseUser(6, "jmiller@gmail.com"));
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType("application/json;charset=UTF8")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
                 .accept("application/json;charset=UTF8")
         )
-                .andExpect(content().contentType("application/json;charset=UTF8"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().string("{\"id\":6,\"email\":\"jmiller@gmail.com\"}"));
     }
 }

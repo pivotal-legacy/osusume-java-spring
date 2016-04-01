@@ -1,15 +1,14 @@
 package com.tokyo.beach.application.restaurant;
 
-import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class DatabaseRestaurantRepository implements RestaurantRepository {
@@ -32,7 +31,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
-                            new ArrayList()
+                            emptyList()
                     );
                 })
                 .stream()
@@ -50,19 +49,15 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
 
                     return Restaurant.withPhotoUrls(restaurant, urls);
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
     public Restaurant createRestaurant(NewRestaurant newRestaurant) {
-        Object[] args = newRestaurant.getParameter();
-        int[] types = newRestaurant.getTypes();
-
         Restaurant restaurant = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) " +
                         "VALUES (?, ?, ?, ?, ?, ?) " +
                         "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes",
-                args, types,
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getInt("id"),
@@ -72,32 +67,35 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
-                            new ArrayList<PhotoUrl>()
+                            emptyList()
                     );
-                });
+                },
+                newRestaurant.getName(),
+                newRestaurant.getAddress(),
+                newRestaurant.getOffersEnglishMenu(),
+                newRestaurant.getWalkInsOk(),
+                newRestaurant.getAcceptsCreditCards(),
+                newRestaurant.getNotes()
+        );
 
-        ArrayList<PhotoUrl> urls = new ArrayList<PhotoUrl>();
-        for (NewPhotoUrl photoUrl : newRestaurant.getPhotoUrls()) {
-            PhotoUrl url = jdbcTemplate.queryForObject(
-                    "INSERT INTO photo_url (url, restaurant_id) " +
-                            "VALUES (?, ?) " +
-                            "RETURNING *",
-                    new Object[]{photoUrl.getUrl(), restaurant.getId()},
-                    new int[]{Types.VARCHAR, Types.INTEGER},
-                    (rs, rowNum) -> {
-                        return new PhotoUrl(
-                                rs.getInt("id"),
-                                rs.getString("url"),
-                                rs.getInt("restaurant_id")
-                        );
-                    }
-            );
-            urls.add(url);
-        }
+        List<PhotoUrl> photoUrls = newRestaurant.getPhotoUrls()
+                .stream()
+                .map(photoUrl -> jdbcTemplate.queryForObject(
+                        "INSERT INTO photo_url (url, restaurant_id) " +
+                                "VALUES (?, ?) " +
+                                "RETURNING *",
+                        (rs, rowNum) -> {
+                            return new PhotoUrl(
+                                    rs.getInt("id"),
+                                    rs.getString("url"),
+                                    rs.getInt("restaurant_id")
+                            );
+                        },
+                        photoUrl.getUrl(),
+                        restaurant.getId()
+                ))
+                .collect(toList());
 
-        restaurant.setPhotoUrlList(urls);
-
-        return restaurant;
-
+        return Restaurant.withPhotoUrls(restaurant, photoUrls);
     }
 }
