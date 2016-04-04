@@ -6,6 +6,10 @@ import com.tokyo.beach.application.user.DatabaseUserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,5 +55,35 @@ public class DatabaseUserRepositoryTest {
         } finally {
             this.jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
         }
+    }
+
+    @Test
+    public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
+        try {
+            LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
+            insertUserIntoDatabase(credentials);
+
+
+            DatabaseUser user = databaseUserRepository.get(credentials);
+
+
+            assertThat(user.getId().intValue(), is(greaterThan(0)));
+            assertThat(user.getEmail(), is("user@gmail.com"));
+        } finally {
+            jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
+        }
+    }
+
+    private Number insertUserIntoDatabase(LogonCredentials credentials) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("users")
+                .usingColumns("email", "password")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", credentials.getEmail());
+        params.put("password", credentials.getPassword());
+
+        return insert.executeAndReturnKey(params);
     }
 }
