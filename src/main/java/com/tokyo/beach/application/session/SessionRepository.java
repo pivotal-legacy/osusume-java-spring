@@ -1,7 +1,7 @@
 package com.tokyo.beach.application.session;
 
-import java.util.Optional;
+import com.tokyo.beach.application.user.DatabaseUser;
 
 public interface SessionRepository {
-    Optional<UserSession> create(TokenGenerator generator, String email, String password);
+    UserSession create(TokenGenerator generator, DatabaseUser user);
 }

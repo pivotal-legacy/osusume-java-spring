@@ -1,14 +1,13 @@
 package com.tokyo.beach.application.session;
 
+import com.tokyo.beach.application.user.DatabaseUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class DatabaseSessionRepository implements SessionRepository {
@@ -20,32 +19,19 @@ public class DatabaseSessionRepository implements SessionRepository {
     }
 
     @Override
-    public Optional<UserSession> create(TokenGenerator generator, String email, String password) {
-        String sql = "SELECT id FROM USERS WHERE email = ? AND password = ?";
-        List<Integer> userIds = this.jdbcTemplate.queryForList(
-                sql,
-                Integer.class,
-                email,
-                password);
+    public UserSession create(TokenGenerator generator, DatabaseUser user) {
+        UserSession userSession = new UserSession(generator, user.getEmail());
 
-        if (userIds.size() == 1) {
-            int userId = userIds.get(0);
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("session")
+                .usingColumns("token", "user_id");
 
-            UserSession userSession = new UserSession(generator, email);
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", userSession.getToken());
+        params.put("user_id", user.getId());
 
-            SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                    .withTableName("session")
-                    .usingColumns("token", "user_id");
+        insert.execute(params);
 
-            Map<String, Object> params = new HashMap<>();
-            params.put("token", userSession.getToken());
-            params.put("user_id", userId);
-
-            insert.execute(params);
-
-            return Optional.of(userSession);
-        }
-
-        return Optional.empty();
+        return userSession;
     }
 }
