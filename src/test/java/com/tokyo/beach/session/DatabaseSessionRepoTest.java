@@ -64,7 +64,7 @@ public class DatabaseSessionRepoTest {
     }
 
     @Test
-    public void test_logonWithAbsentUser_returnsEmptyOptional() {
+    public void test_logonWithNonExistentUser_returnsEmptyOptional() {
         LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "password");
         TokenGenerator mockGenerator = mock(TokenGenerator.class);
         when(mockGenerator.nextToken()).thenReturn("new-token");
