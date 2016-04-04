@@ -1,6 +1,4 @@
-package com.tokyo.beach.application.token;
-
-import com.tokyo.beach.application.session.TokenGenerator;
+package com.tokyo.beach.application.session;
 
 public class UserSession {
 

@@ -2,7 +2,6 @@ package com.tokyo.beach.application.session;
 
 import com.tokyo.beach.application.RestControllerException;
 import com.tokyo.beach.application.logon.LogonCredentials;
-import com.tokyo.beach.application.token.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

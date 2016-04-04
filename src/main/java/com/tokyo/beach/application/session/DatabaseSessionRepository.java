@@ -1,6 +1,5 @@
 package com.tokyo.beach.application.session;
 
-import com.tokyo.beach.application.token.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

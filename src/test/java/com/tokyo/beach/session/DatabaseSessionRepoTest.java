@@ -3,7 +3,7 @@ package com.tokyo.beach.session;
 import com.tokyo.beach.application.logon.LogonCredentials;
 import com.tokyo.beach.application.session.DatabaseSessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
-import com.tokyo.beach.application.token.UserSession;
+import com.tokyo.beach.application.session.UserSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;

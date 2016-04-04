@@ -4,7 +4,7 @@ import com.tokyo.beach.application.RestControllerExceptionHandler;
 import com.tokyo.beach.application.session.SessionController;
 import com.tokyo.beach.application.session.SessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
-import com.tokyo.beach.application.token.UserSession;
+import com.tokyo.beach.application.session.UserSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
