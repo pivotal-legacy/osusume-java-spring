@@ -1,5 +1,6 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.*;
 import org.junit.Before;
@@ -13,6 +14,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -85,9 +88,12 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "soooo goood",
-                        singletonList(new PhotoUrl(1, "http://some-url", 1))
+                        emptyList()
                 )
         );
+
+        when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
 
 
         String payload = "{\"restaurant\": " +

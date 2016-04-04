@@ -3,7 +3,6 @@ package com.tokyo.beach.application.restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 
-import java.sql.Types;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -26,7 +25,8 @@ public class NewRestaurant {
     @JsonProperty("photo_urls")
     private List<NewPhotoUrl> photoUrls;
 
-    public NewRestaurant() {}
+    public NewRestaurant() {
+    }
 
     public NewRestaurant(String name,
                          String address,

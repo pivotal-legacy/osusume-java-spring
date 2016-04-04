@@ -1,5 +1,9 @@
 package com.tokyo.beach.application.restaurant;
 
+import com.tokyo.beach.application.photos.NewPhotoUrl;
+
+import java.util.List;
+
 public class NewRestaurantWrapper {
 
     private NewRestaurant restaurant;
@@ -18,5 +22,9 @@ public class NewRestaurantWrapper {
 
     public String toString() {
         return restaurant.toString();
+    }
+
+    public List<NewPhotoUrl> getPhotoUrls() {
+        return restaurant.getPhotoUrls();
     }
 }

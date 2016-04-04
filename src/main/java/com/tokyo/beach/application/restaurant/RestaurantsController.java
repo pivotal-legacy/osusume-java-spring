@@ -51,8 +51,17 @@ public class RestaurantsController {
 
     @RequestMapping(value = "", method = POST)
     @ResponseStatus(CREATED)
-    public Restaurant create(@RequestBody NewRestaurantWrapper restaurantWrapper) {
-        return restaurantRepository.createRestaurant(restaurantWrapper.getRestaurant());
+    public SerializedRestaurant create(@RequestBody NewRestaurantWrapper restaurantWrapper) {
+        Restaurant restaurant = restaurantRepository.createRestaurant(
+                restaurantWrapper.getRestaurant()
+        );
+
+        List<PhotoUrl> photosForRestaurant = photoRepository.createPhotosForRestaurant(
+                restaurant.getId(),
+                restaurantWrapper.getPhotoUrls()
+        );
+
+        return new SerializedRestaurant(restaurant, photosForRestaurant);
     }
 
     @RequestMapping(value = "{id}", method = GET)

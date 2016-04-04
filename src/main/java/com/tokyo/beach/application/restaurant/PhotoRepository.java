@@ -1,5 +1,6 @@
 package com.tokyo.beach.application.restaurant;
 
+import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -7,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -35,5 +37,24 @@ public class PhotoRepository {
                 }
 
         );
+    }
+
+    public List<PhotoUrl> createPhotosForRestaurant(long restaurantId, List<NewPhotoUrl> photos) {
+        List<PhotoUrl> savedPhotos = new ArrayList<>();
+
+        for (NewPhotoUrl photo : photos) {
+            PhotoUrl photoUrl = jdbcTemplate.queryForObject(
+                    "INSERT INTO photo_url (url, restaurant_id) VALUES (?, ?) RETURNING *",
+                    (rs, rowNum) -> {
+                        return new PhotoUrl(rs.getInt("id"), rs.getString("url"), rs.getInt("restaurant_id"));
+                    },
+                    photo.getUrl(),
+                    restaurantId
+            );
+
+            savedPhotos.add(photoUrl);
+        }
+
+        return savedPhotos;
     }
 }
