@@ -27,7 +27,7 @@ public class SessionController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public UserSession login(@RequestBody LogonCredentials credentials) {
-        Optional<UserSession> userSessionOptional = sessionRepository.logon(tokenGenerator, credentials.getEmail(), credentials.getPassword());
+        Optional<UserSession> userSessionOptional = sessionRepository.create(tokenGenerator, credentials.getEmail(), credentials.getPassword());
 
         return userSessionOptional.orElseThrow(
                 () -> new RestControllerException("Invalid email or password.")

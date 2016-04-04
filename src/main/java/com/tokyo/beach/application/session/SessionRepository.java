@@ -3,5 +3,5 @@ package com.tokyo.beach.application.session;
 import java.util.Optional;
 
 public interface SessionRepository {
-    Optional<UserSession> logon(TokenGenerator generator, String email, String password);
+    Optional<UserSession> create(TokenGenerator generator, String email, String password);
 }

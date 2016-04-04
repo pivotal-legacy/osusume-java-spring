@@ -49,7 +49,7 @@ public class DatabaseUserRepositoryTest {
             assertThat(user.getId().intValue(), is(greaterThan(0)));
             assertThat(user.getEmail(), is("jmiller@gmail.com"));
         } finally {
-            this.jdbcTemplate.update("TRUNCATE TABLE users");
+            this.jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
         }
     }
 }

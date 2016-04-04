@@ -39,7 +39,7 @@ public class SessionControllerTest {
     @Test
     public void test_postToAuthSession_returnsAcceptedHttpStatus() throws Exception {
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
-        when(sessionRepository.logon(tokenGenerator, "jmiller@gmail.com", "mypassword"))
+        when(sessionRepository.create(tokenGenerator, "jmiller@gmail.com", "mypassword"))
                 .thenReturn(Optional.of(userSession));
 
         mvc.perform(MockMvcRequestBuilders.post("/session")
@@ -52,7 +52,7 @@ public class SessionControllerTest {
 
     @Test
     public void test_postToAuthSession_invokesUserRepoLogonMethod() throws Exception {
-        when(sessionRepository.logon(tokenGenerator, "jmiller@gmail.com", "mypassword"))
+        when(sessionRepository.create(tokenGenerator, "jmiller@gmail.com", "mypassword"))
                 .thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.post("/session")
@@ -61,7 +61,7 @@ public class SessionControllerTest {
                 .accept("application/json;charset=UTF-8")
         );
 
-        verify(sessionRepository, times(1)).logon(tokenGenerator, "jmiller@gmail.com", "mypassword");
+        verify(sessionRepository, times(1)).create(tokenGenerator, "jmiller@gmail.com", "mypassword");
     }
 
     @Test
@@ -70,7 +70,7 @@ public class SessionControllerTest {
                 .thenReturn("abcde12345");
 
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
-        when(sessionRepository.logon(tokenGenerator, "jmiller@gmail.com", "mypassword"))
+        when(sessionRepository.create(tokenGenerator, "jmiller@gmail.com", "mypassword"))
                 .thenReturn(Optional.of(userSession));
 
         mvc.perform(MockMvcRequestBuilders.post("/session")
@@ -87,7 +87,7 @@ public class SessionControllerTest {
     public void test_postToAuthSessionWithInvalidUserCredentials_throwsException() throws Exception {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
-        when(sessionRepository.logon(tokenGenerator, "not valid", "not valid"))
+        when(sessionRepository.create(tokenGenerator, "not valid", "not valid"))
                 .thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.post("/session")

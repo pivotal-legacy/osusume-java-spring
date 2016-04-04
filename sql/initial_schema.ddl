@@ -53,3 +53,23 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 ALTER TABLE ONLY users ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+-- SESSION Table
+
+CREATE TABLE session (
+  token character varying NOT NULL,
+  user_id integer NOT NULL,
+  created_at timestamp without time zone default current_timestamp NOT NULL,
+  updated_at timestamp without time zone default current_timestamp NOT NULL
+);
+
+ALTER TABLE session OWNER TO pivotal;
+
+ALTER TABLE ONLY session ADD CONSTRAINT session_pkey PRIMARY KEY (token);
+
+CREATE UNIQUE INDEX index_users_on_token ON session USING btree (token);
+
+ALTER TABLE session ADD CONSTRAINT session_user_id_fkey
+FOREIGN KEY (user_id) REFERENCES users (id)
+ON DELETE CASCADE;
