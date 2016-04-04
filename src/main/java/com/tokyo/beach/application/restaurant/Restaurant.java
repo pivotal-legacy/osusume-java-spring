@@ -103,13 +103,45 @@ public class Restaurant {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Restaurant restaurant = (Restaurant) o;
-        return id == restaurant.id &&
-                (name != null ? name.equals(restaurant.name) : restaurant.name == null) &&
-                (address != null ? address.equals(restaurant.address) : restaurant.address == null) &&
-                (offersEnglishMenu != null ? offersEnglishMenu.equals(restaurant.offersEnglishMenu) : restaurant.offersEnglishMenu == null) &&
-                (walkInsOk != null ? walkInsOk.equals(restaurant.walkInsOk) : restaurant.walkInsOk == null) &&
-                (acceptsCreditCards != null ? acceptsCreditCards.equals(restaurant.acceptsCreditCards) : restaurant.acceptsCreditCards == null) &&
-                (notes != null ? notes.equals(restaurant.notes) : restaurant.notes == null);
+        Restaurant that = (Restaurant) o;
+
+        if (id != that.id) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        if (offersEnglishMenu != null ? !offersEnglishMenu.equals(that.offersEnglishMenu) : that.offersEnglishMenu != null)
+            return false;
+        if (walkInsOk != null ? !walkInsOk.equals(that.walkInsOk) : that.walkInsOk != null) return false;
+        if (acceptsCreditCards != null ? !acceptsCreditCards.equals(that.acceptsCreditCards) : that.acceptsCreditCards != null)
+            return false;
+        //noinspection SimplifiableIfStatement
+        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
+        return photoUrlList != null ? photoUrlList.equals(that.photoUrlList) : that.photoUrlList == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (offersEnglishMenu != null ? offersEnglishMenu.hashCode() : 0);
+        result = 31 * result + (walkInsOk != null ? walkInsOk.hashCode() : 0);
+        result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
+        result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (photoUrlList != null ? photoUrlList.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", offersEnglishMenu=" + offersEnglishMenu +
+                ", walkInsOk=" + walkInsOk +
+                ", acceptsCreditCards=" + acceptsCreditCards +
+                ", notes='" + notes + '\'' +
+                ", photoUrlList=" + photoUrlList +
+                '}';
     }
 }

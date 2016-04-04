@@ -1,7 +1,8 @@
-package com.tokyo.beach.application.restaurant;
+package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.application.photos.PhotoUrl;
-import com.tokyo.beach.restaurant.TestUtils;
+import com.tokyo.beach.TestUtils;
+import com.tokyo.beach.application.restaurant.PhotoRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;

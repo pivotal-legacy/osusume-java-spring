@@ -1,4 +1,6 @@
-package com.tokyo.beach.application.restaurant;
+package com.tokyo.beach.restaurant;
+
+import com.tokyo.beach.application.restaurant.Restaurant;
 
 import static java.util.Collections.emptyList;
 

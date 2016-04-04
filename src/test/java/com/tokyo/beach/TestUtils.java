@@ -1,4 +1,4 @@
-package com.tokyo.beach.restaurant;
+package com.tokyo.beach;
 
 import org.postgresql.ds.PGSimpleDataSource;
 

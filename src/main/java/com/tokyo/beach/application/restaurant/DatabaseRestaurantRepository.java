@@ -33,23 +33,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getString("notes"),
                             emptyList()
                     );
-                })
-                .stream()
-                .map((restaurant) -> {
-                    List<PhotoUrl> urls = jdbcTemplate.query("SELECT * FROM photo_url WHERE restaurant_id = ?",
-                            (rs, rowNum) -> {
-                                return new PhotoUrl(
-                                        rs.getInt("id"),
-                                        rs.getString("url"),
-                                        restaurant.getId()
-                                );
-                            },
-                            restaurant.getId()
-                    );
-
-                    return Restaurant.withPhotoUrls(restaurant, urls);
-                })
-                .collect(toList());
+                });
     }
 
     @Override

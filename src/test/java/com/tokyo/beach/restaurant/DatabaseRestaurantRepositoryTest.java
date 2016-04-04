@@ -1,6 +1,5 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
@@ -10,18 +9,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-@SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
 public class DatabaseRestaurantRepositoryTest {
-    DatabaseRestaurantRepository restaurantRepository;
-    JdbcTemplate jdbcTemplate;
+    private DatabaseRestaurantRepository restaurantRepository;
+    private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() {
@@ -36,47 +34,7 @@ public class DatabaseRestaurantRepositoryTest {
     }
 
     @Test
-    public void testGetAllWithPhotoUrls() {
-        Integer restaurantId = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant " +
-                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
-                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '')" +
-                        "RETURNING *",
-                ((rs, rowNum) -> {
-                    return rs.getInt("id");
-                })
-        );
-        Integer photoUrlId = jdbcTemplate.queryForObject(
-                "INSERT INTO photo_url (url, restaurant_id) " +
-                        "VALUES ('url'," + restaurantId + ") " +
-                        "RETURNING restaurant_id",
-                ((rs, rowNum) -> {
-                    return rs.getInt("restaurant_id");
-                })
-        );
-
-        List<Restaurant> restaurants = restaurantRepository.getAll();
-
-
-        PhotoUrl expectedPhotoUrl = new PhotoUrl(photoUrlId, "url", restaurantId);
-        List<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>() {{
-            add(expectedPhotoUrl);
-        }};
-        Restaurant expectedRestaurant = new Restaurant(
-                restaurantId,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                photoUrls
-        );
-        assertThat(restaurants, is(Collections.singletonList(expectedRestaurant)));
-    }
-
-    @Test
-    public void testGetAllWithoutPhotoUrls() {
+    public void test_getAll() {
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
                         "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
@@ -98,12 +56,12 @@ public class DatabaseRestaurantRepositoryTest {
                 true,
                 false,
                 "",
-                new ArrayList()
+                emptyList()
         );
-        assertThat(restaurants, is(Collections.singletonList(expectedRestaurant)));
+
+        assertThat(restaurants, is(singletonList(expectedRestaurant)));
     }
 
-    @SuppressWarnings("Convert2MethodRef")
     @Test
     public void testCreateRestaurantWithoutPhotoUrls() throws Exception {
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
@@ -113,7 +71,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
-                new ArrayList<>()
+                emptyList()
         );
 
 
@@ -130,7 +88,7 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("walk_ins_ok"),
                         rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
-                        new ArrayList()
+                        emptyList()
                 )
         );
 
@@ -152,11 +110,8 @@ public class DatabaseRestaurantRepositoryTest {
         assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(0));
     }
 
-    @SuppressWarnings("Convert2MethodRef")
     @Test
     public void testCreateRestaurantWithPhotoUrls() throws Exception {
-        ArrayList<NewPhotoUrl> photoUrls = new ArrayList<>();
-        photoUrls.add(new NewPhotoUrl("url"));
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -164,7 +119,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
-                photoUrls
+                emptyList()
         );
 
 
@@ -181,7 +136,7 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("walk_ins_ok"),
                         rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
-                        new ArrayList()
+                        emptyList()
                 )
         );
 
@@ -200,6 +155,5 @@ public class DatabaseRestaurantRepositoryTest {
             restaurant.setPhotoUrlList(actualPhotoUrls);
         }
         assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
-        assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(1));
     }
 }
