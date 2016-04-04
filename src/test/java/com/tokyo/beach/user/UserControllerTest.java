@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,20 +34,20 @@ public class UserControllerTest {
 
     @Test
     public void test_postToUser_returnsCreatedHttpStatus() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        mvc.perform(post("/users")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(status().isCreated());
     }
 
     @Test
     public void test_postToUser_invokesUserRepoCreateMethod() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        mvc.perform(post("/users")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         );
 
         verify(userRepository, times(1)).create("jmiller@gmail.com", "mypassword");
@@ -56,12 +58,12 @@ public class UserControllerTest {
         when(userRepository.create("jmiller@gmail.com", "mypassword"))
                 .thenReturn(new DatabaseUser(6, "jmiller@gmail.com"));
 
-        mvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        mvc.perform(post("/users")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         )
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().string("{\"id\":6,\"email\":\"jmiller@gmail.com\"}"));
     }
 }

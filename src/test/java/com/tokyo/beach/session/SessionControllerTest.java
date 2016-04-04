@@ -60,7 +60,7 @@ public class SessionControllerTest {
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF-8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(status().isAccepted());
     }
@@ -70,7 +70,7 @@ public class SessionControllerTest {
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF-8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         );
 
         verify(sessionRepository, times(1)).create(tokenGenerator, maybeUser.get());
@@ -88,7 +88,7 @@ public class SessionControllerTest {
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
-                .accept("application/json;charset=UTF-8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.email", is("jmiller@gmail.com")))
@@ -104,7 +104,7 @@ public class SessionControllerTest {
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"invalid@email\",\"password\":\"invalid password\"}")
-                .accept("application/json;charset=UTF-8")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid email or password.\"}"));
