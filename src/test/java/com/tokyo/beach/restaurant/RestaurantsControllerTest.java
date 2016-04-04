@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -74,17 +75,8 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void testCreatingARestaurant() throws Exception {
-        NewRestaurant afuriNewRestaurant = new NewRestaurant(
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                emptyList()
-        );
-        when(restaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
+    public void test_create_persistsARestaurant() throws Exception {
+        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -92,18 +84,36 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "",
-                        emptyList()
+                        "soooo goood",
+                        singletonList(new PhotoUrl(1, "http://some-url", 1))
                 )
         );
 
 
+        String payload = "{\"restaurant\": " +
+                "{\"name\":\"Afuri\", " +
+                "\"address\": \"Roppongi\", " +
+                "\"offers_english_menu\": false, " +
+                "\"walk_ins_ok\": true, " +
+                "\"accepts_credit_cards\": false, " +
+                "\"notes\": \"soooo goood\"," +
+                "\"photo_urls\": [{\"url\": \"http://some-url\"}]}" +
+        "}";
+
         mockMvc.perform(
                 post("/restaurants")
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
-                        .content("{\"name\":\"Afuri\"}")
+                        .content(payload)
         )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("Afuri")))
+                .andExpect(jsonPath("$.address", is("Roppongi")))
+                .andExpect(jsonPath("$.offers_english_menu", is(false)))
+                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
+                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
+                .andExpect(jsonPath("$.notes", is("soooo goood")))
+                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")));
+
     }
 
     @Test
