@@ -6,15 +6,14 @@ import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import org.junit.Before;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -79,11 +78,5 @@ public class DatabaseSessionRepoTest {
 
 
         assertFalse(actualOptionalUserSession.isPresent());
-    }
-
-    private DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
-        return dataSource;
     }
 }

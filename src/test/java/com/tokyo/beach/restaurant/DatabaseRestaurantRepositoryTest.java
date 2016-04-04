@@ -1,21 +1,20 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.application.photos.NewPhotoUrl;
+import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
-import com.tokyo.beach.application.photos.NewPhotoUrl;
-import com.tokyo.beach.application.photos.PhotoUrl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -41,7 +40,7 @@ public class DatabaseRestaurantRepositoryTest {
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
                         "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
-                        "VALUES ('Afuri', 'Roppongi', false, true, false, '')" +
+                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '')" +
                         "RETURNING *",
                 ((rs, rowNum) -> {
                     return rs.getInt("id");
@@ -60,7 +59,9 @@ public class DatabaseRestaurantRepositoryTest {
 
 
         PhotoUrl expectedPhotoUrl = new PhotoUrl(photoUrlId, "url", restaurantId);
-        List<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>(){{ add(expectedPhotoUrl); }};
+        List<PhotoUrl> photoUrls = new ArrayList<PhotoUrl>() {{
+            add(expectedPhotoUrl);
+        }};
         Restaurant expectedRestaurant = new Restaurant(
                 restaurantId,
                 "Afuri",
@@ -79,7 +80,7 @@ public class DatabaseRestaurantRepositoryTest {
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
                         "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
-                        "VALUES ('Afuri', 'Roppongi', false, true, false, '')" +
+                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '')" +
                         "RETURNING *",
                 ((rs, rowNum) -> {
                     return rs.getInt("id");
@@ -133,11 +134,11 @@ public class DatabaseRestaurantRepositoryTest {
                 )
         );
 
-        for(Restaurant restaurant: actualRestaurantList) {
+        for (Restaurant restaurant : actualRestaurantList) {
             List<PhotoUrl> photoUrls = jdbcTemplate.query(
                     "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                    new Object[]{ restaurant.getId() },
-                    (rs, rowNum) ->{
+                    new Object[]{restaurant.getId()},
+                    (rs, rowNum) -> {
                         return new PhotoUrl(
                                 rs.getInt("id"),
                                 rs.getString("url"),
@@ -155,7 +156,7 @@ public class DatabaseRestaurantRepositoryTest {
     @Test
     public void testCreateRestaurantWithPhotoUrls() throws Exception {
         ArrayList<NewPhotoUrl> photoUrls = new ArrayList<>();
-        photoUrls.add( new NewPhotoUrl("url") );
+        photoUrls.add(new NewPhotoUrl("url"));
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -184,11 +185,11 @@ public class DatabaseRestaurantRepositoryTest {
                 )
         );
 
-        for(Restaurant restaurant: actualRestaurantList) {
+        for (Restaurant restaurant : actualRestaurantList) {
             List<PhotoUrl> actualPhotoUrls = jdbcTemplate.query(
                     "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                    new Object[]{ restaurant.getId() },
-                    (rs, rowNum) ->{
+                    new Object[]{restaurant.getId()},
+                    (rs, rowNum) -> {
                         return new PhotoUrl(
                                 rs.getInt("id"),
                                 rs.getString("url"),
@@ -200,11 +201,5 @@ public class DatabaseRestaurantRepositoryTest {
         }
         assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
         assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(1));
-    }
-
-    private DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
-        return dataSource;
     }
 }

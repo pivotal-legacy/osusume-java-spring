@@ -5,11 +5,9 @@ import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.DatabaseUserRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-
+import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
@@ -53,11 +51,5 @@ public class DatabaseUserRepositoryTest {
         } finally {
             this.jdbcTemplate.update("TRUNCATE TABLE users");
         }
-    }
-
-    private DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
-        return dataSource;
     }
 }
