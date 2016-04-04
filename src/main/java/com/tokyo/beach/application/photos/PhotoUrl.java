@@ -2,7 +2,6 @@ package com.tokyo.beach.application.photos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@SuppressWarnings("unused")
 public class PhotoUrl {
     @JsonIgnore
     private int id;

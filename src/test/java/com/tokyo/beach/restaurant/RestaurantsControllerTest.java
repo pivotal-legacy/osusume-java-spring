@@ -6,10 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -20,44 +24,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantsControllerTest {
-    private RestaurantRepository mockRestaurantRepository;
+    private RestaurantRepository restaurantRepository;
     private DetailedRestaurantRepository mockDetailedRestaurantRepository;
     private MockMvc mockMvc;
+    private PhotoRepository photoRepository;
 
     @Before
     public void setUp() {
-        mockRestaurantRepository = mock(RestaurantRepository.class);
+        restaurantRepository = mock(RestaurantRepository.class);
         mockDetailedRestaurantRepository = mock(DetailedRestaurantRepository.class);
+        photoRepository = mock(PhotoRepository.class);
+
         RestaurantsController restaurantsController = new RestaurantsController(
-                mockRestaurantRepository,
-                mockDetailedRestaurantRepository
+                restaurantRepository,
+                mockDetailedRestaurantRepository,
+                photoRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController).build();
     }
 
     @Test
-    public void testGettingAListOfRestaurants() throws Exception {
-        when(mockRestaurantRepository.getAll()).thenReturn(
-                singletonList(
-                        new Restaurant(
-                                1,
-                                "Afuri",
-                                "Roppongi",
-                                false,
-                                true,
-                                false,
-                                "",
-                                emptyList()
-                        )
+    public void test_getAll_returnsAListOfRestaurants() throws Exception {
+        List<Restaurant> restaurants = singletonList(
+                new Restaurant(
+                        1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "とても美味しい",
+                        emptyList()
                 )
         );
-
+        when(restaurantRepository.getAll()).thenReturn(restaurants);
+        when(photoRepository.findForRestaurants(anyObject()))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
 
         mockMvc.perform(get("/restaurants"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
-                .andExpect(jsonPath("$[0].name", equalTo("Afuri")));
+                .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
+                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
+                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
+                .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
+                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")));
     }
 
     @Test
@@ -71,7 +85,7 @@ public class RestaurantsControllerTest {
                 "",
                 emptyList()
         );
-        when(mockRestaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
+        when(restaurantRepository.createRestaurant(afuriNewRestaurant)).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",

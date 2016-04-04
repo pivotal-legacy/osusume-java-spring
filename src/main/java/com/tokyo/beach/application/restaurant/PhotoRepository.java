@@ -1,0 +1,39 @@
+package com.tokyo.beach.application.restaurant;
+
+import com.tokyo.beach.application.photos.PhotoUrl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
+@Repository
+public class PhotoRepository {
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public PhotoRepository(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<PhotoUrl> findForRestaurants(List<Restaurant> restaurants) {
+        List<Integer> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", ids);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedTemplate.query(
+                "SELECT * FROM photo_url WHERE restaurant_id IN (:ids)",
+                parameters,
+                (rs, rowNum) -> {
+                    return new PhotoUrl(rs.getInt("id"), rs.getString("url"), rs.getInt("restaurant_id"));
+                }
+
+        );
+    }
+}

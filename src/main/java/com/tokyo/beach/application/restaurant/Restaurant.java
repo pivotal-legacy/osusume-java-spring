@@ -3,10 +3,7 @@ package com.tokyo.beach.application.restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.application.photos.PhotoUrl;
 
-import java.util.ArrayList;
 import java.util.List;
-
-@SuppressWarnings("unused")
 
 public class Restaurant {
     private final int id;
@@ -23,17 +20,20 @@ public class Restaurant {
     private Boolean acceptsCreditCards;
     private String notes;
 
+
     @JsonProperty("photo_urls")
     private List<PhotoUrl> photoUrlList;
 
-    public Restaurant(int id,
-                      String name,
-                      String address,
-                      Boolean offersEnglishMenu,
-                      Boolean walkInsOk,
-                      Boolean acceptsCreditCards,
-                      String notes,
-                      List<PhotoUrl> photoUrlList) {
+    public Restaurant(
+            int id,
+            String name,
+            String address,
+            Boolean offersEnglishMenu,
+            Boolean walkInsOk,
+            Boolean acceptsCreditCards,
+            String notes,
+            List<PhotoUrl> photoUrlList
+    ) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -44,13 +44,29 @@ public class Restaurant {
         this.photoUrlList = photoUrlList;
     }
 
+    static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
+        return new Restaurant(
+                restaurant.getId(),
+                restaurant.getName(),
+                restaurant.getAddress(),
+                restaurant.getOffersEnglishMenu(),
+                restaurant.getWalkInsOk(),
+                restaurant.getAcceptsCreditCards(),
+                restaurant.getNotes(),
+                urls
+        );
+    }
+
     public int getId() {
         return id;
     }
+
+    @SuppressWarnings("WeakerAccess")
     public Boolean getOffersEnglishMenu() {
         return offersEnglishMenu;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Boolean getWalkInsOk() {
         return walkInsOk;
     }
@@ -59,14 +75,17 @@ public class Restaurant {
         return name;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getAddress() {
         return address;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Boolean getAcceptsCreditCards() {
         return acceptsCreditCards;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getNotes() {
         return notes;
     }
@@ -81,10 +100,10 @@ public class Restaurant {
 
     @Override
     public boolean equals(Object o) {
-        if ( this == o ) return true;
-        if ( o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        Restaurant restaurant = (Restaurant)o;
+        Restaurant restaurant = (Restaurant) o;
         return id == restaurant.id &&
                 (name != null ? name.equals(restaurant.name) : restaurant.name == null) &&
                 (address != null ? address.equals(restaurant.address) : restaurant.address == null) &&
@@ -92,34 +111,5 @@ public class Restaurant {
                 (walkInsOk != null ? walkInsOk.equals(restaurant.walkInsOk) : restaurant.walkInsOk == null) &&
                 (acceptsCreditCards != null ? acceptsCreditCards.equals(restaurant.acceptsCreditCards) : restaurant.acceptsCreditCards == null) &&
                 (notes != null ? notes.equals(restaurant.notes) : restaurant.notes == null);
-    }
-
-    private boolean equalPhotoUrlList(List<PhotoUrl> otherPhotoUrlList) {
-        if (photoUrlList == null && otherPhotoUrlList == null) return true;
-
-        if (photoUrlList == null || otherPhotoUrlList == null) return false;
-
-        if (photoUrlList.size() != otherPhotoUrlList.size()) return false;
-
-        for (PhotoUrl photoUrl: otherPhotoUrlList) {
-            if (! photoUrlList.contains(photoUrl) ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
-        return new Restaurant(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getOffersEnglishMenu(),
-                restaurant.getWalkInsOk(),
-                restaurant.getAcceptsCreditCards(),
-                restaurant.getNotes(),
-                urls
-        );
     }
 }
