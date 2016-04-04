@@ -3,13 +3,13 @@ package com.tokyo.beach.application.user;
 import com.tokyo.beach.application.logon.LogonCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class DatabaseUserRepository implements UserRepository {
@@ -37,19 +37,24 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public DatabaseUser get(LogonCredentials credentials) {
+    public Optional<DatabaseUser> get(LogonCredentials credentials) {
         String sql = "SELECT id, email FROM users WHERE email = ? AND password = ?";
         List<DatabaseUser> users = jdbcTemplate.query(
                 sql,
-                new Object[]{credentials.getEmail(), credentials.getPassword()},
                 (rs, rowNum) -> {
                     return new DatabaseUser(
                             rs.getInt("id"),
                             rs.getString("email")
                     );
-                }
+                },
+                credentials.getEmail(),
+                credentials.getPassword()
         );
 
-        return users.get(0);
+        if (users.size() == 1) {
+            return Optional.of(users.get(0));
+        }
+
+        return Optional.empty();
     }
 }

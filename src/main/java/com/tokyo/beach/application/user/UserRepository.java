@@ -2,7 +2,9 @@ package com.tokyo.beach.application.user;
 
 import com.tokyo.beach.application.logon.LogonCredentials;
 
+import java.util.Optional;
+
 public interface UserRepository {
     DatabaseUser create(String email, String password);
-    DatabaseUser get(LogonCredentials credentials);
+    Optional<DatabaseUser> get(LogonCredentials credentials);
 }

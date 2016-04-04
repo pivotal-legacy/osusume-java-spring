@@ -10,10 +10,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseUserRepositoryTest {
@@ -64,14 +66,25 @@ public class DatabaseUserRepositoryTest {
             insertUserIntoDatabase(credentials);
 
 
-            DatabaseUser user = databaseUserRepository.get(credentials);
+            Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
 
 
-            assertThat(user.getId().intValue(), is(greaterThan(0)));
-            assertThat(user.getEmail(), is("user@gmail.com"));
+            assertThat(maybeUser.get().getId().intValue(), is(greaterThan(0)));
+            assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
         } finally {
             jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
         }
+    }
+
+    @Test
+    public void test_getNonExistentUser_returnsEmptyOptional() throws Exception {
+        LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
+
+
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
+
+
+        assertFalse(maybeUser.isPresent());
     }
 
     private Number insertUserIntoDatabase(LogonCredentials credentials) {
