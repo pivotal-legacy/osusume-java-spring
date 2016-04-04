@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatabaseCuisineRepositoryTest {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
+    private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
 
     @After
     public void tearDown() {

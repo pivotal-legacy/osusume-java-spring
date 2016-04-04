@@ -12,7 +12,7 @@ public class DatabaseCuisineRepository implements CuisineRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public DatabaseCuisineRepository(JdbcTemplate jdbcTemplate) {
+    public DatabaseCuisineRepository(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
