@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class DatabaseSessionRepository implements SessionRepository {
@@ -33,5 +35,20 @@ public class DatabaseSessionRepository implements SessionRepository {
         insert.execute(params);
 
         return userSession;
+    }
+
+    @Override
+    public Optional<Number> validateToken(String token) {
+       List<Integer> userIds = jdbcTemplate.query(
+                "SELECT user_id FROM session where token=?",
+               (rs, rowNum) -> {
+                   return  rs.getInt("user_id");
+               },
+               token);
+
+        if (userIds.size() == 1) {
+            return Optional.of(userIds.get(0));
+        }
+        return Optional.empty();
     }
 }

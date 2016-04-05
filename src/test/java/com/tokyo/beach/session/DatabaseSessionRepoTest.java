@@ -5,6 +5,7 @@ import com.tokyo.beach.application.session.DatabaseSessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import com.tokyo.beach.application.user.DatabaseUser;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,9 +14,11 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,42 +43,57 @@ public class DatabaseSessionRepoTest {
         user = new DatabaseUser(userId.intValue(), credentials.getEmail());
     }
 
+    @After
+    public void tearDown() throws Exception {
+        jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
+    }
+
     @Test
     public void test_create_returnsNewUserSession() throws Exception {
-        try {
-            UserSession actualUserSession = databaseSessionRepository.create(
-                    mockTokenGenerator,
-                    user
-            );
+        UserSession actualUserSession = databaseSessionRepository.create(
+                mockTokenGenerator,
+                user
+        );
 
 
-            UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com");
-            assertEquals(actualUserSession, expectedUserSession);
-
-        } finally {
-            jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
-        }
+        UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com");
+        assertEquals(actualUserSession, expectedUserSession);
     }
 
     @Test
     public void test_create_persistsToken_forValidCredentials() throws Exception {
-        try {
-            databaseSessionRepository.create(
-                    mockTokenGenerator,
-                    user
-            );
+        databaseSessionRepository.create(
+                mockTokenGenerator,
+                user
+        );
 
 
-            String sql = "SELECT token FROM session WHERE user_id = ?";
-            List<String> persistedTokens = jdbcTemplate.queryForList(
-                    sql,
-                    String.class,
-                    userId.intValue());
+        String sql = "SELECT token FROM session WHERE user_id = ?";
+        List<String> persistedTokens = jdbcTemplate.queryForList(
+                sql,
+                String.class,
+                userId.intValue());
 
-            assertEquals("new-token", persistedTokens.get(0));
-        } finally {
-            jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
-        }
+        assertEquals("new-token", persistedTokens.get(0));
+    }
+
+    @Test
+    public void test_validateToken_returnsUserId() throws Exception {
+        insertSessionIntoDatabase("token-value", userId.intValue());
+
+
+        Optional<Number> returnedUserId = databaseSessionRepository.validateToken("token-value");
+
+
+        assertEquals(userId, returnedUserId.get());
+    }
+
+    @Test
+    public void test_validateToken_returnsEmptyForInvalidCredentials() throws Exception {
+        Optional<Number> returnedUserId = databaseSessionRepository.validateToken("invalid-token");
+
+
+        assertFalse(returnedUserId.isPresent());
     }
 
     private Number insertUserIntoDatabase(LogonCredentials credentials) {
@@ -90,4 +108,17 @@ public class DatabaseSessionRepoTest {
 
         return insert.executeAndReturnKey(params);
     }
+
+    private void insertSessionIntoDatabase(String token, int userId) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("session")
+                .usingColumns("token", "user_id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", token);
+        params.put("user_id", userId);
+
+        insert.execute(params);
+    }
+
 }
