@@ -3,7 +3,10 @@ package com.tokyo.beach.restaurant;
 import com.tokyo.beach.application.RestControllerExceptionHandler;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
-import com.tokyo.beach.application.restaurant.*;
+import com.tokyo.beach.application.restaurant.PhotoRepository;
+import com.tokyo.beach.application.restaurant.Restaurant;
+import com.tokyo.beach.application.restaurant.RestaurantRepository;
+import com.tokyo.beach.application.restaurant.RestaurantsController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,19 +33,16 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 public class RestaurantsControllerTest {
     private RestaurantRepository restaurantRepository;
-    private DetailedRestaurantRepository mockDetailedRestaurantRepository;
     private MockMvc mockMvc;
     private PhotoRepository photoRepository;
 
     @Before
     public void setUp() {
         restaurantRepository = mock(RestaurantRepository.class);
-        mockDetailedRestaurantRepository = mock(DetailedRestaurantRepository.class);
         photoRepository = mock(PhotoRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
-                mockDetailedRestaurantRepository,
                 photoRepository
         );
 
@@ -85,7 +85,6 @@ public class RestaurantsControllerTest {
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 restaurantRepository,
-                mockDetailedRestaurantRepository,
                 new PhotoRepository(new JdbcTemplate(buildDataSource()))
         );
 
@@ -204,7 +203,7 @@ public class RestaurantsControllerTest {
                 Optional.empty()
         );
 
-        
+
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid restaurant id.\"}"));

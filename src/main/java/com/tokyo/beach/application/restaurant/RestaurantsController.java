@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
@@ -21,17 +20,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/restaurants")
 public class RestaurantsController {
     private final RestaurantRepository restaurantRepository;
-    private final DetailedRestaurantRepository detailedRestaurantRepository;
     private final PhotoRepository photoRepository;
 
     @Autowired
     public RestaurantsController(
             RestaurantRepository restaurantRepo,
-            DetailedRestaurantRepository detailedRepo,
             PhotoRepository photoRepository
     ) {
         this.restaurantRepository = restaurantRepo;
-        this.detailedRestaurantRepository = detailedRepo;
         this.photoRepository = photoRepository;
     }
 
