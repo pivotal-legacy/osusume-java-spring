@@ -79,4 +79,16 @@ public class PhotoRepositoryTest {
         assertThat(photoUrls.get(1).getUrl(), is("http://another-url"));
         assertThat(photoUrls.get(1).getRestaurantId(), is(789));
     }
+
+    @Test
+    public void test_findForRestaurant_returnsPhotoUrlList() throws Exception {
+        jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) VALUES ('http://some-url', 1)");
+
+
+        List<PhotoUrl> photos = photoRepository.findForRestaurant(RestaurantFixtures.newRestaurant(1));
+
+
+        assertThat(photos, hasSize(1));
+        assertThat(photos.get(0).getRestaurantId(), is(1));
+    }
 }

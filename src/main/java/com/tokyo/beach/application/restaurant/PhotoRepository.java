@@ -57,4 +57,18 @@ public class PhotoRepository {
 
         return savedPhotos;
     }
+
+    public List<PhotoUrl> findForRestaurant(Restaurant restaurant) {
+        return jdbcTemplate.query(
+                "SELECT * FROM photo_url WHERE restaurant_id = ?",
+                new Object[]{ restaurant.getId() },
+                (rs, rowNum) -> {
+                    return new PhotoUrl(
+                            rs.getInt("id"),
+                            rs.getString("url"),
+                            rs.getInt("restaurant_id")
+                    );
+                }
+        );
+    }
 }
