@@ -39,8 +39,8 @@ public class DatabaseSessionRepository implements SessionRepository {
 
     @Override
     public Optional<Number> validateToken(String token) {
-       List<Integer> userIds = jdbcTemplate.query(
-                "SELECT user_id FROM session where token=?",
+        List<Integer> userIds = jdbcTemplate.query(
+                "SELECT user_id FROM session where token = ?",
                (rs, rowNum) -> {
                    return  rs.getInt("user_id");
                },

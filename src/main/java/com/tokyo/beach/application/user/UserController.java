@@ -24,4 +24,10 @@ public class UserController {
         return userRepository.create(credentials.getEmail(), credentials.getPassword());
     }
 
+    @RequestMapping(value = "/unauthenticated")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String authError() {
+        return "Authentication Error";
+    }
+
 }
