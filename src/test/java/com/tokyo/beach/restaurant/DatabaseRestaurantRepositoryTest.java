@@ -10,11 +10,13 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseRestaurantRepositoryTest {
@@ -95,4 +97,31 @@ public class DatabaseRestaurantRepositoryTest {
 
         assertThat(actualRestaurant.getName(), is("KFC"));
     }
+
+    @Test
+    public void test_get_returnsRestaurant() throws Exception {
+        int id = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant (name) " +
+                        "VALUES ('Amazing Restaurant') " +
+                        "RETURNING id",
+                (rs, rowNum) -> {
+                    return rs.getInt("id");
+                }
+        );
+
+
+        Optional<Restaurant> maybeRestaurant = restaurantRepository.get(id);
+
+
+        assertThat(maybeRestaurant.get().getName(), is("Amazing Restaurant"));
+    }
+
+    @Test
+    public void test_get_returnsEmptyOptionalForInvalidRestaurantId() throws Exception {
+        Optional<Restaurant> maybeRestaurant = restaurantRepository.get(999);
+
+
+        assertFalse(maybeRestaurant.isPresent());
+    }
+
 }

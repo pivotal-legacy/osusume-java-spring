@@ -1,14 +1,13 @@
 package com.tokyo.beach.application.restaurant;
 
-import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 
 @Repository
 public class DatabaseRestaurantRepository implements RestaurantRepository {
@@ -34,6 +33,32 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             emptyList()
                     );
                 });
+    }
+
+    @Override
+    public Optional<Restaurant> get(int id) {
+        List<Restaurant> restaurants = jdbcTemplate
+                .query("SELECT * FROM restaurant WHERE id = ?",
+                        (rs, rowNum) -> {
+                            return new Restaurant(
+                                    rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getString("address"),
+                                    rs.getBoolean("offers_english_menu"),
+                                    rs.getBoolean("walk_ins_ok"),
+                                    rs.getBoolean("accepts_credit_cards"),
+                                    rs.getString("notes"),
+                                    emptyList()
+                            );
+                        },
+                        id
+                );
+
+        if (restaurants.size() == 1) {
+            return Optional.of(restaurants.get(0));
+        }
+
+        return Optional.empty();
     }
 
     @Override
