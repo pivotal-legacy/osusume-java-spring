@@ -1,5 +1,6 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.application.RestControllerExceptionHandler;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.*;
@@ -9,24 +10,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static com.tokyo.beach.TestUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantsControllerTest {
@@ -47,7 +46,9 @@ public class RestaurantsControllerTest {
                 photoRepository
         );
 
-        mockMvc = standaloneSetup(restaurantsController).build();
+        mockMvc = standaloneSetup(restaurantsController)
+                .setControllerAdvice(createControllerAdvice(new RestControllerExceptionHandler()))
+                .build();
     }
 
     @Test
@@ -124,7 +125,7 @@ public class RestaurantsControllerTest {
                 "\"accepts_credit_cards\": false, " +
                 "\"notes\": \"soooo goood\"," +
                 "\"photo_urls\": [{\"url\": \"http://some-url\"}]}" +
-        "}";
+                "}";
 
         mockMvc.perform(
                 post("/restaurants")
@@ -143,18 +144,22 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void testGetRestaurantWithoutPhotoUrls() throws Exception {
-        when(mockDetailedRestaurantRepository.getRestaurant("1")).thenReturn(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "",
-                        emptyList()
-                )
+    public void test_getRestaurant_returnsRestaurant() throws Exception {
+        Restaurant afuriRestaurant = new Restaurant(
+                1,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                emptyList()
+        );
+        when(restaurantRepository.get(1)).thenReturn(
+                Optional.of(afuriRestaurant)
+        );
+        when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                emptyList()
         );
 
 
@@ -166,18 +171,22 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void testGetRestaurantWithPhotoUrls() throws Exception {
-        when(mockDetailedRestaurantRepository.getRestaurant("1")).thenReturn(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "",
-                        asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
-                )
+    public void test_getRestaurant_returnsRestaurantWithPhotos() throws Exception {
+        Restaurant afuriRestaurant = new Restaurant(
+                1,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                emptyList()
+        );
+        when(restaurantRepository.get(1)).thenReturn(
+                Optional.of(afuriRestaurant)
+        );
+        when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
         );
 
 
@@ -187,6 +196,18 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
                 .andExpect(jsonPath("$.photo_urls[0].url", equalTo("Url1")))
                 .andExpect(jsonPath("$.photo_urls[1].url", equalTo("Url2")));
-
     }
+
+    @Test
+    public void test_getInvalidRestaurantId_throwsException() throws Exception {
+        when(restaurantRepository.get(1)).thenReturn(
+                Optional.empty()
+        );
+
+        
+        mockMvc.perform(get("/restaurants/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("{\"error\":\"Invalid restaurant id.\"}"));
+    }
+
 }

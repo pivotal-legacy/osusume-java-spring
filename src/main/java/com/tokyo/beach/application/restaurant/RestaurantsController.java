@@ -1,10 +1,14 @@
 package com.tokyo.beach.application.restaurant;
 
+import com.tokyo.beach.application.RestControllerException;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
@@ -69,7 +73,13 @@ public class RestaurantsController {
     }
 
     @RequestMapping(value = "{id}", method = GET)
-    public Restaurant getRestaurant(@PathVariable String id) {
-        return detailedRestaurantRepository.getRestaurant(id);
+    public SerializedRestaurant getRestaurant(@PathVariable String id) {
+        Optional<Restaurant> maybeRestaurant = restaurantRepository.get(Integer.parseInt(id));
+
+        maybeRestaurant.orElseThrow(() -> new RestControllerException("Invalid restaurant id."));
+
+        Restaurant retrievedRestaurant = maybeRestaurant.get();
+        List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
+        return new SerializedRestaurant(retrievedRestaurant, photosForRestaurant);
     }
 }
