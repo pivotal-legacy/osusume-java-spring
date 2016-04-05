@@ -5,10 +5,12 @@ import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.tokyo.beach.TestUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -75,6 +78,23 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")));
+    }
+
+    @Test
+    public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
+        RestaurantsController controller = new RestaurantsController(
+                restaurantRepository,
+                mockDetailedRestaurantRepository,
+                new PhotoRepository(new JdbcTemplate(buildDataSource()))
+        );
+
+
+        mockMvc = standaloneSetup(controller).build();
+        when(restaurantRepository.getAll()).thenReturn(emptyList());
+
+        mockMvc.perform(get("/restaurants"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
     }
 
     @Test

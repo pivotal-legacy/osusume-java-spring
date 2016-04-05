@@ -4,9 +4,9 @@ import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -34,8 +34,12 @@ public class RestaurantsController {
     @RequestMapping(value = "", method = GET)
     public List<SerializedRestaurant> getAll() {
         List<Restaurant> restaurantList = restaurantRepository.getAll();
-        List<PhotoUrl> photos = photoRepository.findForRestaurants(restaurantList);
 
+        if (restaurantList.size() == 0) {
+            return emptyList();
+        }
+
+        List<PhotoUrl> photos = photoRepository.findForRestaurants(restaurantList);
         Map<Integer, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
