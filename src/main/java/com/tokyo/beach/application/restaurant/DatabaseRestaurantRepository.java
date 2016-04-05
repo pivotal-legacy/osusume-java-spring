@@ -38,7 +38,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
 
     @Override
     public Restaurant createRestaurant(NewRestaurant newRestaurant) {
-        Restaurant restaurant = jdbcTemplate.queryForObject(
+        return jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) " +
                         "VALUES (?, ?, ?, ?, ?, ?) " +
                         "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes",
@@ -61,25 +61,5 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 newRestaurant.getAcceptsCreditCards(),
                 newRestaurant.getNotes()
         );
-
-        List<PhotoUrl> photoUrls = newRestaurant.getPhotoUrls()
-                .stream()
-                .map(photoUrl -> jdbcTemplate.queryForObject(
-                        "INSERT INTO photo_url (url, restaurant_id) " +
-                                "VALUES (?, ?) " +
-                                "RETURNING *",
-                        (rs, rowNum) -> {
-                            return new PhotoUrl(
-                                    rs.getInt("id"),
-                                    rs.getString("url"),
-                                    rs.getInt("restaurant_id")
-                            );
-                        },
-                        photoUrl.getUrl(),
-                        restaurant.getId()
-                ))
-                .collect(toList());
-
-        return Restaurant.withPhotoUrls(restaurant, photoUrls);
     }
 }

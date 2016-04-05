@@ -63,7 +63,7 @@ public class DatabaseRestaurantRepositoryTest {
     }
 
     @Test
-    public void testCreateRestaurantWithoutPhotoUrls() throws Exception {
+    public void testCreateRestaurant() throws Exception {
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -75,11 +75,11 @@ public class DatabaseRestaurantRepositoryTest {
         );
 
 
-        restaurantRepository.createRestaurant(kfcNewRestaurant);
+        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant);
 
 
-        List<Restaurant> actualRestaurantList = jdbcTemplate.query(
-                "SELECT * FROM restaurant WHERE name = 'KFC'",
+        Restaurant actualRestaurant = jdbcTemplate.queryForObject(
+                "SELECT * FROM restaurant WHERE id = ?",
                 (rs, rowNum) -> new Restaurant(
                         rs.getInt("id"),
                         rs.getString("name"),
@@ -89,71 +89,10 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
                         emptyList()
-                )
+                ),
+                createdRestaurant.getId()
         );
 
-        for (Restaurant restaurant : actualRestaurantList) {
-            List<PhotoUrl> photoUrls = jdbcTemplate.query(
-                    "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                    new Object[]{restaurant.getId()},
-                    (rs, rowNum) -> {
-                        return new PhotoUrl(
-                                rs.getInt("id"),
-                                rs.getString("url"),
-                                restaurant.getId()
-                        );
-                    }
-            );
-            restaurant.setPhotoUrlList(photoUrls);
-        }
-        assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
-        assertThat(actualRestaurantList.get(0).getPhotoUrlList().size(), is(0));
-    }
-
-    @Test
-    public void testCreateRestaurantWithPhotoUrls() throws Exception {
-        NewRestaurant kfcNewRestaurant = new NewRestaurant(
-                "KFC",
-                "Shibuya",
-                Boolean.TRUE,
-                Boolean.TRUE,
-                Boolean.TRUE,
-                "Notes",
-                emptyList()
-        );
-
-
-        restaurantRepository.createRestaurant(kfcNewRestaurant);
-
-
-        List<Restaurant> actualRestaurantList = jdbcTemplate.query(
-                "SELECT * FROM restaurant WHERE name = 'KFC'",
-                (rs, rowNum) -> new Restaurant(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("address"),
-                        rs.getBoolean("offers_english_menu"),
-                        rs.getBoolean("walk_ins_ok"),
-                        rs.getBoolean("accepts_credit_cards"),
-                        rs.getString("notes"),
-                        emptyList()
-                )
-        );
-
-        for (Restaurant restaurant : actualRestaurantList) {
-            List<PhotoUrl> actualPhotoUrls = jdbcTemplate.query(
-                    "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                    new Object[]{restaurant.getId()},
-                    (rs, rowNum) -> {
-                        return new PhotoUrl(
-                                rs.getInt("id"),
-                                rs.getString("url"),
-                                restaurant.getId()
-                        );
-                    }
-            );
-            restaurant.setPhotoUrlList(actualPhotoUrls);
-        }
-        assertThat(actualRestaurantList.get(0).getName(), is("KFC"));
+        assertThat(actualRestaurant.getName(), is("KFC"));
     }
 }
