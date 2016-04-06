@@ -1,10 +1,10 @@
 package com.tokyo.beach.session;
 
-import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.session.DatabaseSessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import com.tokyo.beach.application.user.DatabaseUser;
+import com.tokyo.beach.application.user.LogonCredentials;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.buildDataSource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;

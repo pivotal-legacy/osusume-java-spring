@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.buildDataSource;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;

@@ -28,10 +28,4 @@ public class ControllerTestingUtils {
 
         return exceptionResolver;
     }
-
-    public static DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
-        return dataSource;
-    }
 }

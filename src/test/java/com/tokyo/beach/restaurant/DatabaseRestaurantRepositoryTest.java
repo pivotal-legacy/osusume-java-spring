@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.buildDataSource;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
