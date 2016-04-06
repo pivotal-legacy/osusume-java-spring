@@ -3,6 +3,7 @@ package com.tokyo.beach.user;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.DatabaseUserRepository;
 import com.tokyo.beach.application.user.LogonCredentials;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,51 +28,48 @@ public class DatabaseUserRepositoryTest {
         this.databaseUserRepository = new DatabaseUserRepository(this.jdbcTemplate);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        this.jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
+    }
+
     @Test
     public void test_create_insertsUserCredentialsIntoDB() throws Exception {
-        try {
-            LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "myPassword123");
+        LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "myPassword123");
 
-            String sql = "SELECT count(*) FROM users WHERE email = ?";
-            int count = this.jdbcTemplate.queryForObject(
-                    sql, new Object[]{credentials.getEmail()}, Integer.class
-            );
-            assertThat(count, is(0));
-
-
-            DatabaseUser user = this.databaseUserRepository.create(
-                    credentials.getEmail(),
-                    credentials.getPassword()
-            );
+        String sql = "SELECT count(*) FROM users WHERE email = ?";
+        int count = this.jdbcTemplate.queryForObject(
+                sql, new Object[]{credentials.getEmail()}, Integer.class
+        );
+        assertThat(count, is(0));
 
 
-            sql = "SELECT count(*) FROM USERS WHERE email = ?";
-            count = this.jdbcTemplate.queryForObject(
-                    sql, new Object[]{credentials.getEmail()}, Integer.class
-            );
-            assertThat(count, is(1));
-            assertTrue(user.getId() > 0);
-            assertThat(user.getEmail(), is("jmiller@gmail.com"));
-        } finally {
-            this.jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
-        }
+        DatabaseUser user = this.databaseUserRepository.create(
+                credentials.getEmail(),
+                credentials.getPassword()
+        );
+
+
+        sql = "SELECT count(*) FROM USERS WHERE email = ?";
+        count = this.jdbcTemplate.queryForObject(
+                sql, new Object[]{credentials.getEmail()}, Integer.class
+        );
+        assertThat(count, is(1));
+        assertTrue(user.getId() > 0);
+        assertThat(user.getEmail(), is("jmiller@gmail.com"));
     }
 
     @Test
     public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
-        try {
-            LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
-            insertUserIntoDatabase(jdbcTemplate, credentials);
+        LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
+        insertUserIntoDatabase(jdbcTemplate, credentials);
 
 
-            Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
 
 
-            assertTrue(maybeUser.get().getId() > 0);
-            assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
-        } finally {
-            jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
-        }
+        assertTrue(maybeUser.get().getId() > 0);
+        assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
     }
 
     @Test
