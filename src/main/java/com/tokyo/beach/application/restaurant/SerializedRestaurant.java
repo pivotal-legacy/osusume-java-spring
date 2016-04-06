@@ -1,6 +1,7 @@
 package com.tokyo.beach.application.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.photos.PhotoUrl;
 
 import java.util.List;
@@ -8,10 +9,13 @@ import java.util.List;
 class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
+    private Cuisine cuisine;
 
-    SerializedRestaurant(Restaurant restaurant, List<PhotoUrl> photoUrls) {
+
+    SerializedRestaurant(Restaurant restaurant, List<PhotoUrl> photoUrls, Cuisine cuisine) {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
+        this.cuisine = cuisine;
     }
 
     public int getId() {
@@ -50,5 +54,9 @@ class SerializedRestaurant {
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrls;
+    }
+
+    public Cuisine getCuisine() {
+        return cuisine;
     }
 }

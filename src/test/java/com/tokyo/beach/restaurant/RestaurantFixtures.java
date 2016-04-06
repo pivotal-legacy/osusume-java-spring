@@ -14,4 +14,16 @@ public class RestaurantFixtures {
                 ""
         );
     }
+
+    public static Restaurant newRestaurant(int id, String name) {
+        return new Restaurant(
+                id,
+                name,
+                "Roppongi",
+                false,
+                true,
+                false,
+                ""
+        );
+    }
 }

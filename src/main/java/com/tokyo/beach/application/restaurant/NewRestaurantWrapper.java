@@ -3,6 +3,7 @@ package com.tokyo.beach.application.restaurant;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 
 import java.util.List;
+import java.util.Optional;
 
 public class NewRestaurantWrapper {
 
@@ -26,5 +27,9 @@ public class NewRestaurantWrapper {
 
     public List<NewPhotoUrl> getPhotoUrls() {
         return restaurant.getPhotoUrls();
+    }
+
+    public Optional<Integer> getCuisineId() {
+        return restaurant.getCuisineId();
     }
 }

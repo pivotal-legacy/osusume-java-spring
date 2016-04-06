@@ -25,7 +25,7 @@ public class CuisineController {
 
     @RequestMapping(value="{id}", method=GET)
     public Cuisine getCuisine(@PathVariable String id) {
-        return cuisineRepository.getCuisine(id);
+        return cuisineRepository.getCuisine(id).get();
     }
 
     @RequestMapping(value="", method= RequestMethod.POST)

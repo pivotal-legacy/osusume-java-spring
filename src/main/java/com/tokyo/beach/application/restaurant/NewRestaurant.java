@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class NewRestaurant {
@@ -25,6 +26,9 @@ public class NewRestaurant {
     @JsonProperty("photo_urls")
     private List<NewPhotoUrl> photoUrls;
 
+    @JsonProperty("cuisine_id")
+    private Integer cuisineId;
+
     public NewRestaurant() {
     }
 
@@ -34,6 +38,7 @@ public class NewRestaurant {
                          Boolean walkInsOk,
                          Boolean acceptsCreditCards,
                          String notes,
+                         Integer cuisineId,
                          List<NewPhotoUrl> photoUrls) {
         this.name = name;
         this.address = address;
@@ -41,6 +46,7 @@ public class NewRestaurant {
         this.walkInsOk = walkInsOk;
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
+        this.cuisineId = cuisineId;
         this.photoUrls = photoUrls;
     }
 
@@ -72,12 +78,54 @@ public class NewRestaurant {
         return photoUrls;
     }
 
+    public Optional<Integer> getCuisineId() {
+        return Optional.ofNullable(cuisineId);
+    }
+
+    @Override
     public String toString() {
-        return "name: " + getName() + ",\n" +
-                "address: " + getAddress() + ",\n" +
-                "englishMenu: " + getOffersEnglishMenu() + ",\n" +
-                "walkInsOk: " + getWalkInsOk() + ",\n" +
-                "acceptsCreditCards: " + getAcceptsCreditCards() + ",\n" +
-                "notes: " + getNotes();
+        return "NewRestaurant{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", offersEnglishMenu=" + offersEnglishMenu +
+                ", walkInsOk=" + walkInsOk +
+                ", acceptsCreditCards=" + acceptsCreditCards +
+                ", notes='" + notes + '\'' +
+                ", photoUrls=" + photoUrls +
+                ", cuisineId=" + cuisineId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NewRestaurant that = (NewRestaurant) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        if (offersEnglishMenu != null ? !offersEnglishMenu.equals(that.offersEnglishMenu) : that.offersEnglishMenu != null)
+            return false;
+        if (walkInsOk != null ? !walkInsOk.equals(that.walkInsOk) : that.walkInsOk != null) return false;
+        if (acceptsCreditCards != null ? !acceptsCreditCards.equals(that.acceptsCreditCards) : that.acceptsCreditCards != null)
+            return false;
+        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
+        if (photoUrls != null ? !photoUrls.equals(that.photoUrls) : that.photoUrls != null) return false;
+        return cuisineId != null ? cuisineId.equals(that.cuisineId) : that.cuisineId == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (offersEnglishMenu != null ? offersEnglishMenu.hashCode() : 0);
+        result = 31 * result + (walkInsOk != null ? walkInsOk.hashCode() : 0);
+        result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
+        result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (photoUrls != null ? photoUrls.hashCode() : 0);
+        result = 31 * result + (cuisineId != null ? cuisineId.hashCode() : 0);
+        return result;
     }
 }

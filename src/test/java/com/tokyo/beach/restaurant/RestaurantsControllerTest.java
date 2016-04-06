@@ -1,6 +1,8 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.application.RestControllerExceptionHandler;
+import com.tokyo.beach.application.cuisine.Cuisine;
+import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.PhotoRepository;
@@ -22,6 +24,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,15 +38,18 @@ public class RestaurantsControllerTest {
     private RestaurantRepository restaurantRepository;
     private MockMvc mockMvc;
     private PhotoRepository photoRepository;
+    private CuisineRepository cuisineRepository;
 
     @Before
     public void setUp() {
         restaurantRepository = mock(RestaurantRepository.class);
         photoRepository = mock(PhotoRepository.class);
+        cuisineRepository = mock(CuisineRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
-                photoRepository
+                photoRepository,
+                cuisineRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -84,7 +90,8 @@ public class RestaurantsControllerTest {
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 restaurantRepository,
-                new PhotoRepository(new JdbcTemplate(buildDataSource()))
+                new PhotoRepository(new JdbcTemplate(buildDataSource())),
+                cuisineRepository
         );
 
 
@@ -113,6 +120,64 @@ public class RestaurantsControllerTest {
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
 
+        when(cuisineRepository.getCuisine("2")).thenReturn(
+                Optional.of(
+                        new Cuisine(
+                            2,
+                            "Ramen"
+                        )
+                )
+        );
+
+
+        String payload = "{\"restaurant\": " +
+                "{\"name\":\"Afuri\", " +
+                "\"address\": \"Roppongi\", " +
+                "\"offers_english_menu\": false, " +
+                "\"walk_ins_ok\": true, " +
+                "\"accepts_credit_cards\": false, " +
+                "\"notes\": \"soooo goood\"," +
+                "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
+                "\"cuisine_id\": \"2\"}" +
+                "}";
+
+        mockMvc.perform(
+                post("/restaurants")
+                        .contentType(APPLICATION_JSON_UTF8_VALUE)
+                        .content(payload)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("Afuri")))
+                .andExpect(jsonPath("$.address", is("Roppongi")))
+                .andExpect(jsonPath("$.offers_english_menu", is(false)))
+                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
+                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
+                .andExpect(jsonPath("$.notes", is("soooo goood")))
+                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+                .andExpect(jsonPath("$.cuisine.name", is("Ramen")));
+    }
+
+    @Test
+    public void test_create_persistsARestaurantWithoutACuisineId() throws Exception {
+        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
+                new Restaurant(
+                        1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "soooo goood"
+                )
+        );
+
+        when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
+
+        when(cuisineRepository.getCuisine("2")).thenReturn(
+                Optional.empty()
+        );
+
 
         String payload = "{\"restaurant\": " +
                 "{\"name\":\"Afuri\", " +
@@ -136,8 +201,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.walk_ins_ok", is(true)))
                 .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
-                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")));
-
+                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+                .andExpect(jsonPath("$.cuisine", isEmptyOrNullString()));
     }
 
     @Test

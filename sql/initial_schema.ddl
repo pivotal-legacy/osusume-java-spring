@@ -7,7 +7,8 @@ create table restaurant (
     offers_english_menu boolean,
     walk_ins_ok boolean,
     accepts_credit_cards boolean,
-    notes text
+    notes text,
+    cuisine_id INTEGER
 );
 
 

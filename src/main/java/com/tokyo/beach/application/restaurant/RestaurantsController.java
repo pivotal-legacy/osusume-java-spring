@@ -1,6 +1,8 @@
 package com.tokyo.beach.application.restaurant;
 
 import com.tokyo.beach.application.RestControllerException;
+import com.tokyo.beach.application.cuisine.Cuisine;
+import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +23,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class RestaurantsController {
     private final RestaurantRepository restaurantRepository;
     private final PhotoRepository photoRepository;
+    private final CuisineRepository cuisineRepository;
 
     @Autowired
     public RestaurantsController(
             RestaurantRepository restaurantRepo,
-            PhotoRepository photoRepository
+            PhotoRepository photoRepository,
+            CuisineRepository cuisineRepository
     ) {
         this.restaurantRepository = restaurantRepo;
         this.photoRepository = photoRepository;
+        this.cuisineRepository = cuisineRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -47,8 +52,8 @@ public class RestaurantsController {
                 .stream()
                 .map((restaurant) -> new SerializedRestaurant(
                         restaurant,
-                        restaurantPhotos.get(restaurant.getId()
-                        )
+                        restaurantPhotos.get(restaurant.getId()),
+                        null
                 ))
                 .collect(toList());
     }
@@ -65,7 +70,14 @@ public class RestaurantsController {
                 restaurantWrapper.getPhotoUrls()
         );
 
-        return new SerializedRestaurant(restaurant, photosForRestaurant);
+        Cuisine cuisine = null;
+        if (restaurantWrapper.getCuisineId().isPresent()) {
+            cuisine = cuisineRepository.getCuisine(
+                    String.valueOf(restaurantWrapper.getCuisineId().get())
+            ).get();
+        }
+
+        return new SerializedRestaurant(restaurant, photosForRestaurant, cuisine);
     }
 
     @RequestMapping(value = "{id}", method = GET)
@@ -76,6 +88,6 @@ public class RestaurantsController {
 
         Restaurant retrievedRestaurant = maybeRestaurant.get();
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
-        return new SerializedRestaurant(retrievedRestaurant, photosForRestaurant);
+        return new SerializedRestaurant(retrievedRestaurant, photosForRestaurant, null);
     }
 }

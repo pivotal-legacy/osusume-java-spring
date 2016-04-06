@@ -4,7 +4,10 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.application.cuisine.NewCuisine;
+import com.tokyo.beach.application.restaurant.Restaurant;
+import com.tokyo.beach.restaurant.RestaurantFixtures;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -16,6 +19,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DatabaseCuisineRepositoryTest {
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
+    private CuisineRepository cuisineRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
+    }
 
     @After
     public void tearDown() {
@@ -39,8 +48,6 @@ public class DatabaseCuisineRepositoryTest {
                 (rs, rowNum) -> rs.getInt("id")
         );
 
-        CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
-
         List<Cuisine> cuisines = cuisineRepository.getAll();
         Cuisine expectedJapanese = new Cuisine(japaneseId, "Japanese");
         Cuisine expectedSpanish = new Cuisine(spanishId, "Spanish");
@@ -59,9 +66,7 @@ public class DatabaseCuisineRepositoryTest {
                 (rs, rowNum) -> rs.getInt("id")
         );
 
-        CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
-
-        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId));
+        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId)).get();
         Cuisine expectedCuisine = new Cuisine(cuisineId, "Japanese");
 
         assertThat(cuisine, is(expectedCuisine));
@@ -70,8 +75,6 @@ public class DatabaseCuisineRepositoryTest {
     @Test
     public void testCreateCuisine() {
         NewCuisine newCuisine = new NewCuisine("Test Cuisine");
-
-        CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
 
         cuisineRepository.createCuisine(newCuisine);
 

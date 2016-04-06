@@ -60,8 +60,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     @Override
     public Restaurant createRestaurant(NewRestaurant newRestaurant) {
         return jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) " +
-                        "VALUES (?, ?, ?, ?, ?, ?) " +
+                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                         "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes",
                 (rs, rowNum) -> {
                     return new Restaurant(
@@ -79,7 +79,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 newRestaurant.getOffersEnglishMenu(),
                 newRestaurant.getWalkInsOk(),
                 newRestaurant.getAcceptsCreditCards(),
-                newRestaurant.getNotes()
+                newRestaurant.getNotes(),
+                newRestaurant.getCuisineId().get()
         );
     }
 }

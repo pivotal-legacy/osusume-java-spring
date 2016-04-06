@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
@@ -57,7 +58,12 @@ public class CuisineControllerTest {
     @Test
     public void testGetCuisine() throws Exception {
         when(mockCuisineRepository.getCuisine("1")).thenReturn(
-                new Cuisine(1, "Japanese")
+                Optional.of(
+                        new Cuisine(
+                                1,
+                                "Japanese"
+                        )
+                )
         );
 
         ResultActions result = mockMvc.perform(get("/cuisines/1"));

@@ -71,6 +71,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
+                1,
                 emptyList()
         );
 
@@ -78,21 +79,22 @@ public class DatabaseRestaurantRepositoryTest {
         Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant);
 
 
-        Restaurant actualRestaurant = jdbcTemplate.queryForObject(
+        NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
                 "SELECT * FROM restaurant WHERE id = ?",
-                (rs, rowNum) -> new Restaurant(
-                        rs.getInt("id"),
+                (rs, rowNum) -> new NewRestaurant(
                         rs.getString("name"),
                         rs.getString("address"),
                         rs.getBoolean("offers_english_menu"),
                         rs.getBoolean("walk_ins_ok"),
                         rs.getBoolean("accepts_credit_cards"),
-                        rs.getString("notes")
+                        rs.getString("notes"),
+                        rs.getInt("cuisine_id"),
+                        emptyList()
                 ),
                 createdRestaurant.getId()
         );
 
-        assertThat(actualRestaurant.getName(), is("KFC"));
+        assertThat(actualRestaurant, is(kfcNewRestaurant));
     }
 
     @Test
