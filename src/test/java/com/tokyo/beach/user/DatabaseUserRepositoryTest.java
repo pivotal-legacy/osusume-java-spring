@@ -6,13 +6,11 @@ import com.tokyo.beach.application.user.LogonCredentials;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -63,7 +61,7 @@ public class DatabaseUserRepositoryTest {
     public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
         try {
             LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
-            insertUserIntoDatabase(credentials);
+            insertUserIntoDatabase(jdbcTemplate, credentials);
 
 
             Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
@@ -85,18 +83,5 @@ public class DatabaseUserRepositoryTest {
 
 
         assertFalse(maybeUser.isPresent());
-    }
-
-    private Number insertUserIntoDatabase(LogonCredentials credentials) {
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("users")
-                .usingColumns("email", "password")
-                .usingGeneratedKeyColumns("id");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", credentials.getEmail());
-        params.put("password", credentials.getPassword());
-
-        return insert.executeAndReturnKey(params);
     }
 }

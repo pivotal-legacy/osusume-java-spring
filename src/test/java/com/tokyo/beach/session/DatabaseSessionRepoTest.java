@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -39,7 +40,7 @@ public class DatabaseSessionRepoTest {
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
-        userId = insertUserIntoDatabase(credentials);
+        userId = insertUserIntoDatabase(jdbcTemplate, credentials);
         user = new DatabaseUser(userId.longValue(), credentials.getEmail());
     }
 
@@ -96,19 +97,6 @@ public class DatabaseSessionRepoTest {
         assertFalse(returnedUserId.isPresent());
     }
 
-    private Number insertUserIntoDatabase(LogonCredentials credentials) {
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("users")
-                .usingColumns("email", "password")
-                .usingGeneratedKeyColumns("id");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", credentials.getEmail());
-        params.put("password", credentials.getPassword());
-
-        return insert.executeAndReturnKey(params);
-    }
-
     private void insertSessionIntoDatabase(String token, int userId) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("session")
@@ -120,5 +108,4 @@ public class DatabaseSessionRepoTest {
 
         insert.execute(params);
     }
-
 }
