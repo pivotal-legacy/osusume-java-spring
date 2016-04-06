@@ -20,30 +20,32 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public DatabaseUser create(String email, String password) {
+    public DatabaseUser create(String email, String password, String name) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
-                .usingColumns("email", "password")
+                .usingColumns("email", "password", "name")
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("password", password);
+        params.put("name", name);
 
         Number id = insert.executeAndReturnKey(params);
 
-        return new DatabaseUser(id.longValue(), email);
+        return new DatabaseUser(id.longValue(), email, name);
     }
 
     @Override
     public Optional<DatabaseUser> get(LogonCredentials credentials) {
-        String sql = "SELECT id, email FROM users WHERE lower(email) = ? AND password = ?";
+        String sql = "SELECT id, email, name FROM users WHERE lower(email) = ? AND password = ?";
         List<DatabaseUser> users = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> {
                     return new DatabaseUser(
                             rs.getLong("id"),
-                            rs.getString("email")
+                            rs.getString("email"),
+                            rs.getString("name")
                     );
                 },
                 credentials.getEmail().toLowerCase(),

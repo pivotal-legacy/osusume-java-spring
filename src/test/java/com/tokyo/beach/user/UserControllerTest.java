@@ -44,24 +44,24 @@ public class UserControllerTest {
     public void test_postToUser_invokesUserRepoCreateMethod() throws Exception {
         mvc.perform(post("/users")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\",\"name\":\"Joe Miller\"}")
                 .accept(APPLICATION_JSON_UTF8_VALUE)
         );
 
-        verify(userRepository, times(1)).create("jmiller@gmail.com", "mypassword");
+        verify(userRepository, times(1)).create("jmiller@gmail.com", "mypassword", "Joe Miller");
     }
 
     @Test
-    public void test_postToUser_returnsToken() throws Exception {
-        when(userRepository.create("jmiller@gmail.com", "mypassword"))
-                .thenReturn(new DatabaseUser(6, "jmiller@gmail.com"));
+    public void test_postToUser_returnsUserObject() throws Exception {
+        when(userRepository.create("jmiller@gmail.com", "mypassword", "Joe Miller"))
+                .thenReturn(new DatabaseUser(6, "jmiller@gmail.com", "Joe Miller"));
 
         mvc.perform(post("/users")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\",\"name\":\"Joe Miller\"}")
                 .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string("{\"id\":6,\"email\":\"jmiller@gmail.com\"}"));
+                .andExpect(content().string("{\"id\":6,\"email\":\"jmiller@gmail.com\",\"name\":\"Joe Miller\"}"));
     }
 }

@@ -1,23 +1,24 @@
 package com.tokyo.beach.application.user;
 
-public class DatabaseUser {
-
-    private long id;
+public class UserRegistration {
     private String email;
+    private String password;
     private String name;
 
-    public DatabaseUser(long id, String email, String name) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-    }
+    public UserRegistration() {}
 
-    public long getId() {
-        return id;
+    public UserRegistration(String email, String password, String name) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
     }
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
@@ -29,26 +30,27 @@ public class DatabaseUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DatabaseUser that = (DatabaseUser) o;
+        UserRegistration that = (UserRegistration) o;
 
-        if (id != that.id) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
         return name != null ? name.equals(that.name) : that.name == null;
+
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (email != null ? email.hashCode() : 0);
+        int result = email != null ? email.hashCode() : 0;
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "DatabaseUser{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
+        return "UserRegistration{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }

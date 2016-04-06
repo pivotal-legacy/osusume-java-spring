@@ -18,7 +18,11 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public DatabaseUser registerUser(@RequestBody LogonCredentials credentials) {
-        return userRepository.create(credentials.getEmail(), credentials.getPassword());
+    public DatabaseUser registerUser(@RequestBody UserRegistration userRegistration) {
+        return userRepository.create(
+                userRegistration.getEmail(),
+                userRegistration.getPassword(),
+                userRegistration.getName()
+        );
     }
 }

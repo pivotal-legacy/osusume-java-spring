@@ -45,7 +45,7 @@ public class SessionControllerTest {
                 .build();
 
         credentials = new LogonCredentials("jmiller@gmail.com", "mypassword");
-        maybeUser = Optional.of(new DatabaseUser(999, "jmiller@gmail.com"));
+        maybeUser = Optional.of(new DatabaseUser(999, "jmiller@gmail.com", "Joe Miller"));
         when(userRepository.get(credentials))
                 .thenReturn(maybeUser);
     }

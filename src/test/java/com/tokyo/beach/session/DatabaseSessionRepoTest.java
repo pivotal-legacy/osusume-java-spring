@@ -5,6 +5,7 @@ import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.LogonCredentials;
+import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,12 +39,16 @@ public class DatabaseSessionRepoTest {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
         this.databaseSessionRepository = new DatabaseSessionRepository(this.jdbcTemplate);
 
-        LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "password");
+        UserRegistration userRegistration = new UserRegistration(
+                "jmiller@gmail.com", "password", "Joe Miller"
+        );
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
-        userId = insertUserIntoDatabase(jdbcTemplate, credentials);
-        user = new DatabaseUser(userId.longValue(), credentials.getEmail());
+        userId = insertUserIntoDatabase(jdbcTemplate, userRegistration);
+        user = new DatabaseUser(
+                userId.longValue(), userRegistration.getEmail(), userRegistration.getName()
+        );
     }
 
     @After

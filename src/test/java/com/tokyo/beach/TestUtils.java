@@ -1,6 +1,7 @@
 package com.tokyo.beach;
 
 import com.tokyo.beach.application.user.LogonCredentials;
+import com.tokyo.beach.application.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -16,15 +17,19 @@ public class TestUtils {
         return dataSource;
     }
 
-    public static Number insertUserIntoDatabase(JdbcTemplate jdbcTemplate, LogonCredentials credentials) {
+    public static Number insertUserIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            UserRegistration userRegistration
+    ) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
-                .usingColumns("email", "password")
+                .usingColumns("email", "password", "name")
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("email", credentials.getEmail());
-        params.put("password", credentials.getPassword());
+        params.put("email", userRegistration.getEmail());
+        params.put("password", userRegistration.getPassword());
+        params.put("name", userRegistration.getName());
 
         return insert.executeAndReturnKey(params);
     }

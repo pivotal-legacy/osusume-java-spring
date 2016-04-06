@@ -3,6 +3,7 @@ package com.tokyo.beach.user;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.DatabaseUserRepository;
 import com.tokyo.beach.application.user.LogonCredentials;
+import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,24 +36,27 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_create_insertsUserCredentialsIntoDB() throws Exception {
-        LogonCredentials credentials = new LogonCredentials("jmiller@gmail.com", "myPassword123");
+        UserRegistration userRegistration = new UserRegistration(
+                "jmiller@gmail.com", "myPassword123", "Joe Miller"
+        );
 
         String sql = "SELECT count(*) FROM users WHERE email = ?";
         int count = this.jdbcTemplate.queryForObject(
-                sql, new Object[]{credentials.getEmail()}, Integer.class
+                sql, new Object[]{userRegistration.getEmail()}, Integer.class
         );
         assertThat(count, is(0));
 
 
         DatabaseUser user = this.databaseUserRepository.create(
-                credentials.getEmail(),
-                credentials.getPassword()
+                userRegistration.getEmail(),
+                userRegistration.getPassword(),
+                userRegistration.getName()
         );
 
 
         sql = "SELECT count(*) FROM USERS WHERE email = ?";
         count = this.jdbcTemplate.queryForObject(
-                sql, new Object[]{credentials.getEmail()}, Integer.class
+                sql, new Object[]{userRegistration.getEmail()}, Integer.class
         );
         assertThat(count, is(1));
         assertTrue(user.getId() > 0);
@@ -61,11 +65,15 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
-        LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
-        insertUserIntoDatabase(jdbcTemplate, credentials);
+        UserRegistration userRegistration = new UserRegistration(
+                "user@gmail.com", "password", "Username"
+        );
+        insertUserIntoDatabase(jdbcTemplate, userRegistration);
 
 
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(
+                new LogonCredentials(userRegistration.getEmail(), userRegistration.getPassword())
+        );
 
 
         assertTrue(maybeUser.get().getId() > 0);
@@ -74,8 +82,10 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getExistingUser_isCaseInsenitive() throws Exception {
-        LogonCredentials persistCredentials = new LogonCredentials("user@gmail.com", "password");
-        insertUserIntoDatabase(jdbcTemplate, persistCredentials);
+        UserRegistration userRegistration = new UserRegistration(
+                "user@gmail.com", "password", "Username"
+        );
+        insertUserIntoDatabase(jdbcTemplate, userRegistration);
 
 
         LogonCredentials queryCredentials = new LogonCredentials("User@gMail.com", "password");
