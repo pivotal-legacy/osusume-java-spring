@@ -4,6 +4,7 @@ TRUNCATE TABLE users, session;
 TRUNCATE TABLE cuisine;
 TRUNCATE TABLE restaurant;
 
+
 -- Users
 
 INSERT INTO users (email, password) VALUES ('danny', 'danny');
