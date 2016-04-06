@@ -1,7 +1,7 @@
 package com.tokyo.beach.application.session;
 
 import com.tokyo.beach.application.RestControllerException;
-import com.tokyo.beach.application.logon.LogonCredentials;
+import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

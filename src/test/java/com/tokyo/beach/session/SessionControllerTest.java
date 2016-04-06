@@ -1,7 +1,7 @@
 package com.tokyo.beach.session;
 
 import com.tokyo.beach.application.RestControllerExceptionHandler;
-import com.tokyo.beach.application.logon.LogonCredentials;
+import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.session.SessionController;
 import com.tokyo.beach.application.session.SessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;

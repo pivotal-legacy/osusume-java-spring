@@ -1,6 +1,6 @@
 package com.tokyo.beach.user;
 
-import com.tokyo.beach.application.logon.LogonCredentials;
+import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.DatabaseUserRepository;
 import org.junit.Before;
