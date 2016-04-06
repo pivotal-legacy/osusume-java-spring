@@ -61,8 +61,7 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "とても美味しい",
-                        emptyList()
+                        "とても美味しい"
                 )
         );
         when(restaurantRepository.getAll()).thenReturn(restaurants);
@@ -107,8 +106,7 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "soooo goood",
-                        emptyList()
+                        "soooo goood"
                 )
         );
 
@@ -151,8 +149,7 @@ public class RestaurantsControllerTest {
                 false,
                 true,
                 false,
-                "",
-                emptyList()
+                ""
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
@@ -178,8 +175,7 @@ public class RestaurantsControllerTest {
                 false,
                 true,
                 false,
-                "",
-                emptyList()
+                ""
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)

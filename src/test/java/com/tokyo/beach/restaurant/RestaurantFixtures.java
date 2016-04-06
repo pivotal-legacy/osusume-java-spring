@@ -2,8 +2,6 @@ package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.application.restaurant.Restaurant;
 
-import static java.util.Collections.emptyList;
-
 public class RestaurantFixtures {
     public static Restaurant newRestaurant(int id) {
         return new Restaurant(
@@ -13,8 +11,7 @@ public class RestaurantFixtures {
                 false,
                 true,
                 false,
-                "",
-                emptyList()
+                ""
         );
     }
 }

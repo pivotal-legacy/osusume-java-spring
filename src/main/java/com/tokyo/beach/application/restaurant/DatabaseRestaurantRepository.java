@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
-
 @Repository
 public class DatabaseRestaurantRepository implements RestaurantRepository {
     private JdbcTemplate jdbcTemplate;
@@ -29,8 +27,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes"),
-                            emptyList()
+                            rs.getString("notes")
                     );
                 });
     }
@@ -47,8 +44,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                                     rs.getBoolean("offers_english_menu"),
                                     rs.getBoolean("walk_ins_ok"),
                                     rs.getBoolean("accepts_credit_cards"),
-                                    rs.getString("notes"),
-                                    emptyList()
+                                    rs.getString("notes")
                             );
                         },
                         id
@@ -75,8 +71,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes"),
-                            emptyList()
+                            rs.getString("notes")
                     );
                 },
                 newRestaurant.getName(),

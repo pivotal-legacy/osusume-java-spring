@@ -1,6 +1,5 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
@@ -57,8 +56,7 @@ public class DatabaseRestaurantRepositoryTest {
                 false,
                 true,
                 false,
-                "",
-                emptyList()
+                ""
         );
 
         assertThat(restaurants, is(singletonList(expectedRestaurant)));
@@ -89,8 +87,7 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("offers_english_menu"),
                         rs.getBoolean("walk_ins_ok"),
                         rs.getBoolean("accepts_credit_cards"),
-                        rs.getString("notes"),
-                        emptyList()
+                        rs.getString("notes")
                 ),
                 createdRestaurant.getId()
         );

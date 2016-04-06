@@ -20,10 +20,6 @@ public class Restaurant {
     private Boolean acceptsCreditCards;
     private String notes;
 
-
-    @JsonProperty("photo_urls")
-    private List<PhotoUrl> photoUrlList;
-
     public Restaurant(
             int id,
             String name,
@@ -31,8 +27,7 @@ public class Restaurant {
             Boolean offersEnglishMenu,
             Boolean walkInsOk,
             Boolean acceptsCreditCards,
-            String notes,
-            List<PhotoUrl> photoUrlList
+            String notes
     ) {
         this.id = id;
         this.name = name;
@@ -41,7 +36,6 @@ public class Restaurant {
         this.walkInsOk = walkInsOk;
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
-        this.photoUrlList = photoUrlList;
     }
 
     static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
@@ -52,8 +46,7 @@ public class Restaurant {
                 restaurant.getOffersEnglishMenu(),
                 restaurant.getWalkInsOk(),
                 restaurant.getAcceptsCreditCards(),
-                restaurant.getNotes(),
-                urls
+                restaurant.getNotes()
         );
     }
 
@@ -90,14 +83,6 @@ public class Restaurant {
         return notes;
     }
 
-    public List<PhotoUrl> getPhotoUrlList() {
-        return photoUrlList;
-    }
-
-    public void setPhotoUrlList(List<PhotoUrl> photoUrlList) {
-        this.photoUrlList = photoUrlList;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -113,9 +98,8 @@ public class Restaurant {
         if (walkInsOk != null ? !walkInsOk.equals(that.walkInsOk) : that.walkInsOk != null) return false;
         if (acceptsCreditCards != null ? !acceptsCreditCards.equals(that.acceptsCreditCards) : that.acceptsCreditCards != null)
             return false;
-        //noinspection SimplifiableIfStatement
-        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
-        return photoUrlList != null ? photoUrlList.equals(that.photoUrlList) : that.photoUrlList == null;
+        return notes != null ? notes.equals(that.notes) : that.notes == null;
+
     }
 
     @Override
@@ -127,7 +111,6 @@ public class Restaurant {
         result = 31 * result + (walkInsOk != null ? walkInsOk.hashCode() : 0);
         result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
-        result = 31 * result + (photoUrlList != null ? photoUrlList.hashCode() : 0);
         return result;
     }
 
@@ -141,7 +124,6 @@ public class Restaurant {
                 ", walkInsOk=" + walkInsOk +
                 ", acceptsCreditCards=" + acceptsCreditCards +
                 ", notes='" + notes + '\'' +
-                ", photoUrlList=" + photoUrlList +
                 '}';
     }
 }
