@@ -40,7 +40,7 @@ public class DatabaseSessionRepoTest {
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
         userId = insertUserIntoDatabase(credentials);
-        user = new DatabaseUser(userId.intValue(), credentials.getEmail());
+        user = new DatabaseUser(userId.longValue(), credentials.getEmail());
     }
 
     @After

@@ -32,7 +32,7 @@ public class DatabaseUserRepository implements UserRepository {
 
         Number id = insert.executeAndReturnKey(params);
 
-        return new DatabaseUser(id, email);
+        return new DatabaseUser(id.longValue(), email);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DatabaseUserRepository implements UserRepository {
                 sql,
                 (rs, rowNum) -> {
                     return new DatabaseUser(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("email")
                     );
                 },
