@@ -37,7 +37,7 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public Optional<DatabaseUser> get(LogonCredentials credentials) {
-        String sql = "SELECT id, email FROM users WHERE email = ? AND password = ?";
+        String sql = "SELECT id, email FROM users WHERE lower(email) = ? AND password = ?";
         List<DatabaseUser> users = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> {
@@ -46,7 +46,7 @@ public class DatabaseUserRepository implements UserRepository {
                             rs.getString("email")
                     );
                 },
-                credentials.getEmail(),
+                credentials.getEmail().toLowerCase(),
                 credentials.getPassword()
         );
 

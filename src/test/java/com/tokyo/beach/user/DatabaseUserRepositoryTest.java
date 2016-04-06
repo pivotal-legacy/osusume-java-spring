@@ -73,6 +73,19 @@ public class DatabaseUserRepositoryTest {
     }
 
     @Test
+    public void test_getExistingUser_isCaseInsenitive() throws Exception {
+        LogonCredentials persistCredentials = new LogonCredentials("user@gmail.com", "password");
+        insertUserIntoDatabase(jdbcTemplate, persistCredentials);
+
+
+        LogonCredentials queryCredentials = new LogonCredentials("User@gMail.com", "password");
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(queryCredentials);
+
+
+        assertTrue(maybeUser.isPresent());
+    }
+
+    @Test
     public void test_getNonExistentUser_returnsEmptyOptional() throws Exception {
         LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
 
