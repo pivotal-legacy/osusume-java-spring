@@ -34,6 +34,7 @@ create table cuisine (
 CREATE TABLE users (
   id integer NOT NULL,
   email character varying,
+  name character varying,
   password character varying,
   created_at timestamp without time zone default current_timestamp NOT NULL,
   updated_at timestamp without time zone default current_timestamp NOT NULL

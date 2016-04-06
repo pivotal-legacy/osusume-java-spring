@@ -7,21 +7,21 @@ TRUNCATE TABLE restaurant;
 
 -- Users
 
-INSERT INTO users (email, password) VALUES ('danny', 'danny');
-INSERT INTO users (email, password) VALUES ('derek', 'derek');
-INSERT INTO users (email, password) VALUES ('eno', 'eno');
-INSERT INTO users (email, password) VALUES ('erika', 'erika');
-INSERT INTO users (email, password) VALUES ('eugene', 'eugene');
-INSERT INTO users (email, password) VALUES ('hadrien', 'hadrien');
-INSERT INTO users (email, password) VALUES ('heewon', 'heewon');
-INSERT INTO users (email, password) VALUES ('ichizo', 'ichizo');
-INSERT INTO users (email, password) VALUES ('jeana', 'jeana');
-INSERT INTO users (email, password) VALUES ('kyle', 'kyle');
-INSERT INTO users (email, password) VALUES ('miya', 'miya');
-INSERT INTO users (email, password) VALUES ('robert', 'robert');
-INSERT INTO users (email, password) VALUES ('sukjun', 'sukjun');
-INSERT INTO users (email, password) VALUES ('whitney', 'whitney');
-INSERT INTO users (email, password) VALUES ('yuki', 'yuki');
+INSERT INTO users (name, email, password) VALUES ('Danny', 'danny', 'danny');
+INSERT INTO users (name, email, password) VALUES ('Derek', 'derek', 'derek');
+INSERT INTO users (name, email, password) VALUES ('Eno', 'eno', 'eno');
+INSERT INTO users (name, email, password) VALUES ('Erika', 'erika', 'erika');
+INSERT INTO users (name, email, password) VALUES ('Eugene', 'eugene', 'eugene');
+INSERT INTO users (name, email, password) VALUES ('Hadrien', 'hadrien', 'hadrien');
+INSERT INTO users (name, email, password) VALUES ('Heewon', 'heewon', 'heewon');
+INSERT INTO users (name, email, password) VALUES ('Ichizo', 'ichizo', 'ichizo');
+INSERT INTO users (name, email, password) VALUES ('Jeana', 'jeana', 'jeana');
+INSERT INTO users (name, email, password) VALUES ('Kyle', 'kyle', 'kyle');
+INSERT INTO users (name, email, password) VALUES ('Miya', 'miya', 'miya');
+INSERT INTO users (name, email, password) VALUES ('Robert', 'robert', 'robert');
+INSERT INTO users (name, email, password) VALUES ('Sukjun', 'sukjun', 'sukjun');
+INSERT INTO users (name, email, password) VALUES ('Whitney', 'whitney', 'whitney');
+INSERT INTO users (name, email, password) VALUES ('Yuki', 'yuki', 'yuki');
 
 
 -- Cuisines
