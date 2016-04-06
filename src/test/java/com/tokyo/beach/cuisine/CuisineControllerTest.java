@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -18,7 +17,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,6 +33,7 @@ public class CuisineControllerTest {
         cuisineController = new CuisineController(mockCuisineRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(cuisineController).build();
     }
+
     @Test
     public void testGetAllCuisines() throws Exception {
 
@@ -77,8 +78,8 @@ public class CuisineControllerTest {
         );
 
         ResultActions result = mockMvc.perform(post("/cuisines")
-            .contentType(APPLICATION_JSON_UTF8_VALUE)
-            .content("{\"name\":\"Japanese\"}"));
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .content("{\"name\":\"Japanese\"}"));
 
         result.andExpect(MockMvcResultMatchers.status().isCreated());
     }

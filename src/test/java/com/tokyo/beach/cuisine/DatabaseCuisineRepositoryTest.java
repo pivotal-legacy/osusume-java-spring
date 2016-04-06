@@ -48,7 +48,6 @@ public class DatabaseCuisineRepositoryTest {
 
         assertThat(cuisines.get(0), is(expectedJapanese));
         assertThat(cuisines.get(1), is(expectedSpanish));
-
     }
 
     @Test
@@ -71,23 +70,20 @@ public class DatabaseCuisineRepositoryTest {
 
     @Test
     public void testCreateCuisine() {
-        NewCuisine newCuisine = new NewCuisine("Japanese");
+        NewCuisine newCuisine = new NewCuisine("Test Cuisine");
 
         CuisineRepository cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
 
         cuisineRepository.createCuisine(newCuisine);
 
-        int count = jdbcTemplate.queryForObject("SELECT count(*) from cuisine", Integer.class);
-
         Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * from cuisine where name=?",
-                new Object[]{"Japanese"},
+                new Object[]{"Test Cuisine"},
                 (rs, rowNum) -> {
                     return new Cuisine(rs.getInt("id"), rs.getString("name"));
                 }
         );
 
-        assertThat(count, is(1));
-        assertThat(actualCuisine.getName(), is("Japanese"));
+        assertThat(actualCuisine.getName(), is("Test Cuisine"));
     }
 
     private static DataSource buildDataSource() {

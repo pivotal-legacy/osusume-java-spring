@@ -5,5 +5,10 @@ refreshdb:
 	@createdb -e osusume-test
 	@psql -d osusume-test -f ./sql/initial_schema.ddl
 
-tests:
+loadsampledata:
+	@psql -q -d osusume-test -f ./sql/SampleData.sql
+
+alltests:
 	@./gradlew clean test build
+
+tests: alltests loadsampledata
