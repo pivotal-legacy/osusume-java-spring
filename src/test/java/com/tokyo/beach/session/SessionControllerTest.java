@@ -1,12 +1,12 @@
 package com.tokyo.beach.session;
 
 import com.tokyo.beach.application.RestControllerExceptionHandler;
-import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.session.SessionController;
 import com.tokyo.beach.application.session.SessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import com.tokyo.beach.application.user.DatabaseUser;
+import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +19,7 @@ import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -108,5 +109,11 @@ public class SessionControllerTest {
         )
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid email or password.\"}"));
+    }
+
+    @Test
+    public void test_unauthenticated_returnsBadRequestHttpStatus() throws Exception {
+        mvc.perform(get("/unauthenticated"))
+                .andExpect(status().isBadRequest());
     }
 }

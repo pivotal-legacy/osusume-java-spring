@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
-
     private UserRepository userRepository;
 
     @Autowired
@@ -22,11 +21,4 @@ public class UserController {
     public DatabaseUser registerUser(@RequestBody LogonCredentials credentials) {
         return userRepository.create(credentials.getEmail(), credentials.getPassword());
     }
-
-    @RequestMapping(value = "/unauthenticated")
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String authError() {
-        return "Authentication Error";
-    }
-
 }

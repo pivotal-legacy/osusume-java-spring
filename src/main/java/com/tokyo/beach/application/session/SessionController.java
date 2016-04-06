@@ -39,4 +39,10 @@ public class SessionController {
 
         throw new RestControllerException("Invalid email or password.");
     }
+
+    @RequestMapping(value = "/unauthenticated")
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String authError() {
+        return "Authentication Error";
+    }
 }
