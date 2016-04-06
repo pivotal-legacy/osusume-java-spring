@@ -6,12 +6,11 @@ import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.application.cuisine.NewCuisine;
 import org.junit.After;
 import org.junit.Test;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
 import java.util.List;
 
+import static com.tokyo.beach.TestUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -76,7 +75,7 @@ public class DatabaseCuisineRepositoryTest {
 
         cuisineRepository.createCuisine(newCuisine);
 
-        Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * from cuisine where name=?",
+        Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * FROM cuisine WHERE name=?",
                 new Object[]{"Test Cuisine"},
                 (rs, rowNum) -> {
                     return new Cuisine(rs.getInt("id"), rs.getString("name"));
@@ -84,11 +83,5 @@ public class DatabaseCuisineRepositoryTest {
         );
 
         assertThat(actualCuisine.getName(), is("Test Cuisine"));
-    }
-
-    private static DataSource buildDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
-        return dataSource;
     }
 }
