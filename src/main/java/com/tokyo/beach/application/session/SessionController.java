@@ -40,6 +40,13 @@ public class SessionController {
         throw new RestControllerException("Invalid email or password.");
     }
 
+    @RequestMapping(value = "/session", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
+    public void delete(@RequestBody WrappedToken wrappedToken) {
+        sessionRepository.delete(wrappedToken.getToken());
+    }
+
     @RequestMapping(value = "/unauthenticated")
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String authError() {

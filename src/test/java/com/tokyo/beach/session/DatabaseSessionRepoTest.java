@@ -18,8 +18,10 @@ import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
 import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -95,6 +97,23 @@ public class DatabaseSessionRepoTest {
 
 
         assertFalse(returnedUserId.isPresent());
+    }
+
+    @Test
+    public void test_delete_removesSessionRecordForValidToken() throws Exception {
+        insertSessionIntoDatabase("token-value", userId.intValue());
+
+
+        databaseSessionRepository.delete("token-value");
+
+
+        String sql = "SELECT count(*) FROM session WHERE token = ?";
+        int count = jdbcTemplate.queryForObject(
+                sql,
+                new Object[]{"token-value"},
+                Integer.class
+        );
+        assertThat(count, is(0));
     }
 
     private void insertSessionIntoDatabase(String token, int userId) {

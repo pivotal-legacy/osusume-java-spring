@@ -18,7 +18,9 @@ import java.util.Optional;
 import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -52,7 +54,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void test_postToAuthSession_returnsAcceptedHttpStatus() throws Exception {
+    public void test_postToSession_returnsAcceptedHttpStatus() throws Exception {
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
         when(sessionRepository.create(tokenGenerator, maybeUser.get()))
                 .thenReturn(userSession);
@@ -67,7 +69,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void test_postToAuthSession_invokesUserRepoCreateMethod() throws Exception {
+    public void test_postToSession_invokesSessionRepoCreate() throws Exception {
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
                 .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
@@ -78,7 +80,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void test_postToAuthSession_returnsValidSession() throws Exception {
+    public void test_postToSession_returnsValidSession() throws Exception {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
@@ -97,7 +99,7 @@ public class SessionControllerTest {
     }
 
     @Test
-    public void test_postToAuthSessionWithInvalidUserCredentials_throwsException() throws Exception {
+    public void test_postToSessionWithInvalidUserCredentials_throwsException() throws Exception {
         when(userRepository.get(anyObject()))
                 .thenReturn(Optional.empty());
 
@@ -109,6 +111,32 @@ public class SessionControllerTest {
         )
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid email or password.\"}"));
+    }
+
+    @Test
+    public void test_deleteSession_returnsAcceptedHttpStatus() throws Exception {
+
+
+        mvc.perform(delete("/session")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .content("{\"token\":\"ABCDE12345\"}")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
+        )
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void test_deleteSession_invokesSessionRepoLogout() throws Exception {
+
+
+        mvc.perform(delete("/session")
+                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .content("{\"token\":\"ABCDE12345\"}")
+                .accept(APPLICATION_JSON_UTF8_VALUE)
+        );
+
+
+        verify(sessionRepository, times(1)).delete("ABCDE12345");
     }
 
     @Test

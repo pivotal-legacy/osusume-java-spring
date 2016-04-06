@@ -51,4 +51,12 @@ public class DatabaseSessionRepository implements SessionRepository {
         }
         return Optional.empty();
     }
+
+    @Override
+    public void delete(String token) {
+        jdbcTemplate.update(
+                "DELETE from session WHERE token = ?",
+                token
+        );
+    }
 }
