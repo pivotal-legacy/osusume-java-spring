@@ -24,11 +24,11 @@ public class RequestFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         AuthorizationValidator authorizationValidator = new AuthorizationValidator(sessionRepository, request);
 
-        if (!authorizationValidator.authorizeRequest()) {
+        if (authorizationValidator.authorizeRequest()) {
+            chain.doFilter(request, response);
+        } else {
             RequestDispatcher rd = request.getRequestDispatcher("/unauthenticated");
             rd.forward(request, response);
-        } else {
-            chain.doFilter(request, response);
         }
     }
 
