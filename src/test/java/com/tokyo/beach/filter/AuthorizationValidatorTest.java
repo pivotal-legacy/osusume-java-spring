@@ -9,7 +9,7 @@ import org.mockito.ArgumentCaptor;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.anyObject;
