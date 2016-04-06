@@ -31,13 +31,11 @@ public class SessionController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public UserSession create(@RequestBody LogonCredentials credentials) {
-        Optional<DatabaseUser> user = userRepository.get(credentials);
+        Optional<DatabaseUser> maybeUser = userRepository.get(credentials);
 
-        if (user.isPresent()) {
-            return sessionRepository.create(tokenGenerator, user.get());
-        }
+        maybeUser.orElseThrow(() -> new RestControllerException("Invalid email or password."));
 
-        throw new RestControllerException("Invalid email or password.");
+        return sessionRepository.create(tokenGenerator, maybeUser.get());
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.DELETE)

@@ -85,18 +85,18 @@ public class DatabaseSessionRepoTest {
         insertSessionIntoDatabase("token-value", userId.intValue());
 
 
-        Optional<Number> returnedUserId = databaseSessionRepository.validateToken("token-value");
+        Optional<Number> maybeUserId = databaseSessionRepository.validateToken("token-value");
 
 
-        assertEquals(userId, returnedUserId.get());
+        assertEquals(userId, maybeUserId.get());
     }
 
     @Test
     public void test_validateToken_returnsEmptyForInvalidCredentials() throws Exception {
-        Optional<Number> returnedUserId = databaseSessionRepository.validateToken("invalid-token");
+        Optional<Number> maybeUserId = databaseSessionRepository.validateToken("invalid-token");
 
 
-        assertFalse(returnedUserId.isPresent());
+        assertFalse(maybeUserId.isPresent());
     }
 
     @Test
