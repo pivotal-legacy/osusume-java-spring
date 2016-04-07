@@ -105,4 +105,27 @@ public class DatabaseUserRepositoryTest {
 
         assertFalse(maybeUser.isPresent());
     }
+
+    @Test
+    public void test_getExistingUserWithUserId_returnsUser() throws Exception {
+        UserRegistration userRegistration = new UserRegistration(
+                "user@gmail.com", "password", "Username"
+        );
+        Number userId = insertUserIntoDatabase(jdbcTemplate, userRegistration);
+
+
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(userId.longValue());
+
+
+        assertTrue(maybeUser.get().getId() == userId.longValue());
+        assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
+    }
+
+    @Test
+    public void test_getNonExistentUserWithUserId_returnsEmptyOptional() throws Exception {
+        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(999);
+
+
+        assertFalse(maybeUser.isPresent());
+    }
 }

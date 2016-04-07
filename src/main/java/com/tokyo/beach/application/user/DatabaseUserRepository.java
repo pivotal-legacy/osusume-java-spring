@@ -58,4 +58,26 @@ public class DatabaseUserRepository implements UserRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public Optional<DatabaseUser> get(long userId) {
+        String sql = "SELECT id, email, name FROM users WHERE id = ?";
+        List<DatabaseUser> users = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+                    return new DatabaseUser(
+                            rs.getLong("id"),
+                            rs.getString("email"),
+                            rs.getString("name")
+                    );
+                },
+                userId
+        );
+
+        if (users.size() == 1) {
+            return Optional.of(users.get(0));
+        }
+
+        return Optional.empty();
+    }
 }
