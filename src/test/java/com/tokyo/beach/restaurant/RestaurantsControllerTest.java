@@ -22,9 +22,7 @@ import static com.tokyo.beach.TestUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -119,8 +117,7 @@ public class RestaurantsControllerTest {
 
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-
-        when(cuisineRepository.getCuisine("2")).thenReturn(
+        when(cuisineRepository.getCuisine(Optional.of(2L))).thenReturn(
                 Optional.of(
                         new Cuisine(
                             2,
@@ -171,10 +168,58 @@ public class RestaurantsControllerTest {
                 )
         );
 
+        Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
+        when(cuisineRepository.getCuisine(Optional.empty())).thenReturn(
+                Optional.of(expectedCuisine));
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
 
-        when(cuisineRepository.getCuisine("2")).thenReturn(
+
+        String payload = "{\"restaurant\": " +
+                "{\"name\":\"Afuri\", " +
+                "\"address\": \"Roppongi\", " +
+                "\"offers_english_menu\": false, " +
+                "\"walk_ins_ok\": true, " +
+                "\"accepts_credit_cards\": false, " +
+                "\"notes\": \"soooo goood\"," +
+                "\"photo_urls\": [{\"url\": \"http://some-url\"}]}" +
+                "}";
+
+        mockMvc.perform(
+                post("/restaurants")
+                        .contentType(APPLICATION_JSON_UTF8_VALUE)
+                        .content(payload)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("Afuri")))
+                .andExpect(jsonPath("$.address", is("Roppongi")))
+                .andExpect(jsonPath("$.offers_english_menu", is(false)))
+                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
+                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
+                .andExpect(jsonPath("$.notes", is("soooo goood")))
+                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+                .andExpect(jsonPath("$.cuisine.name", is("Not Specified")))
+                .andExpect(jsonPath("$.cuisine.id", is(0)));
+
+    }
+
+    @Test
+    public void test_create_withInvalidCuisineId() throws Exception {
+        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
+                new Restaurant(
+                        1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "soooo goood"
+                )
+        );
+
+        when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
+        when(cuisineRepository.getCuisine(Optional.of(2L))).thenReturn(
                 Optional.empty()
         );
 
@@ -186,7 +231,8 @@ public class RestaurantsControllerTest {
                 "\"walk_ins_ok\": true, " +
                 "\"accepts_credit_cards\": false, " +
                 "\"notes\": \"soooo goood\"," +
-                "\"photo_urls\": [{\"url\": \"http://some-url\"}]}" +
+                "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
+                "\"cuisine_id\": \"2\"}" +
                 "}";
 
         mockMvc.perform(

@@ -71,14 +71,9 @@ public class RestaurantsController {
                 restaurantWrapper.getPhotoUrls()
         );
 
-        Cuisine cuisine = null;
-        if (restaurantWrapper.getCuisineId().isPresent()) {
-            cuisine = cuisineRepository.getCuisine(
-                    String.valueOf(restaurantWrapper.getCuisineId().get())
-            ).get();
-        }
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId());
 
-        return new SerializedRestaurant(restaurant, photosForRestaurant, cuisine);
+        return new SerializedRestaurant(restaurant, photosForRestaurant, maybeCuisine.orElse(null));
     }
 
     @RequestMapping(value = "{id}", method = GET)

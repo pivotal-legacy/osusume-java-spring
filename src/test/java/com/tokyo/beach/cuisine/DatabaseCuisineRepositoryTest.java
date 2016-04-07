@@ -4,18 +4,20 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.application.cuisine.NewCuisine;
-import com.tokyo.beach.application.restaurant.Restaurant;
-import com.tokyo.beach.restaurant.RestaurantFixtures;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DatabaseCuisineRepositoryTest {
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
@@ -24,6 +26,7 @@ public class DatabaseCuisineRepositoryTest {
     @Before
     public void setUp() throws Exception {
         cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
+        jdbcTemplate.update("insert into cuisine (id, name) values (0, 'Not Specified')");
     }
 
     @After
@@ -52,8 +55,8 @@ public class DatabaseCuisineRepositoryTest {
         Cuisine expectedCuisine1 = new Cuisine(cuisine1Id, "Test Cuisine1");
         Cuisine expectedCuisine2 = new Cuisine(cuisine2Id, "Test Cuisine2");
 
-        assertThat(cuisines.get(0), is(expectedCuisine1));
-        assertThat(cuisines.get(1), is(expectedCuisine2));
+        assertTrue(cuisines.contains(expectedCuisine1));
+        assertTrue(cuisines.contains(expectedCuisine2));
     }
 
     @Test
@@ -66,10 +69,47 @@ public class DatabaseCuisineRepositoryTest {
                 (rs, rowNum) -> rs.getLong("id")
         );
 
-        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId)).get();
+        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId)).orElse(null);
         Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
 
         assertThat(cuisine, is(expectedCuisine));
+    }
+
+    @Test
+    public void testGetCuisine_withInvalidId() {
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine("1");
+
+        assertFalse(maybeCuisine.isPresent());
+    }
+
+    @Test
+    public void testGetCuisineWithOptional_isPresent() {
+               Long cuisineId = jdbcTemplate.queryForObject(
+                        "INSERT INTO cuisine " +
+                        "(name) VALUES ('Cuisine Test1') RETURNING id",
+                (rs, rowNum) -> rs.getLong("id")
+        );
+
+        Optional<Cuisine> maybeCuisine  = cuisineRepository.getCuisine(Optional.of(cuisineId));
+        Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
+
+        assertTrue(maybeCuisine.isPresent());
+        assertThat(maybeCuisine.get(), is(expectedCuisine));
+    }
+
+    @Test
+    public void testGetCuisineWithOptional_withInvalidId() {
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(Optional.of(1L));
+
+        assertFalse(maybeCuisine.isPresent());
+    }
+
+    @Test
+    public void testGetCuisineWithOptional_isNotPresent() {
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(Optional.empty());
+        Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
+        assertTrue(maybeCuisine.isPresent());
+        Assert.assertThat(maybeCuisine.get(), is(expectedCuisine));
     }
 
     @Test
