@@ -30,7 +30,7 @@ public class NewRestaurantWrapper {
         return restaurant.getPhotoUrls();
     }
 
-    public Optional<Long> getCuisineId() {
+    public Long getCuisineId() {
         return restaurant.getCuisineId();
     }
 }

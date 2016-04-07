@@ -47,15 +47,7 @@ public class DatabaseCuisineRepository implements CuisineRepository {
         }
     }
 
-    @Override
-    public Optional<Cuisine> getCuisine(Optional<Long> maybeId) {
-        if ( maybeId.isPresent()) {
-            Long id = maybeId.get();
-            return getCuisine(id.toString());
-        } else {
-            return getCuisine(String.valueOf(0));
-        }
-    }
+
 
     @Override
     public Cuisine createCuisine(NewCuisine newCuisine) {

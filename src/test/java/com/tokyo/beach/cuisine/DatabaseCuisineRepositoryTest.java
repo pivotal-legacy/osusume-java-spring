@@ -82,35 +82,7 @@ public class DatabaseCuisineRepositoryTest {
         assertFalse(maybeCuisine.isPresent());
     }
 
-    @Test
-    public void testGetCuisineWithOptional_isPresent() {
-               Long cuisineId = jdbcTemplate.queryForObject(
-                        "INSERT INTO cuisine " +
-                        "(name) VALUES ('Cuisine Test1') RETURNING id",
-                (rs, rowNum) -> rs.getLong("id")
-        );
 
-        Optional<Cuisine> maybeCuisine  = cuisineRepository.getCuisine(Optional.of(cuisineId));
-        Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
-
-        assertTrue(maybeCuisine.isPresent());
-        assertThat(maybeCuisine.get(), is(expectedCuisine));
-    }
-
-    @Test
-    public void testGetCuisineWithOptional_withInvalidId() {
-        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(Optional.of(1L));
-
-        assertFalse(maybeCuisine.isPresent());
-    }
-
-    @Test
-    public void testGetCuisineWithOptional_isNotPresent() {
-        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(Optional.empty());
-        Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
-        assertTrue(maybeCuisine.isPresent());
-        Assert.assertThat(maybeCuisine.get(), is(expectedCuisine));
-    }
 
     @Test
     public void testCreateCuisine() {

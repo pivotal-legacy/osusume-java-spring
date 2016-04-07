@@ -85,8 +85,12 @@ public class NewRestaurant {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public Optional<Long> getCuisineId() {
-        return Optional.ofNullable(cuisineId);
+    public Long getCuisineId() {
+        if (cuisineId != null) {
+            return cuisineId;
+        } else {
+            return 0L;
+        }
     }
 
     @Override

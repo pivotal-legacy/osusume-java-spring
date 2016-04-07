@@ -71,7 +71,7 @@ public class RestaurantsController {
                 restaurantWrapper.getPhotoUrls()
         );
 
-        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId());
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId().toString());
 
         return new SerializedRestaurant(restaurant, photosForRestaurant, maybeCuisine.orElse(null));
     }

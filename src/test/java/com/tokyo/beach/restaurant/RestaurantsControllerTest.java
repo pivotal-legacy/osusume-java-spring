@@ -117,7 +117,7 @@ public class RestaurantsControllerTest {
 
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(cuisineRepository.getCuisine(Optional.of(2L))).thenReturn(
+        when(cuisineRepository.getCuisine("2")).thenReturn(
                 Optional.of(
                         new Cuisine(
                             2,
@@ -169,7 +169,7 @@ public class RestaurantsControllerTest {
         );
 
         Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
-        when(cuisineRepository.getCuisine(Optional.empty())).thenReturn(
+        when(cuisineRepository.getCuisine("0")).thenReturn(
                 Optional.of(expectedCuisine));
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
@@ -219,7 +219,7 @@ public class RestaurantsControllerTest {
 
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(cuisineRepository.getCuisine(Optional.of(2L))).thenReturn(
+        when(cuisineRepository.getCuisine("2")).thenReturn(
                 Optional.empty()
         );
 

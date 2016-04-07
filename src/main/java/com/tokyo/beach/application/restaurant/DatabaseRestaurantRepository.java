@@ -80,7 +80,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 newRestaurant.getWalkInsOk(),
                 newRestaurant.getAcceptsCreditCards(),
                 newRestaurant.getNotes(),
-                newRestaurant.getCuisineId().get()
+                newRestaurant.getCuisineId()
         );
     }
 }
