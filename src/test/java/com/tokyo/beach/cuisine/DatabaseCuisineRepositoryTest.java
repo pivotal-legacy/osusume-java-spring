@@ -57,9 +57,11 @@ public class DatabaseCuisineRepositoryTest {
         List<Cuisine> cuisines = cuisineRepository.getAll();
         Cuisine expectedCuisine1 = new Cuisine(cuisine1Id, "Test Cuisine1");
         Cuisine expectedCuisine2 = new Cuisine(cuisine2Id, "Test Cuisine2");
+        Cuisine exceptCuisine = new Cuisine(0L, "Not Specified");
 
         assertTrue(cuisines.contains(expectedCuisine1));
         assertTrue(cuisines.contains(expectedCuisine2));
+        assertFalse(cuisines.contains(exceptCuisine));
     }
 
     @Test
