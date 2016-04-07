@@ -27,7 +27,7 @@ public class NewRestaurant {
     private List<NewPhotoUrl> photoUrls;
 
     @JsonProperty("cuisine_id")
-    private Integer cuisineId;
+    private Long cuisineId;
 
     public NewRestaurant() {
     }
@@ -38,7 +38,7 @@ public class NewRestaurant {
                          Boolean walkInsOk,
                          Boolean acceptsCreditCards,
                          String notes,
-                         Integer cuisineId,
+                         Long cuisineId,
                          List<NewPhotoUrl> photoUrls) {
         this.name = name;
         this.address = address;
@@ -54,46 +54,39 @@ public class NewRestaurant {
         return name;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getAddress() {
         return address;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Boolean getOffersEnglishMenu() {
         return offersEnglishMenu;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Boolean getWalkInsOk() {
         return walkInsOk;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Boolean getAcceptsCreditCards() {
         return acceptsCreditCards;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getNotes() {
         return notes;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public List<NewPhotoUrl> getPhotoUrls() {
         return photoUrls;
     }
 
-    public Optional<Integer> getCuisineId() {
+    @SuppressWarnings("WeakerAccess")
+    public Optional<Long> getCuisineId() {
         return Optional.ofNullable(cuisineId);
-    }
-
-    @Override
-    public String toString() {
-        return "NewRestaurant{" +
-                "name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", offersEnglishMenu=" + offersEnglishMenu +
-                ", walkInsOk=" + walkInsOk +
-                ", acceptsCreditCards=" + acceptsCreditCards +
-                ", notes='" + notes + '\'' +
-                ", photoUrls=" + photoUrls +
-                ", cuisineId=" + cuisineId +
-                '}';
     }
 
     @Override
@@ -127,5 +120,19 @@ public class NewRestaurant {
         result = 31 * result + (photoUrls != null ? photoUrls.hashCode() : 0);
         result = 31 * result + (cuisineId != null ? cuisineId.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "NewRestaurant{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", offersEnglishMenu=" + offersEnglishMenu +
+                ", walkInsOk=" + walkInsOk +
+                ", acceptsCreditCards=" + acceptsCreditCards +
+                ", notes='" + notes + '\'' +
+                ", photoUrls=" + photoUrls +
+                ", cuisineId=" + cuisineId +
+                '}';
     }
 }

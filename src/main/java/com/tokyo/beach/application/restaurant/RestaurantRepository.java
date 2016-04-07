@@ -7,7 +7,7 @@ public interface RestaurantRepository {
 
     List<Restaurant> getAll();
 
-    Optional<Restaurant> get(int id);
+    Optional<Restaurant> get(long id);
 
     Restaurant createRestaurant(NewRestaurant restaurant);
 }

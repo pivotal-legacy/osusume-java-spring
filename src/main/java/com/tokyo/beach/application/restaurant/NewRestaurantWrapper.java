@@ -5,6 +5,7 @@ import com.tokyo.beach.application.photos.NewPhotoUrl;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("WeakerAccess")
 public class NewRestaurantWrapper {
 
     private NewRestaurant restaurant;
@@ -29,7 +30,7 @@ public class NewRestaurantWrapper {
         return restaurant.getPhotoUrls();
     }
 
-    public Optional<Integer> getCuisineId() {
+    public Optional<Long> getCuisineId() {
         return restaurant.getCuisineId();
     }
 }

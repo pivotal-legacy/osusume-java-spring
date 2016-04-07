@@ -21,7 +21,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
         return jdbcTemplate
                 .query("SELECT * FROM restaurant", (rs, rowNum) -> {
                     return new Restaurant(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
                             rs.getBoolean("offers_english_menu"),
@@ -33,12 +33,12 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
-    public Optional<Restaurant> get(int id) {
+    public Optional<Restaurant> get(long id) {
         List<Restaurant> restaurants = jdbcTemplate
                 .query("SELECT * FROM restaurant WHERE id = ?",
                         (rs, rowNum) -> {
                             return new Restaurant(
-                                    rs.getInt("id"),
+                                    rs.getLong("id"),
                                     rs.getString("name"),
                                     rs.getString("address"),
                                     rs.getBoolean("offers_english_menu"),
@@ -65,7 +65,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                         "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes",
                 (rs, rowNum) -> {
                     return new Restaurant(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
                             rs.getBoolean("offers_english_menu"),

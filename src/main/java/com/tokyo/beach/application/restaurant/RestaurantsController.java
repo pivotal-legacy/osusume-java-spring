@@ -3,6 +3,7 @@ package com.tokyo.beach.application.restaurant;
 import com.tokyo.beach.application.RestControllerException;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
+import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class RestaurantsController {
         }
 
         List<PhotoUrl> photos = photoRepository.findForRestaurants(restaurantList);
-        Map<Integer, List<PhotoUrl>> restaurantPhotos = photos.stream()
+        Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
         return restaurantList

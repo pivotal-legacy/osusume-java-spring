@@ -18,7 +18,7 @@ class SerializedRestaurant {
         this.cuisine = cuisine;
     }
 
-    public int getId() {
+    public long getId() {
         return restaurant.getId();
     }
 

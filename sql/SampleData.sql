@@ -1,8 +1,7 @@
 -- Delete existing data
 
 TRUNCATE TABLE users, session;
-TRUNCATE TABLE restaurant;
-TRUNCATE TABLE cuisine cascade;
+TRUNCATE TABLE restaurant, cuisine;
 
 -- Users
 

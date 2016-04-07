@@ -1,7 +1,7 @@
 -- CUISINE Table
 
 create table cuisine (
-  id serial primary key,
+  id BIGSERIAL primary key,
   name varchar(255) not null
 );
 
@@ -9,23 +9,23 @@ create table cuisine (
 -- RESTAURANT Table
 
 create table restaurant (
-    id serial primary key,
+    id BIGSERIAL primary key,
     name varchar(255) not null,
     address varchar(255),
     offers_english_menu boolean,
     walk_ins_ok boolean,
     accepts_credit_cards boolean,
     notes text,
-    cuisine_id INTEGER REFERENCES cuisine(id) NOT NULL DEFAULT 0
+    cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0
 );
 
 
 -- PHOTO_URL Table
 
 create table photo_url (
-  id serial primary key,
+  id BIGSERIAL primary key,
   url varchar(255) not null,
-  restaurant_id INTEGER
+  restaurant_id BIGINT
 );
 
 

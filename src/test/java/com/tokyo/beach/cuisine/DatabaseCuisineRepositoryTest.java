@@ -33,41 +33,41 @@ public class DatabaseCuisineRepositoryTest {
 
     @Test
     public void testGetAll() {
-        Integer japaneseId = jdbcTemplate.queryForObject(
+        Long cuisine1Id = jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine " +
                         "(name)" +
-                        "VALUES ('Japanese')" +
+                        "VALUES ('Test Cuisine1')" +
                         "RETURNING *",
-                (rs, rowNum) -> rs.getInt("id")
+                (rs, rowNum) -> rs.getLong("id")
         );
-        Integer spanishId = jdbcTemplate.queryForObject(
+        Long cuisine2Id = jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine " +
                         "(name)" +
-                        "VALUES ('Spanish')" +
+                        "VALUES ('Test Cuisine2')" +
                         "RETURNING *",
-                (rs, rowNum) -> rs.getInt("id")
+                (rs, rowNum) -> rs.getLong("id")
         );
 
         List<Cuisine> cuisines = cuisineRepository.getAll();
-        Cuisine expectedJapanese = new Cuisine(japaneseId, "Japanese");
-        Cuisine expectedSpanish = new Cuisine(spanishId, "Spanish");
+        Cuisine expectedCuisine1 = new Cuisine(cuisine1Id, "Test Cuisine1");
+        Cuisine expectedCuisine2 = new Cuisine(cuisine2Id, "Test Cuisine2");
 
-        assertThat(cuisines.get(0), is(expectedJapanese));
-        assertThat(cuisines.get(1), is(expectedSpanish));
+        assertThat(cuisines.get(0), is(expectedCuisine1));
+        assertThat(cuisines.get(1), is(expectedCuisine2));
     }
 
     @Test
     public void testGetCuisine() {
-        Integer cuisineId = jdbcTemplate.queryForObject(
+        Long cuisineId = jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine " +
                         "(name) " +
-                        "VALUES ('Japanese') " +
+                        "VALUES ('Cuisine Test1') " +
                         "RETURNING id",
-                (rs, rowNum) -> rs.getInt("id")
+                (rs, rowNum) -> rs.getLong("id")
         );
 
         Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId)).get();
-        Cuisine expectedCuisine = new Cuisine(cuisineId, "Japanese");
+        Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
 
         assertThat(cuisine, is(expectedCuisine));
     }
@@ -81,7 +81,7 @@ public class DatabaseCuisineRepositoryTest {
         Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * FROM cuisine WHERE name=?",
                 new Object[]{"Test Cuisine"},
                 (rs, rowNum) -> {
-                    return new Cuisine(rs.getInt("id"), rs.getString("name"));
+                    return new Cuisine(rs.getLong("id"), rs.getString("name"));
                 }
         );
 

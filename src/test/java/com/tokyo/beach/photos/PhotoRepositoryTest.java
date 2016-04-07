@@ -1,17 +1,15 @@
-package com.tokyo.beach.restaurant;
+package com.tokyo.beach.photos;
 
 import com.tokyo.beach.TestUtils;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
-import com.tokyo.beach.application.restaurant.PhotoRepository;
+import com.tokyo.beach.application.photos.PhotoRepository;
+import com.tokyo.beach.restaurant.RestaurantFixtures;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -49,7 +47,7 @@ public class PhotoRepositoryTest {
 
         PhotoUrl firstPhoto = photos.get(0);
 
-        assertThat(firstPhoto.getRestaurantId(), is(1));
+        assertThat(firstPhoto.getRestaurantId(), is(1L));
     }
 
     @Test
@@ -66,18 +64,18 @@ public class PhotoRepositoryTest {
                 "SELECT * FROM photo_url where restaurant_id = 789",
                 (rs, rowNum) -> {
                     return new PhotoUrl(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("url"),
-                            rs.getInt("restaurant_id")
+                            rs.getLong("restaurant_id")
                     );
                 }
         );
 
         assertThat(photoUrls, notNullValue());
         assertThat(photoUrls.get(0).getUrl(), is("http://some-url"));
-        assertThat(photoUrls.get(0).getRestaurantId(), is(789));
+        assertThat(photoUrls.get(0).getRestaurantId(), is(789L));
         assertThat(photoUrls.get(1).getUrl(), is("http://another-url"));
-        assertThat(photoUrls.get(1).getRestaurantId(), is(789));
+        assertThat(photoUrls.get(1).getRestaurantId(), is(789L));
     }
 
     @Test
@@ -89,6 +87,6 @@ public class PhotoRepositoryTest {
 
 
         assertThat(photos, hasSize(1));
-        assertThat(photos.get(0).getRestaurantId(), is(1));
+        assertThat(photos.get(0).getRestaurantId(), is(1L));
     }
 }

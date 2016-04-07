@@ -31,9 +31,8 @@ public class DatabaseRestaurantRepositoryTest {
 
     @After
     public void tearDown() {
-        jdbcTemplate.update("DELETE FROM restaurant");
         jdbcTemplate.update("DELETE FROM photo_url");
-        jdbcTemplate.update("TRUNCATE TABLE cuisine CASCADE");
+        jdbcTemplate.update("TRUNCATE TABLE restaurant, cuisine");
     }
 
     @Test
@@ -73,7 +72,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
-                0,
+                0L,
                 emptyList()
         );
 
@@ -90,7 +89,7 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("walk_ins_ok"),
                         rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
-                        rs.getInt("cuisine_id"),
+                        rs.getLong("cuisine_id"),
                         emptyList()
                 ),
                 createdRestaurant.getId()
@@ -101,12 +100,12 @@ public class DatabaseRestaurantRepositoryTest {
 
     @Test
     public void test_get_returnsRestaurant() throws Exception {
-        int id = jdbcTemplate.queryForObject(
+        long id = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name) " +
                         "VALUES ('Amazing Restaurant') " +
                         "RETURNING id",
                 (rs, rowNum) -> {
-                    return rs.getInt("id");
+                    return rs.getLong("id");
                 }
         );
 

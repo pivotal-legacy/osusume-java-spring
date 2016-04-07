@@ -5,7 +5,7 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
-import com.tokyo.beach.application.restaurant.PhotoRepository;
+import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.restaurant.RestaurantRepository;
 import com.tokyo.beach.application.restaurant.RestaurantsController;

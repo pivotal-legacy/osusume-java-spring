@@ -1,6 +1,5 @@
 package com.tokyo.beach.application.cuisine;
 
-import com.tokyo.beach.application.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,7 +21,7 @@ public class DatabaseCuisineRepository implements CuisineRepository {
     public List<Cuisine> getAll() {
         return jdbcTemplate.query("SELECT * FROM cuisine", (rs, rowNum) -> {
             return new Cuisine(
-                    rs.getInt("id"),
+                    rs.getLong("id"),
                     rs.getString("name")
             );
         });
@@ -31,19 +30,21 @@ public class DatabaseCuisineRepository implements CuisineRepository {
     @Override
     public Optional<Cuisine> getCuisine(String id) {
         List<Cuisine> cuisines = jdbcTemplate.query("SELECT * FROM cuisine where id = ?",
-                new Object[]{id}, new int[]{Types.INTEGER},
+                new Object[]{id}, new int[]{Types.BIGINT},
                 (rs, rowNum) -> {
                     return new Cuisine(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("name")
                     );
                 }
         );
 
-        if ( cuisines.size() != 1 )
+        if ( cuisines.size() != 1 ) {
             return Optional.empty();
-        else
+        }
+        else {
             return Optional.of(cuisines.get(0));
+        }
     }
 
     @Override
@@ -53,7 +54,7 @@ public class DatabaseCuisineRepository implements CuisineRepository {
                 new Object[]{newCuisine.getName()}, new int[]{Types.VARCHAR},
                 (rs, rowNum) -> {
                     return new Cuisine(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("name")
                     );
                 }

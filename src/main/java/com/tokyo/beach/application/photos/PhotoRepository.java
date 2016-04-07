@@ -1,7 +1,6 @@
-package com.tokyo.beach.application.restaurant;
+package com.tokyo.beach.application.photos;
 
-import com.tokyo.beach.application.photos.NewPhotoUrl;
-import com.tokyo.beach.application.photos.PhotoUrl;
+import com.tokyo.beach.application.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,7 +22,7 @@ public class PhotoRepository {
     }
 
     public List<PhotoUrl> findForRestaurants(List<Restaurant> restaurants) {
-        List<Integer> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
+        List<Long> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("ids", ids);
@@ -33,7 +32,7 @@ public class PhotoRepository {
                 "SELECT * FROM photo_url WHERE restaurant_id IN (:ids)",
                 parameters,
                 (rs, rowNum) -> {
-                    return new PhotoUrl(rs.getInt("id"), rs.getString("url"), rs.getInt("restaurant_id"));
+                    return new PhotoUrl(rs.getLong("id"), rs.getString("url"), rs.getLong("restaurant_id"));
                 }
 
         );
@@ -46,7 +45,7 @@ public class PhotoRepository {
             PhotoUrl photoUrl = jdbcTemplate.queryForObject(
                     "INSERT INTO photo_url (url, restaurant_id) VALUES (?, ?) RETURNING *",
                     (rs, rowNum) -> {
-                        return new PhotoUrl(rs.getInt("id"), rs.getString("url"), rs.getInt("restaurant_id"));
+                        return new PhotoUrl(rs.getLong("id"), rs.getString("url"), rs.getLong("restaurant_id"));
                     },
                     photo.getUrl(),
                     restaurantId
@@ -64,9 +63,9 @@ public class PhotoRepository {
                 new Object[]{ restaurant.getId() },
                 (rs, rowNum) -> {
                     return new PhotoUrl(
-                            rs.getInt("id"),
+                            rs.getLong("id"),
                             rs.getString("url"),
-                            rs.getInt("restaurant_id")
+                            rs.getLong("restaurant_id")
                     );
                 }
         );

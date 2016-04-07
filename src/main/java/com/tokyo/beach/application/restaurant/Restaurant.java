@@ -6,7 +6,7 @@ import com.tokyo.beach.application.photos.PhotoUrl;
 import java.util.List;
 
 public class Restaurant {
-    private final int id;
+    private final long id;
     private final String name;
     private String address;
 
@@ -21,7 +21,7 @@ public class Restaurant {
     private String notes;
 
     public Restaurant(
-            int id,
+            long id,
             String name,
             String address,
             Boolean offersEnglishMenu,
@@ -38,6 +38,7 @@ public class Restaurant {
         this.notes = notes;
     }
 
+    @SuppressWarnings("unused")
     static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
         return new Restaurant(
                 restaurant.getId(),
@@ -50,7 +51,7 @@ public class Restaurant {
         );
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -104,7 +105,7 @@ public class Restaurant {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (offersEnglishMenu != null ? offersEnglishMenu.hashCode() : 0);
