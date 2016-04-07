@@ -1,9 +1,8 @@
 -- Delete existing data
 
 TRUNCATE TABLE users, session;
-TRUNCATE TABLE cuisine;
 TRUNCATE TABLE restaurant;
-
+TRUNCATE TABLE cuisine cascade;
 
 -- Users
 
@@ -26,6 +25,7 @@ INSERT INTO users (name, email, password) VALUES ('Yuki', 'yuki', 'yuki');
 
 -- Cuisines
 
+INSERT INTO cuisine (id, name) VALUES (0, 'Not Specified');
 INSERT INTO cuisine (name) VALUES ('Japanese');
 INSERT INTO cuisine (name) VALUES ('Korean');
 INSERT INTO cuisine (name) VALUES ('Chinese');

@@ -1,3 +1,11 @@
+-- CUISINE Table
+
+create table cuisine (
+  id serial primary key,
+  name varchar(255) not null
+);
+
+
 -- RESTAURANT Table
 
 create table restaurant (
@@ -8,7 +16,7 @@ create table restaurant (
     walk_ins_ok boolean,
     accepts_credit_cards boolean,
     notes text,
-    cuisine_id INTEGER
+    cuisine_id INTEGER REFERENCES cuisine(id) NOT NULL DEFAULT 0
 );
 
 
@@ -18,14 +26,6 @@ create table photo_url (
   id serial primary key,
   url varchar(255) not null,
   restaurant_id INTEGER
-);
-
-
--- CUISINE Table
-
-create table cuisine (
-  id serial primary key,
-  name varchar(255) not null
 );
 
 
