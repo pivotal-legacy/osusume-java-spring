@@ -26,7 +26,9 @@ public class DatabaseRestaurantRepositoryTest {
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         restaurantRepository = new DatabaseRestaurantRepository(jdbcTemplate);
-        jdbcTemplate.update("INSERT INTO cuisine (id, name) values (0, 'Not Specified')");
+        jdbcTemplate.update("insert into cuisine (id, name) " +
+                "select 0, 'Not Specified' " +
+                "WHERE NOT EXISTS (SELECT id From cuisine WHERE id=0)");
     }
 
     @After
@@ -42,9 +44,9 @@ public class DatabaseRestaurantRepositoryTest {
                         "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
                         "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '')" +
                         "RETURNING *",
-                ((rs, rowNum) -> {
+                (rs, rowNum) -> {
                     return rs.getInt("id");
-                })
+                }
         );
 
         List<Restaurant> restaurants = restaurantRepository.getAll();
@@ -96,6 +98,44 @@ public class DatabaseRestaurantRepositoryTest {
         );
 
         assertThat(actualRestaurant, is(kfcNewRestaurant));
+        assertThat(actualRestaurant.getCuisineId(), is(0L));
+    }
+
+    @Test
+    public void testCreateRestaurant_withoutCuisineId() throws Exception {
+        NewRestaurant kfcNewRestaurant = new NewRestaurant(
+                "KFC",
+                "Shibuya",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                "Notes",
+                null,
+                emptyList()
+        );
+
+
+        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant);
+
+
+        NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
+                "SELECT * FROM restaurant WHERE id = ?",
+                (rs, rowNum) -> new NewRestaurant(
+                        rs.getString("name"),
+                        rs.getString("address"),
+                        rs.getBoolean("offers_english_menu"),
+                        rs.getBoolean("walk_ins_ok"),
+                        rs.getBoolean("accepts_credit_cards"),
+                        rs.getString("notes"),
+                        rs.getLong("cuisine_id"),
+                        emptyList()
+                ),
+                createdRestaurant.getId()
+        );
+
+        assertThat(actualRestaurant.getName(), is("KFC"));
+        assertThat(actualRestaurant.getAddress(), is("Shibuya"));
+        assertThat(actualRestaurant.getCuisineId(), is(0L));
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.application.cuisine.NewCuisine;
+import com.tokyo.beach.application.restaurant.Restaurant;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,9 @@ public class DatabaseCuisineRepositoryTest {
     @Before
     public void setUp() throws Exception {
         cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
-        jdbcTemplate.update("insert into cuisine (id, name) values (0, 'Not Specified')");
+        jdbcTemplate.update("insert into cuisine (id, name) " +
+                            "select 0, 'Not Specified' " +
+                            "WHERE NOT EXISTS (SELECT id From cuisine WHERE id=0)");
     }
 
     @After
@@ -99,4 +102,59 @@ public class DatabaseCuisineRepositoryTest {
 
         assertThat(actualCuisine.getName(), is("Test Cuisine"));
     }
+
+    @Test
+    public void test_findForRestaurant_returnCuisine() {
+        Long cuisineId = jdbcTemplate.queryForObject(
+                "INSERT INTO cuisine (name) VALUES " +
+                        "('Cuisine Test1') RETURNING id",
+                (rs, rowNum) -> rs.getLong("id")
+        );
+        Restaurant restaurant = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant (name, cuisine_id) VALUES " +
+                        "('TEST RESTAURANT', ?) RETURNING *",
+                (rs, rowNum) -> {
+                    return new Restaurant(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes")
+                    );
+                },
+                cuisineId
+        );
+
+        Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);
+
+        assertThat(cuisine.getId(), is(cuisineId));
+        assertThat(cuisine.getName(), is("Cuisine Test1"));
+    }
+
+    @Test
+    public void test_findForRestaurant_returnNotSpecified_whenCuisineTypeNotSpecified() {
+        Restaurant restaurant = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant (name) VALUES " +
+                        "('TEST RESTAURANT') RETURNING *",
+                (rs, rowNum) -> {
+                    return new Restaurant(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes")
+                    );
+                }
+        );
+
+        Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);
+
+        assertThat(cuisine.getId(), is(0L));
+        assertThat(cuisine.getName(), is("Not Specified"));
+    }
+
 }

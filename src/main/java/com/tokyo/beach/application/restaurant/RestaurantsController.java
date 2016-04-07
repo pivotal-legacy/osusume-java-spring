@@ -84,6 +84,7 @@ public class RestaurantsController {
 
         Restaurant retrievedRestaurant = maybeRestaurant.get();
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
-        return new SerializedRestaurant(retrievedRestaurant, photosForRestaurant, null);
+        Cuisine cuisineForRestaurant = cuisineRepository.findForRestaurant(retrievedRestaurant);
+        return new SerializedRestaurant(retrievedRestaurant, photosForRestaurant, cuisineForRestaurant);
     }
 }

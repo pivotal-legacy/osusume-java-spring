@@ -1,5 +1,6 @@
 package com.tokyo.beach.application.cuisine;
 
+import com.tokyo.beach.application.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -63,5 +64,22 @@ public class DatabaseCuisineRepository implements CuisineRepository {
         );
     }
 
-
+    @Override
+    public Cuisine findForRestaurant(Restaurant restaurant) {
+        List<Cuisine> cuisines = jdbcTemplate.query(
+                "SELECT * FROM cuisine WHERE id = " +
+                        "(SELECT cuisine_id FROM restaurant WHERE id = ?)",
+                (rs, rowNum) -> {
+                    return new Cuisine(
+                            rs.getLong("id"),
+                            rs.getString("name")
+                    );
+                },
+                restaurant.getId()
+        );
+        if (cuisines.size() < 1) {
+            return getCuisine("0").orElse(null);
+        }
+        return cuisines.get(0);
+    }
 }

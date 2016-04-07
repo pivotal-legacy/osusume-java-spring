@@ -262,18 +262,22 @@ public class RestaurantsControllerTest {
                 false,
                 ""
         );
+        Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
         );
         when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
                 emptyList()
         );
-
+        when(cuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+            expectedCuisine
+        );
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
+                .andExpect(jsonPath("$.cuisine.name", equalTo("Ramen")))
                 .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())));
     }
 
