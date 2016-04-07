@@ -28,7 +28,7 @@ public class DatabaseCuisineRepositoryTest {
 
     @After
     public void tearDown() {
-        jdbcTemplate.update("DELETE FROM cuisine");
+        jdbcTemplate.update("truncate table cuisine cascade");
     }
 
     @Test

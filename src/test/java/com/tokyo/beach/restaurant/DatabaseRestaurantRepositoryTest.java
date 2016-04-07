@@ -26,12 +26,14 @@ public class DatabaseRestaurantRepositoryTest {
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         restaurantRepository = new DatabaseRestaurantRepository(jdbcTemplate);
+        jdbcTemplate.update("INSERT INTO cuisine (id, name) values (0, 'Not Specified')");
     }
 
     @After
     public void tearDown() {
         jdbcTemplate.update("DELETE FROM restaurant");
         jdbcTemplate.update("DELETE FROM photo_url");
+        jdbcTemplate.update("TRUNCATE TABLE cuisine CASCADE");
     }
 
     @Test
@@ -71,7 +73,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
-                1,
+                0,
                 emptyList()
         );
 
