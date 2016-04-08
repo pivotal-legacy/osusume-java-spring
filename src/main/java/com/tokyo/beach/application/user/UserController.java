@@ -26,7 +26,7 @@ public class UserController {
     public DatabaseUser profile() {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
-        Integer userId = (Integer) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
 
         Optional<DatabaseUser> maybeUser = userRepository.get(userId);
 

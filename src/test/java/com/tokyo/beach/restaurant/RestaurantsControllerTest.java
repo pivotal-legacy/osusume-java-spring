@@ -151,7 +151,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 post("/restaurants")
-                        .requestAttr("userId", 99)
+                        .requestAttr("userId", 99L)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )
@@ -203,7 +203,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 post("/restaurants")
-                        .requestAttr("userId", 1)
+                        .requestAttr("userId", 1L)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )
@@ -255,7 +255,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 post("/restaurants")
-                        .requestAttr("userId", 1)
+                        .requestAttr("userId", 1L)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )

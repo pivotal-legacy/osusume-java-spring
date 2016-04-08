@@ -77,7 +77,7 @@ public class UserControllerTest {
 
 
         mvc.perform(get("/profile")
-                .requestAttr("userId", 12)
+                .requestAttr("userId", 12L)
         )
                 .andExpect(content().string("{\"id\":12,\"email\":\"jmiller@gmail.com\",\"name\":\"Joe Miller\"}"));
     }
@@ -88,7 +88,7 @@ public class UserControllerTest {
                 .thenReturn(Optional.empty());
 
         mvc.perform(get("/profile")
-                .requestAttr("userId", 12)
+                .requestAttr("userId", 12L)
         )
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid user id.\"}"));
