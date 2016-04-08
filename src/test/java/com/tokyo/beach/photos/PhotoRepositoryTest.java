@@ -38,7 +38,8 @@ public class PhotoRepositoryTest {
 
     @Test
     public void test_findForRestaurants_returnsPhotoUrlList() throws Exception {
-        jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) VALUES ('http://some-url', 1)");
+        jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) " +
+                "VALUES ('http://some-url', 1)");
 
         List<PhotoUrl> photos = photoRepository.findForRestaurants(singletonList(
                 RestaurantFixtures.newRestaurant(1)

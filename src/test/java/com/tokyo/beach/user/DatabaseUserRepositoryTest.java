@@ -9,11 +9,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static java.util.Collections.singletonList;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -128,5 +131,20 @@ public class DatabaseUserRepositoryTest {
 
 
         assertFalse(maybeUser.isPresent());
+    }
+
+    @Test
+    public void test_findForUserIds_returnsDatabaseUserList() throws Exception {
+        jdbcTemplate.update("INSERT INTO users (id, email, name) " +
+                "VALUES (1, 'jiro@user.com', 'jiro')");
+
+        List<DatabaseUser> databaseUsers = databaseUserRepository.findForUserIds(
+                singletonList(1L)
+        );
+
+        assertEquals(databaseUsers.size(), 1);
+
+        DatabaseUser databaseUser = databaseUsers.get(0);
+        assertEquals(databaseUser.getName(), "jiro");
     }
 }

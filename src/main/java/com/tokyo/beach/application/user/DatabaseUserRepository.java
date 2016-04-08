@@ -2,6 +2,9 @@ package com.tokyo.beach.application.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -79,5 +82,23 @@ public class DatabaseUserRepository implements UserRepository {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<DatabaseUser> findForUserIds(List<Long> ids) {
+        MapSqlParameterSource parameters =  new MapSqlParameterSource();
+        parameters.addValue("ids", ids);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedTemplate.query(
+                "SELECT * FROM users WHERE id IN (:ids)",
+                parameters,
+                (rs, rowNum) -> {
+                    return new DatabaseUser(
+                            rs.getLong("id"),
+                            rs.getString("email"),
+                            rs.getString("name"));
+                }
+        );
     }
 }

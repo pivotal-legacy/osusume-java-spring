@@ -10,12 +10,15 @@ import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.restaurant.RestaurantRepository;
 import com.tokyo.beach.application.restaurant.RestaurantsController;
+import com.tokyo.beach.application.user.DatabaseUser;
+import com.tokyo.beach.application.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,17 +43,20 @@ public class RestaurantsControllerTest {
     private MockMvc mockMvc;
     private PhotoRepository photoRepository;
     private CuisineRepository cuisineRepository;
+    private UserRepository userRepository;
 
     @Before
     public void setUp() {
         restaurantRepository = mock(RestaurantRepository.class);
         photoRepository = mock(PhotoRepository.class);
         cuisineRepository = mock(CuisineRepository.class);
+        userRepository = mock(UserRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
                 photoRepository,
-                cuisineRepository
+                cuisineRepository,
+                userRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -75,6 +81,8 @@ public class RestaurantsControllerTest {
         when(restaurantRepository.getAll()).thenReturn(restaurants);
         when(photoRepository.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
+        when(userRepository.findForUserIds(anyList()))
+                .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
 
         mockMvc.perform(get("/restaurants"))
                 .andExpect(status().isOk())
@@ -85,15 +93,18 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
                 .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
-                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")));
+                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
+                .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
     }
+
 
     @Test
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 restaurantRepository,
                 new PhotoRepository(new JdbcTemplate(buildDataSource())),
-                cuisineRepository
+                cuisineRepository,
+                userRepository
         );
 
 
@@ -136,6 +147,11 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(
+                        new DatabaseUser(99L, "jiro@mail.com", "jiro")
+                )
+        );
 
         String payload = "{\"restaurant\": " +
                 "{\"name\":\"Afuri\", " +
@@ -164,7 +180,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
-                .andExpect(jsonPath("$.created_by_user_id", is(99)));
+                .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
 
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
     }
@@ -189,7 +205,11 @@ public class RestaurantsControllerTest {
                 Optional.of(expectedCuisine));
         when(photoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(
+                        new DatabaseUser(1L, "jiro@mail.com", "jiro")
+                )
+        );
 
         String payload = "{\"restaurant\": " +
                 "{\"name\":\"Afuri\", " +
@@ -240,7 +260,11 @@ public class RestaurantsControllerTest {
         when(cuisineRepository.getCuisine("2")).thenReturn(
                 Optional.empty()
         );
-
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(
+                        new DatabaseUser(1L, "jiro@mail.com", "jiro")
+                )
+        );
 
         String payload = "{\"restaurant\": " +
                 "{\"name\":\"Afuri\", " +
@@ -292,13 +316,17 @@ public class RestaurantsControllerTest {
         when(cuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
             expectedCuisine
         );
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+        );
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
                 .andExpect(jsonPath("$.cuisine.name", equalTo("Ramen")))
-                .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())));
+                .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())))
+                .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")));
     }
 
     @Test
@@ -319,7 +347,9 @@ public class RestaurantsControllerTest {
         when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
                 asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
         );
-
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+        );
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())

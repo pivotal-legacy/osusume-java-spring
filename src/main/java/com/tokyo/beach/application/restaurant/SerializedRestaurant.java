@@ -3,19 +3,27 @@ package com.tokyo.beach.application.restaurant;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.photos.PhotoUrl;
+import com.tokyo.beach.application.user.DatabaseUser;
 
 import java.util.List;
+import java.util.Optional;
 
 class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
     private Cuisine cuisine;
+    private Optional<DatabaseUser> createdByUser;
 
-
-    SerializedRestaurant(Restaurant restaurant, List<PhotoUrl> photoUrls, Cuisine cuisine) {
+    SerializedRestaurant(
+            Restaurant restaurant,
+            List<PhotoUrl> photoUrls,
+            Cuisine cuisine,
+            Optional<DatabaseUser> createdByUser
+    ) {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
+        this.createdByUser = createdByUser;
     }
 
     public long getId() {
@@ -51,9 +59,14 @@ class SerializedRestaurant {
         return restaurant.getNotes();
     }
 
-    @JsonProperty("created_by_user_id")
-    public Long getCreatedByUserId() {
-        return restaurant.getCreatedByUserId();
+    @JsonProperty("created_by_user_name")
+    public String getCreatedByUserName() {
+        String username = "";
+
+        if (createdByUser.isPresent()) {
+            username = createdByUser.get().getName();
+        }
+        return username;
     }
 
     @JsonProperty("photo_urls")
