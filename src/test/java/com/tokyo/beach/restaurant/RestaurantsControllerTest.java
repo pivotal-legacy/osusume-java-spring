@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
-import static com.tokyo.beach.TestUtils.buildDataSource;
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

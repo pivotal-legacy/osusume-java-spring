@@ -9,13 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestUtils.buildDataSource;
-import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
+import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,8 +38,7 @@ public class DatabaseRestaurantRepositoryTest {
 
     @After
     public void tearDown() {
-        jdbcTemplate.update("DELETE FROM photo_url");
-        jdbcTemplate.update("TRUNCATE TABLE restaurant, cuisine, session, users");
+        truncateAllTables(jdbcTemplate);
     }
 
     @Test

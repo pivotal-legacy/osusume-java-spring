@@ -11,8 +11,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 
-import static com.tokyo.beach.TestUtils.buildDataSource;
-import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
+import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -31,7 +32,7 @@ public class DatabaseUserRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
-        this.jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
+        truncateAllTables(jdbcTemplate);
     }
 
     @Test

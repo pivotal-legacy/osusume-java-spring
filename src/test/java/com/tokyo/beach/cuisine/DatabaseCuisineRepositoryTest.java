@@ -7,7 +7,6 @@ import com.tokyo.beach.application.cuisine.NewCuisine;
 import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,8 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestUtils.buildDataSource;
-import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
+import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -36,8 +36,7 @@ public class DatabaseCuisineRepositoryTest {
 
     @After
     public void tearDown() {
-        jdbcTemplate.update("truncate table cuisine cascade");
-        jdbcTemplate.update("truncate table users cascade");
+        truncateAllTables(jdbcTemplate);
     }
 
     @Test

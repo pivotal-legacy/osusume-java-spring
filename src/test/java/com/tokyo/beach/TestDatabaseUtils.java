@@ -1,6 +1,5 @@
 package com.tokyo.beach;
 
-import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,7 +9,7 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestUtils {
+public class TestDatabaseUtils {
     public static DataSource buildDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
@@ -32,5 +31,9 @@ public class TestUtils {
         params.put("name", userRegistration.getName());
 
         return insert.executeAndReturnKey(params).longValue();
+    }
+
+    public static void truncateAllTables(JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users");
     }
 }

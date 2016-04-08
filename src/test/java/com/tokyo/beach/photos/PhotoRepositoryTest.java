@@ -1,6 +1,6 @@
 package com.tokyo.beach.photos;
 
-import com.tokyo.beach.TestUtils;
+import com.tokyo.beach.TestDatabaseUtils;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.photos.PhotoRepository;
@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
+import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,13 +27,13 @@ public class PhotoRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        jdbcTemplate = new JdbcTemplate(TestUtils.buildDataSource());
+        jdbcTemplate = new JdbcTemplate(TestDatabaseUtils.buildDataSource());
         photoRepository = new PhotoRepository(jdbcTemplate);
     }
 
     @After
     public void tearDown() throws Exception {
-        jdbcTemplate.update("DELETE FROM photo_url");
+        truncateAllTables(jdbcTemplate);
     }
 
     @Test

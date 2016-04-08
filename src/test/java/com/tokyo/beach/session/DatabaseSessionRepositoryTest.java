@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestUtils.buildDataSource;
-import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
+import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
+import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DatabaseSessionRepoTest {
+public class DatabaseSessionRepositoryTest {
     private DatabaseSessionRepository databaseSessionRepository;
     private JdbcTemplate jdbcTemplate;
 
@@ -50,7 +51,7 @@ public class DatabaseSessionRepoTest {
 
     @After
     public void tearDown() throws Exception {
-        jdbcTemplate.update("TRUNCATE TABLE users CASCADE");
+        truncateAllTables(jdbcTemplate);
     }
 
     @Test
