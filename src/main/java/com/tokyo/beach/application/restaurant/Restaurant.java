@@ -20,6 +20,8 @@ public class Restaurant {
     private Boolean acceptsCreditCards;
     private String notes;
 
+    private long createdByUserId;
+
     public Restaurant(
             long id,
             String name,
@@ -27,8 +29,8 @@ public class Restaurant {
             Boolean offersEnglishMenu,
             Boolean walkInsOk,
             Boolean acceptsCreditCards,
-            String notes
-    ) {
+            String notes,
+            long createdByUserId) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -36,6 +38,7 @@ public class Restaurant {
         this.walkInsOk = walkInsOk;
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
+        this.createdByUserId = createdByUserId;
     }
 
     @SuppressWarnings("unused")
@@ -47,7 +50,8 @@ public class Restaurant {
                 restaurant.getOffersEnglishMenu(),
                 restaurant.getWalkInsOk(),
                 restaurant.getAcceptsCreditCards(),
-                restaurant.getNotes()
+                restaurant.getNotes(),
+                restaurant.getCreatedByUserId()
         );
     }
 
@@ -84,6 +88,24 @@ public class Restaurant {
         return notes;
     }
 
+    public long getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "Restaurant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", offersEnglishMenu=" + offersEnglishMenu +
+                ", walkInsOk=" + walkInsOk +
+                ", acceptsCreditCards=" + acceptsCreditCards +
+                ", notes='" + notes + '\'' +
+                ", createdByUserId=" + createdByUserId +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,6 +114,7 @@ public class Restaurant {
         Restaurant that = (Restaurant) o;
 
         if (id != that.id) return false;
+        if (createdByUserId != that.createdByUserId) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (offersEnglishMenu != null ? !offersEnglishMenu.equals(that.offersEnglishMenu) : that.offersEnglishMenu != null)
@@ -112,19 +135,7 @@ public class Restaurant {
         result = 31 * result + (walkInsOk != null ? walkInsOk.hashCode() : 0);
         result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (int) (createdByUserId ^ (createdByUserId >>> 32));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", offersEnglishMenu=" + offersEnglishMenu +
-                ", walkInsOk=" + walkInsOk +
-                ", acceptsCreditCards=" + acceptsCreditCards +
-                ", notes='" + notes + '\'' +
-                '}';
     }
 }

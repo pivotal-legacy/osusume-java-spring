@@ -3,18 +3,23 @@ package com.tokyo.beach.restaurant;
 import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
+import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.ResultSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -34,19 +39,25 @@ public class DatabaseRestaurantRepositoryTest {
     @After
     public void tearDown() {
         jdbcTemplate.update("DELETE FROM photo_url");
-        jdbcTemplate.update("TRUNCATE TABLE restaurant, cuisine");
+        jdbcTemplate.update("TRUNCATE TABLE restaurant, cuisine, session, users");
     }
 
     @Test
     public void test_getAll() {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
-                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes)" +
-                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '')" +
+                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id)" +
+                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '', ?)" +
                         "RETURNING *",
                 (rs, rowNum) -> {
                     return rs.getInt("id");
-                }
+                },
+                userId
         );
 
         List<Restaurant> restaurants = restaurantRepository.getAll();
@@ -59,7 +70,8 @@ public class DatabaseRestaurantRepositoryTest {
                 false,
                 true,
                 false,
-                ""
+                "",
+                userId.longValue()
         );
 
         assertThat(restaurants, is(singletonList(expectedRestaurant)));
@@ -67,6 +79,11 @@ public class DatabaseRestaurantRepositoryTest {
 
     @Test
     public void testCreateRestaurant() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -79,30 +96,33 @@ public class DatabaseRestaurantRepositoryTest {
         );
 
 
-        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant);
+        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant, userId.longValue());
 
 
-        NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
+        Map<String, Object> map = jdbcTemplate.queryForMap(
                 "SELECT * FROM restaurant WHERE id = ?",
-                (rs, rowNum) -> new NewRestaurant(
-                        rs.getString("name"),
-                        rs.getString("address"),
-                        rs.getBoolean("offers_english_menu"),
-                        rs.getBoolean("walk_ins_ok"),
-                        rs.getBoolean("accepts_credit_cards"),
-                        rs.getString("notes"),
-                        rs.getLong("cuisine_id"),
-                        emptyList()
-                ),
                 createdRestaurant.getId()
         );
 
-        assertThat(actualRestaurant, is(kfcNewRestaurant));
-        assertThat(actualRestaurant.getCuisineId(), is(0L));
+
+        assertEquals(map.get("id"), createdRestaurant.getId());
+        assertEquals(map.get("name"), createdRestaurant.getName());
+        assertEquals(map.get("address"), createdRestaurant.getAddress());
+        assertEquals(map.get("offers_english_menu"), createdRestaurant.getOffersEnglishMenu());
+        assertEquals(map.get("walk_ins_ok"), createdRestaurant.getWalkInsOk());
+        assertEquals(map.get("accepts_credit_cards"), createdRestaurant.getAcceptsCreditCards());
+        assertEquals(map.get("notes"), createdRestaurant.getNotes());
+        assertEquals(map.get("created_by_user_id"), userId.longValue());
+        assertEquals(map.get("cuisine_id"), 0L);
     }
 
     @Test
     public void testCreateRestaurant_withoutCuisineId() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -115,7 +135,7 @@ public class DatabaseRestaurantRepositoryTest {
         );
 
 
-        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant);
+        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant, userId.longValue());
 
 
         NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
@@ -140,13 +160,19 @@ public class DatabaseRestaurantRepositoryTest {
 
     @Test
     public void test_get_returnsRestaurant() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         long id = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name) " +
-                        "VALUES ('Amazing Restaurant') " +
+                "INSERT INTO restaurant (name, created_by_user_id) " +
+                        "VALUES ('Amazing Restaurant', ?) " +
                         "RETURNING id",
                 (rs, rowNum) -> {
                     return rs.getLong("id");
-                }
+                },
+                userId
         );
 
 

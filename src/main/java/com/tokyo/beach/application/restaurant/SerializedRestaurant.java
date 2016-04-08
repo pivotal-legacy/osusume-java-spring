@@ -51,6 +51,11 @@ class SerializedRestaurant {
         return restaurant.getNotes();
     }
 
+    @JsonProperty("created_by_user_id")
+    public Long getCreatedByUserId() {
+        return restaurant.getCreatedByUserId();
+    }
+
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrls;

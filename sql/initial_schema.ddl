@@ -6,29 +6,6 @@ create table cuisine (
 );
 
 
--- RESTAURANT Table
-
-create table restaurant (
-    id BIGSERIAL primary key,
-    name varchar(255) not null,
-    address varchar(255),
-    offers_english_menu boolean,
-    walk_ins_ok boolean,
-    accepts_credit_cards boolean,
-    notes text,
-    cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0
-);
-
-
--- PHOTO_URL Table
-
-create table photo_url (
-  id BIGSERIAL primary key,
-  url varchar(255) not null,
-  restaurant_id BIGINT
-);
-
-
 -- USERS Table
 
 CREATE TABLE users (
@@ -55,6 +32,30 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 ALTER TABLE ONLY users ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+-- RESTAURANT Table
+
+create table restaurant (
+    id BIGSERIAL primary key,
+    name varchar(255) not null,
+    address varchar(255),
+    offers_english_menu boolean,
+    walk_ins_ok boolean,
+    accepts_credit_cards boolean,
+    notes text,
+    cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0,
+    created_by_user_id BIGSERIAL REFERENCES users(id) NOT NULL
+);
+
+
+-- PHOTO_URL Table
+
+create table photo_url (
+  id BIGSERIAL primary key,
+  url varchar(255) not null,
+  restaurant_id BIGINT
+);
 
 
 -- SESSION Table

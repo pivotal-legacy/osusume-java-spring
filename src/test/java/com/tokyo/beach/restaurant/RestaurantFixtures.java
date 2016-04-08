@@ -11,7 +11,8 @@ public class RestaurantFixtures {
                 false,
                 true,
                 false,
-                ""
+                "",
+                1
         );
     }
 
@@ -23,7 +24,8 @@ public class RestaurantFixtures {
                 false,
                 true,
                 false,
-                ""
+                "",
+                1
         );
     }
 }

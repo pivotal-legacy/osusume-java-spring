@@ -5,6 +5,7 @@ import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.application.cuisine.NewCuisine;
 import com.tokyo.beach.application.restaurant.Restaurant;
+import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestUtils.buildDataSource;
+import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -35,6 +37,7 @@ public class DatabaseCuisineRepositoryTest {
     @After
     public void tearDown() {
         jdbcTemplate.update("truncate table cuisine cascade");
+        jdbcTemplate.update("truncate table users cascade");
     }
 
     @Test
@@ -107,14 +110,19 @@ public class DatabaseCuisineRepositoryTest {
 
     @Test
     public void test_findForRestaurant_returnCuisine() {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         Long cuisineId = jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine (name) VALUES " +
                         "('Cuisine Test1') RETURNING id",
                 (rs, rowNum) -> rs.getLong("id")
         );
         Restaurant restaurant = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, cuisine_id) VALUES " +
-                        "('TEST RESTAURANT', ?) RETURNING *",
+                "INSERT INTO restaurant (name, cuisine_id, created_by_user_id) VALUES " +
+                        "('TEST RESTAURANT', ?, ?) RETURNING *",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -123,10 +131,12 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes")
+                            rs.getString("notes"),
+                            rs.getLong("created_by_user_id")
                     );
                 },
-                cuisineId
+                cuisineId,
+                userId
         );
 
         Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);
@@ -137,9 +147,14 @@ public class DatabaseCuisineRepositoryTest {
 
     @Test
     public void test_findForRestaurant_returnNotSpecified_whenCuisineTypeNotSpecified() {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
         Restaurant restaurant = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name) VALUES " +
-                        "('TEST RESTAURANT') RETURNING *",
+                "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
+                        "('TEST RESTAURANT', ?) RETURNING *",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -148,9 +163,11 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes")
+                            rs.getString("notes"),
+                            rs.getLong("created_by_user_id")
                     );
-                }
+                },
+                userId
         );
 
         Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);

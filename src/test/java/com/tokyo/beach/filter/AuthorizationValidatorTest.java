@@ -56,7 +56,6 @@ public class AuthorizationValidatorTest {
         verify(servletRequest, times(0)).setAttribute(anyString(), anyObject());
     }
 
-    // Does not have authorization header
     @Test
     public void test_returnsFalse_whenDoesNotHaveAuthorizationHeader() throws Exception {
         when(servletRequest.getServletPath()).thenReturn(anyString());
@@ -75,22 +74,24 @@ public class AuthorizationValidatorTest {
         when(servletRequest.getServletPath()).thenReturn(anyString());
         when(servletRequest.getHeader("Authorization")).thenReturn("valid-token");
         when(sessionRepository.validateToken(anyObject()))
-                .thenReturn(Optional.of(new Integer(12)));
+                .thenReturn(Optional.of(new Long(12)));
 
         ArgumentCaptor<String> attributeNameArgument = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Object> attributeValueArgument = ArgumentCaptor.forClass(Object.class);
+        ArgumentCaptor<Number> attributeValueArgument = ArgumentCaptor.forClass(Number.class);
 
 
         boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
 
 
         assertTrue(requestWasAuthorized);
-        verify(servletRequest).setAttribute(attributeNameArgument.capture(), attributeValueArgument.capture());
+        verify(servletRequest).setAttribute(
+                attributeNameArgument.capture(),
+                attributeValueArgument.capture()
+        );
         assertEquals("userId", attributeNameArgument.getValue());
-        assertEquals(12, attributeValueArgument.getValue());
+        assertEquals(12, attributeValueArgument.getValue().longValue());
     }
 
-    // Contains invalid token
     @Test
     public void test_returnsFalse_withInvalidToken() throws Exception {
         when(servletRequest.getServletPath()).thenReturn(anyString());

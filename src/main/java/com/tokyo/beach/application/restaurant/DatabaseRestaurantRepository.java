@@ -27,7 +27,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes")
+                            rs.getString("notes"),
+                            rs.getLong("created_by_user_id")
                     );
                 });
     }
@@ -44,7 +45,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                                     rs.getBoolean("offers_english_menu"),
                                     rs.getBoolean("walk_ins_ok"),
                                     rs.getBoolean("accepts_credit_cards"),
-                                    rs.getString("notes")
+                                    rs.getString("notes"),
+                                    rs.getLong("created_by_user_id")
                             );
                         },
                         id
@@ -58,11 +60,11 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
-    public Restaurant createRestaurant(NewRestaurant newRestaurant) {
+    public Restaurant createRestaurant(NewRestaurant newRestaurant, Long createdByUserId) {
         return jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes",
+                "INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id, created_by_user_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -71,7 +73,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),
                             rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes")
+                            rs.getString("notes"),
+                            rs.getLong("created_by_user_id")
                     );
                 },
                 newRestaurant.getName(),
@@ -80,7 +83,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 newRestaurant.getWalkInsOk(),
                 newRestaurant.getAcceptsCreditCards(),
                 newRestaurant.getNotes(),
-                newRestaurant.getCuisineId()
+                newRestaurant.getCuisineId(),
+                createdByUserId
         );
     }
 }

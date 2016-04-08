@@ -7,7 +7,10 @@ import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,8 +65,12 @@ public class RestaurantsController {
     @RequestMapping(value = "", method = POST)
     @ResponseStatus(CREATED)
     public SerializedRestaurant create(@RequestBody NewRestaurantWrapper restaurantWrapper) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
+
         Restaurant restaurant = restaurantRepository.createRestaurant(
-                restaurantWrapper.getRestaurant()
+                restaurantWrapper.getRestaurant(), userId.longValue()
         );
 
         List<PhotoUrl> photosForRestaurant = photoRepository.createPhotosForRestaurant(

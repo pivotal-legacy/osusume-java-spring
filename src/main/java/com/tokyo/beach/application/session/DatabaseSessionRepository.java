@@ -38,11 +38,11 @@ public class DatabaseSessionRepository implements SessionRepository {
     }
 
     @Override
-    public Optional<Number> validateToken(String token) {
-        List<Integer> userIds = jdbcTemplate.query(
+    public Optional<Long> validateToken(String token) {
+        List<Long> userIds = jdbcTemplate.query(
                 "SELECT user_id FROM session where token = ?",
                (rs, rowNum) -> {
-                   return  rs.getInt("user_id");
+                   return  rs.getLong("user_id");
                },
                token);
 

@@ -4,13 +4,15 @@ import com.tokyo.beach.application.RestControllerExceptionHandler;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
-import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.photos.PhotoRepository;
+import com.tokyo.beach.application.photos.PhotoUrl;
+import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.restaurant.RestaurantRepository;
 import com.tokyo.beach.application.restaurant.RestaurantsController;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +25,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,7 +68,8 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "とても美味しい"
+                        "とても美味しい",
+                        1
                 )
         );
         when(restaurantRepository.getAll()).thenReturn(restaurants);
@@ -103,7 +107,13 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_persistsARestaurant() throws Exception {
-        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
+        ArgumentCaptor<NewRestaurant> attributeNewRestaurant = ArgumentCaptor.forClass(NewRestaurant.class);
+        ArgumentCaptor<Long> attributeCreatedByUserId = ArgumentCaptor.forClass(Long.class);
+
+        when(restaurantRepository.createRestaurant(
+                attributeNewRestaurant.capture(),
+                attributeCreatedByUserId.capture()
+        )).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -111,7 +121,8 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "soooo goood"
+                        "soooo goood",
+                        99
                 )
         );
 
@@ -120,12 +131,11 @@ public class RestaurantsControllerTest {
         when(cuisineRepository.getCuisine("2")).thenReturn(
                 Optional.of(
                         new Cuisine(
-                            2,
-                            "Ramen"
+                                2,
+                                "Ramen"
                         )
                 )
         );
-
 
         String payload = "{\"restaurant\": " +
                 "{\"name\":\"Afuri\", " +
@@ -138,8 +148,10 @@ public class RestaurantsControllerTest {
                 "\"cuisine_id\": \"2\"}" +
                 "}";
 
+
         mockMvc.perform(
                 post("/restaurants")
+                        .requestAttr("userId", 99)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )
@@ -151,12 +163,15 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
-                .andExpect(jsonPath("$.cuisine.name", is("Ramen")));
+                .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
+                .andExpect(jsonPath("$.created_by_user_id", is(99)));
+
+        assertEquals(99, attributeCreatedByUserId.getValue().longValue());
     }
 
     @Test
     public void test_create_persistsARestaurantWithoutACuisineId() throws Exception {
-        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
+        when(restaurantRepository.createRestaurant(anyObject(), anyLong())).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -164,7 +179,8 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "soooo goood"
+                        "soooo goood",
+                        1
                 )
         );
 
@@ -187,6 +203,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 post("/restaurants")
+                        .requestAttr("userId", 1)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )
@@ -205,7 +222,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_withInvalidCuisineId() throws Exception {
-        when(restaurantRepository.createRestaurant(anyObject())).thenReturn(
+        when(restaurantRepository.createRestaurant(anyObject(), anyLong())).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -213,7 +230,8 @@ public class RestaurantsControllerTest {
                         false,
                         true,
                         false,
-                        "soooo goood"
+                        "soooo goood",
+                        1
                 )
         );
 
@@ -237,6 +255,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 post("/restaurants")
+                        .requestAttr("userId", 1)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(payload)
         )
@@ -260,7 +279,8 @@ public class RestaurantsControllerTest {
                 false,
                 true,
                 false,
-                ""
+                "",
+                1
         );
         Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
         when(restaurantRepository.get(1)).thenReturn(
@@ -290,7 +310,8 @@ public class RestaurantsControllerTest {
                 false,
                 true,
                 false,
-                ""
+                "",
+                1
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)

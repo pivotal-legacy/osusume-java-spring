@@ -17,7 +17,7 @@ public class TestUtils {
         return dataSource;
     }
 
-    public static Number insertUserIntoDatabase(
+    public static Long insertUserIntoDatabase(
             JdbcTemplate jdbcTemplate,
             UserRegistration userRegistration
     ) {
@@ -31,6 +31,6 @@ public class TestUtils {
         params.put("password", userRegistration.getPassword());
         params.put("name", userRegistration.getName());
 
-        return insert.executeAndReturnKey(params);
+        return insert.executeAndReturnKey(params).longValue();
     }
 }

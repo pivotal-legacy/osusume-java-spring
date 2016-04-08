@@ -37,10 +37,10 @@ public class AuthorizationValidator {
             token = originalToken.replace("Bearer", "").trim();
         }
 
-        Optional<Number> maybeUserId = this.sessionRepository.validateToken(token);
+        Optional<Long> maybeUserId = this.sessionRepository.validateToken(token);
 
         if (maybeUserId.isPresent()) {
-            Number userId = maybeUserId.get();
+            Long userId = maybeUserId.get();
             request.setAttribute("userId", userId);
             return true;
         } else {

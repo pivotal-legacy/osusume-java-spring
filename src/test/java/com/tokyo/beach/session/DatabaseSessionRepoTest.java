@@ -4,7 +4,6 @@ import com.tokyo.beach.application.session.DatabaseSessionRepository;
 import com.tokyo.beach.application.session.TokenGenerator;
 import com.tokyo.beach.application.session.UserSession;
 import com.tokyo.beach.application.user.DatabaseUser;
-import com.tokyo.beach.application.user.LogonCredentials;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Before;
@@ -20,9 +19,7 @@ import java.util.Optional;
 import static com.tokyo.beach.TestUtils.buildDataSource;
 import static com.tokyo.beach.TestUtils.insertUserIntoDatabase;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +29,7 @@ public class DatabaseSessionRepoTest {
 
     private TokenGenerator mockTokenGenerator;
     private DatabaseUser user;
-    private Number userId;
+    private Long userId;
 
     @Before
     public void setUp() throws Exception {
@@ -47,7 +44,7 @@ public class DatabaseSessionRepoTest {
 
         userId = insertUserIntoDatabase(jdbcTemplate, userRegistration);
         user = new DatabaseUser(
-                userId.longValue(), userRegistration.getEmail(), userRegistration.getName()
+                userId, userRegistration.getEmail(), userRegistration.getName()
         );
     }
 
@@ -87,10 +84,10 @@ public class DatabaseSessionRepoTest {
 
     @Test
     public void test_validateToken_returnsUserId() throws Exception {
-        insertSessionIntoDatabase("token-value", userId.intValue());
+        insertSessionIntoDatabase("token-value", userId);
 
 
-        Optional<Number> maybeUserId = databaseSessionRepository.validateToken("token-value");
+        Optional<Long> maybeUserId = databaseSessionRepository.validateToken("token-value");
 
 
         assertEquals(userId, maybeUserId.get());
@@ -98,7 +95,7 @@ public class DatabaseSessionRepoTest {
 
     @Test
     public void test_validateToken_returnsEmptyForInvalidCredentials() throws Exception {
-        Optional<Number> maybeUserId = databaseSessionRepository.validateToken("invalid-token");
+        Optional<Long> maybeUserId = databaseSessionRepository.validateToken("invalid-token");
 
 
         assertFalse(maybeUserId.isPresent());
@@ -121,7 +118,7 @@ public class DatabaseSessionRepoTest {
         assertThat(count, is(0));
     }
 
-    private void insertSessionIntoDatabase(String token, int userId) {
+    private void insertSessionIntoDatabase(String token, long userId) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("session")
                 .usingColumns("token", "user_id");
