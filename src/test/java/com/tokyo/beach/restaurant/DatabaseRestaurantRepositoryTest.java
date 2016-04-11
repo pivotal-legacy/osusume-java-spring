@@ -69,8 +69,8 @@ public class DatabaseRestaurantRepositoryTest {
                 true,
                 false,
                 "",
-                userId.longValue()
-        );
+                "created-date",
+                userId.longValue());
 
         assertThat(restaurants, is(singletonList(expectedRestaurant)));
     }

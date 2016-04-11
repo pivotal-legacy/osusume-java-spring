@@ -76,6 +76,11 @@ public class SerializedRestaurant {
         return username;
     }
 
+    @JsonProperty("created_at")
+    public String getCreatedDate() {
+        return restaurant.getCreatedDate();
+    }
+
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrls;

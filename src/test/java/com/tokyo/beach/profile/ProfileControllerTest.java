@@ -8,24 +8,20 @@ import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.profile.ProfileController;
 import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.restaurant.RestaurantRepository;
-import com.tokyo.beach.application.restaurant.RestaurantsController;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
@@ -72,6 +68,7 @@ public class ProfileControllerTest {
                         true,
                         false,
                         "とても美味しい",
+                        "created-date",
                         1
                 )
         );

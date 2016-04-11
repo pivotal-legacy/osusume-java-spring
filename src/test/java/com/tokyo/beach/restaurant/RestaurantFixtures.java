@@ -12,6 +12,7 @@ public class RestaurantFixtures {
                 true,
                 false,
                 "",
+                "created-date",
                 1
         );
     }
@@ -25,6 +26,7 @@ public class RestaurantFixtures {
                 true,
                 false,
                 "",
+                "created-date",
                 1
         );
     }

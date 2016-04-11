@@ -2,7 +2,9 @@
 
 create table cuisine (
   id BIGSERIAL primary key,
-  name varchar(255) not null
+  name varchar(255) not null,
+  created_at timestamp without time zone default current_timestamp NOT NULL,
+  updated_at timestamp without time zone default current_timestamp NOT NULL
 );
 
 
@@ -45,7 +47,9 @@ create table restaurant (
     accepts_credit_cards boolean,
     notes text,
     cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0,
-    created_by_user_id BIGSERIAL REFERENCES users(id) NOT NULL
+    created_by_user_id BIGSERIAL REFERENCES users(id) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
 -- COMMENT Table
@@ -65,7 +69,9 @@ create table comment (
 create table photo_url (
   id BIGSERIAL primary key,
   url varchar(255) not null,
-  restaurant_id BIGINT
+  restaurant_id BIGINT,
+  created_at timestamp without time zone default current_timestamp NOT NULL,
+  updated_at timestamp without time zone default current_timestamp NOT NULL
 );
 
 

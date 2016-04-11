@@ -9,17 +9,11 @@ public class Restaurant {
     private final long id;
     private final String name;
     private String address;
-
-    @JsonProperty("offers_english_menu")
     private Boolean offersEnglishMenu;
-
-    @JsonProperty("walk_ins_ok")
     private Boolean walkInsOk;
-
-    @JsonProperty("accepts_credit_cards")
     private Boolean acceptsCreditCards;
     private String notes;
-
+    private String createdDate;
     private long createdByUserId;
 
     public Restaurant(
@@ -30,6 +24,7 @@ public class Restaurant {
             Boolean walkInsOk,
             Boolean acceptsCreditCards,
             String notes,
+            String createdDate,
             long createdByUserId) {
         this.id = id;
         this.name = name;
@@ -38,6 +33,7 @@ public class Restaurant {
         this.walkInsOk = walkInsOk;
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
+        this.createdDate = createdDate;
         this.createdByUserId = createdByUserId;
     }
 
@@ -51,20 +47,20 @@ public class Restaurant {
                 restaurant.getWalkInsOk(),
                 restaurant.getAcceptsCreditCards(),
                 restaurant.getNotes(),
-                restaurant.getCreatedByUserId()
-        );
+                restaurant.getCreatedDate(),
+                restaurant.getCreatedByUserId());
     }
 
     public long getId() {
         return id;
     }
 
-    @SuppressWarnings("WeakerAccess")
+    @JsonProperty("offers_english_menu")
     public Boolean getOffersEnglishMenu() {
         return offersEnglishMenu;
     }
 
-    @SuppressWarnings("WeakerAccess")
+    @JsonProperty("walk_ins_ok")
     public Boolean getWalkInsOk() {
         return walkInsOk;
     }
@@ -78,7 +74,7 @@ public class Restaurant {
         return address;
     }
 
-    @SuppressWarnings("WeakerAccess")
+    @JsonProperty("accepts_credit_cards")
     public Boolean getAcceptsCreditCards() {
         return acceptsCreditCards;
     }
@@ -90,6 +86,11 @@ public class Restaurant {
 
     public long getCreatedByUserId() {
         return createdByUserId;
+    }
+
+    @JsonProperty("created_at")
+    public String getCreatedDate() {
+        return createdDate;
     }
 
     @Override

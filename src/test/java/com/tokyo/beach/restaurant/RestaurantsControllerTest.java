@@ -75,6 +75,7 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "とても美味しい",
+                        "created-date",
                         1
                 )
         );
@@ -133,6 +134,7 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "soooo goood",
+                        "created-date",
                         99
                 )
         );
@@ -196,6 +198,7 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "soooo goood",
+                        "created-date",
                         1
                 )
         );
@@ -251,6 +254,7 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "soooo goood",
+                        "created-date",
                         1
                 )
         );
@@ -304,6 +308,7 @@ public class RestaurantsControllerTest {
                 true,
                 false,
                 "",
+                "created-date",
                 1
         );
         Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
@@ -339,6 +344,7 @@ public class RestaurantsControllerTest {
                 true,
                 false,
                 "",
+                "created-date",
                 1
         );
         when(restaurantRepository.get(1)).thenReturn(
