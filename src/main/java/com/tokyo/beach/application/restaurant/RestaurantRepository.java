@@ -9,4 +9,6 @@ public interface RestaurantRepository {
     Optional<Restaurant> get(long id);
 
     Restaurant createRestaurant(NewRestaurant restaurant, Long createdByUserId);
+
+    List<Restaurant> getRestaurantsPostedByUser(long userId);
 }

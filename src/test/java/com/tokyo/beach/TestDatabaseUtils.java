@@ -1,5 +1,7 @@
 package com.tokyo.beach;
 
+import com.tokyo.beach.application.cuisine.NewCuisine;
+import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;

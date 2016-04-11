@@ -87,4 +87,9 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 createdByUserId
         );
     }
+
+    @Override
+    public List<Restaurant> getRestaurantsPostedByUser(long userId) {
+        return null;
+    }
 }

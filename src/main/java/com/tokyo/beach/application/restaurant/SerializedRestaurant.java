@@ -8,13 +8,13 @@ import com.tokyo.beach.application.user.DatabaseUser;
 import java.util.List;
 import java.util.Optional;
 
-class SerializedRestaurant {
+public class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
     private Cuisine cuisine;
     private Optional<DatabaseUser> createdByUser;
 
-    SerializedRestaurant(
+    public SerializedRestaurant(
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
@@ -32,6 +32,11 @@ class SerializedRestaurant {
 
     public String getName() {
         return restaurant.getName();
+    }
+
+    @JsonProperty("user")
+    public DatabaseUser getCreatedByUser() {
+        return createdByUser.orElse(null);
     }
 
     @SuppressWarnings("unused")
@@ -59,6 +64,8 @@ class SerializedRestaurant {
         return restaurant.getNotes();
     }
 
+
+
     @JsonProperty("created_by_user_name")
     public String getCreatedByUserName() {
         String username = "";
@@ -76,5 +83,15 @@ class SerializedRestaurant {
 
     public Cuisine getCuisine() {
         return cuisine;
+    }
+
+    @Override
+    public String toString() {
+        return "SerializedRestaurant{" +
+                "restaurant=" + restaurant +
+                ", photoUrls=" + photoUrls +
+                ", cuisine=" + cuisine +
+                ", createdByUser=" + createdByUser +
+                '}';
     }
 }
