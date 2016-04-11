@@ -35,6 +35,39 @@ public class TestDatabaseUtils {
         return insert.executeAndReturnKey(params).longValue();
     }
 
+    public static Long insertCuisineIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            NewCuisine  newCuisine
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("cuisine")
+                .usingColumns("name")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", newCuisine.getName());
+
+        return insert.executeAndReturnKey(params).longValue();
+    }
+
+    public static Long insertRestaurantIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            NewRestaurant newRestaurant,
+            Long userId
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("restaurant")
+                .usingColumns("name", "cuisine_id", "created_by_user_id")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", newRestaurant.getName());
+        params.put("cuisine_id", newRestaurant.getCuisineId());
+        params.put("created_by_user_id", userId);
+
+        return insert.executeAndReturnKey(params).longValue();
+    }
+
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {
         jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users, comment");
     }

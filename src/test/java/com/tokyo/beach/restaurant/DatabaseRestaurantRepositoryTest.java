@@ -1,5 +1,6 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.application.cuisine.NewCuisine;
 import com.tokyo.beach.application.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.restaurant.Restaurant;
@@ -13,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
-import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.TestDatabaseUtils.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
@@ -189,4 +188,34 @@ public class DatabaseRestaurantRepositoryTest {
         assertFalse(maybeRestaurant.isPresent());
     }
 
+    @Test
+    public void test_getRestaurantsPostedByUser() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("user_email", "password", "username")
+        );
+        Long cuisineId = insertCuisineIntoDatabase(
+                jdbcTemplate,
+                new NewCuisine("cuisine_name")
+        );
+        Long restaurantId = insertRestaurantIntoDatabase(
+                jdbcTemplate,
+                new NewRestaurant(
+                        "restaurant_name",
+                        "address",
+                        true,
+                        true,
+                        true,
+                        "",
+                        cuisineId,
+                        emptyList()),
+                userId.longValue()
+        );
+
+        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(userId.longValue());
+
+        assertEquals(restaurantList.size(), 1);
+        assertThat(restaurantList.get(0).getName(), is("restaurant_name"));
+        assertThat(restaurantList.get(0).getCreatedByUserId(), is(userId.longValue()));
+    }
 }
