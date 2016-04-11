@@ -34,6 +34,6 @@ public class TestDatabaseUtils {
     }
 
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users");
+        jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users, comment");
     }
 }

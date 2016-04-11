@@ -3,7 +3,6 @@ package com.tokyo.beach.application.restaurant;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 
 import java.util.List;
-import java.util.Optional;
 
 @SuppressWarnings("WeakerAccess")
 public class NewRestaurantWrapper {
@@ -22,15 +21,15 @@ public class NewRestaurantWrapper {
         return restaurant;
     }
 
-    public String toString() {
-        return restaurant.toString();
-    }
-
     public List<NewPhotoUrl> getPhotoUrls() {
         return restaurant.getPhotoUrls();
     }
 
     public Long getCuisineId() {
         return restaurant.getCuisineId();
+    }
+
+    public String toString() {
+        return restaurant.toString();
     }
 }

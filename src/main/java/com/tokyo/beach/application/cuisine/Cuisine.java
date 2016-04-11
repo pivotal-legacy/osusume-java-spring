@@ -26,7 +26,6 @@ public class Cuisine {
 
         if (id != cuisine.id) return false;
         return name != null ? name.equals(cuisine.name) : cuisine.name == null;
-
     }
 
     @Override

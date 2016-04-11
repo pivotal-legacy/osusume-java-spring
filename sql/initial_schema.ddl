@@ -48,6 +48,17 @@ create table restaurant (
     created_by_user_id BIGSERIAL REFERENCES users(id) NOT NULL
 );
 
+-- COMMENT Table
+
+create table comment (
+    id BIGSERIAL PRIMARY KEY,
+    content CHARACTER VARYING NOT NULL,
+    restaurant_id BIGINT REFERENCES restaurant(id) NOT NULL,
+    created_by_user_id BIGINT REFERENCES users(id) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
+);
+
 
 -- PHOTO_URL Table
 
