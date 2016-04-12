@@ -72,3 +72,12 @@ CREATE TABLE session (
 );
 
 CREATE UNIQUE INDEX index_session_on_token ON session USING BTREE (token);
+
+
+-- LIKES table
+
+CREATE TABLE likes (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
+);
