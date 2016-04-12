@@ -13,9 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
-import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.TestDatabaseUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -28,10 +26,7 @@ public class DatabaseCommentRepositoryTest {
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         commentRepository = new DatabaseCommentRepository(jdbcTemplate);
-
-        jdbcTemplate.update("INSERT INTO cuisine (id, name) " +
-                "SELECT 0, 'Not Specified' " +
-                "WHERE NOT EXISTS (SELECT id FROM cuisine WHERE id=0)");
+        createDefaultCuisine(jdbcTemplate);
     }
 
     @After
@@ -92,9 +87,9 @@ public class DatabaseCommentRepositoryTest {
                 "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
                         "('TEST RESTAURANT', ?) RETURNING *",
                 (rs, rowNum) -> {
-                    return new Restaurant (
-                        rs.getLong("id"),
-                        rs.getString("name"),
+                    return new Restaurant(
+                            rs.getLong("id"),
+                            rs.getString("name"),
                             rs.getString("address"),
                             rs.getBoolean("offers_english_menu"),
                             rs.getBoolean("walk_ins_ok"),

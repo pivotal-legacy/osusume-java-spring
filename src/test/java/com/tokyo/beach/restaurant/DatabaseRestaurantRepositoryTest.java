@@ -18,9 +18,7 @@ import static com.tokyo.beach.TestDatabaseUtils.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DatabaseRestaurantRepositoryTest {
     private DatabaseRestaurantRepository restaurantRepository;
@@ -30,9 +28,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         restaurantRepository = new DatabaseRestaurantRepository(jdbcTemplate);
-        jdbcTemplate.update("insert into cuisine (id, name) " +
-                "select 0, 'Not Specified' " +
-                "WHERE NOT EXISTS (SELECT id From cuisine WHERE id=0)");
+        createDefaultCuisine(jdbcTemplate);
     }
 
     @After

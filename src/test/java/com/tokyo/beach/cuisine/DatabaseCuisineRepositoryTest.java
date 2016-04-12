@@ -14,9 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
-import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.TestDatabaseUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -29,9 +27,7 @@ public class DatabaseCuisineRepositoryTest {
     @Before
     public void setUp() throws Exception {
         cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
-        jdbcTemplate.update("insert into cuisine (id, name) " +
-                            "select 0, 'Not Specified' " +
-                            "WHERE NOT EXISTS (SELECT id From cuisine WHERE id=0)");
+        createDefaultCuisine(jdbcTemplate);
     }
 
     @After
@@ -88,7 +84,6 @@ public class DatabaseCuisineRepositoryTest {
 
         assertFalse(maybeCuisine.isPresent());
     }
-
 
 
     @Test
