@@ -1,6 +1,7 @@
 package com.tokyo.beach.application.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tokyo.beach.application.comment.SerializedComment;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.user.DatabaseUser;
@@ -13,17 +14,20 @@ public class SerializedRestaurant {
     private List<PhotoUrl> photoUrls;
     private Cuisine cuisine;
     private Optional<DatabaseUser> createdByUser;
+    private List<SerializedComment> comments;
 
     public SerializedRestaurant(
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
-            Optional<DatabaseUser> createdByUser
+            Optional<DatabaseUser> createdByUser,
+            List<SerializedComment> comments
     ) {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
         this.createdByUser = createdByUser;
+        this.comments = comments;
     }
 
     public long getId() {
@@ -84,6 +88,11 @@ public class SerializedRestaurant {
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrls;
+    }
+
+    @JsonProperty("comments")
+    public List<SerializedComment> getComments() {
+        return comments;
     }
 
     public Cuisine getCuisine() {

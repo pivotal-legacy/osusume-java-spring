@@ -64,7 +64,7 @@ public class CommentControllerTest {
                 new Comment(
                         1,
                         "New Comment Text",
-                        "2016-02-29T06:07:55.000Z",
+                        "2016-02-29 06:07:55.000000",
                         88,
                         99
                 )

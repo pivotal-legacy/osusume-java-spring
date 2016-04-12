@@ -1,6 +1,8 @@
 package com.tokyo.beach.application.restaurant;
 
 import com.tokyo.beach.application.RestControllerException;
+import com.tokyo.beach.application.comment.CommentRepository;
+import com.tokyo.beach.application.comment.SerializedComment;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.PhotoRepository;
@@ -20,7 +22,6 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -34,17 +35,20 @@ public class RestaurantsController {
     private final PhotoRepository photoRepository;
     private final CuisineRepository cuisineRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
     public RestaurantsController(
             RestaurantRepository restaurantRepo,
             PhotoRepository photoRepository,
             CuisineRepository cuisineRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            CommentRepository commentRepository) {
         this.restaurantRepository = restaurantRepo;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -77,7 +81,8 @@ public class RestaurantsController {
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         null,
-                        Optional.of(createdByUsers.get(restaurant.getCreatedByUserId()))
+                        Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
+                        emptyList()
                 ))
                 .collect(toList());
     }
@@ -103,7 +108,8 @@ public class RestaurantsController {
                 restaurant,
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
-                createdByUser
+                createdByUser,
+                emptyList()
         );
     }
 
@@ -120,11 +126,14 @@ public class RestaurantsController {
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
         Cuisine cuisineForRestaurant = cuisineRepository.findForRestaurant(retrievedRestaurant);
 
+        List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant);
+
         return new SerializedRestaurant(
                 retrievedRestaurant,
                 photosForRestaurant,
                 cuisineForRestaurant,
-                createdByUser
+                createdByUser,
+                comments
         );
     }
 }

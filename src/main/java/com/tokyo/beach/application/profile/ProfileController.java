@@ -83,7 +83,8 @@ public class ProfileController {
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         cuisineRepository.findForRestaurant(restaurant),
-                        maybeUser
+                        maybeUser,
+                        emptyList()
                 ))
                 .collect(toList());
         System.out.println("resultList = " + resultList);

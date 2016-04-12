@@ -3,23 +3,22 @@ package com.tokyo.beach.comment;
 import com.tokyo.beach.application.comment.Comment;
 import com.tokyo.beach.application.comment.DatabaseCommentRepository;
 import com.tokyo.beach.application.comment.NewComment;
+import com.tokyo.beach.application.comment.SerializedComment;
+import com.tokyo.beach.application.restaurant.Restaurant;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertEquals;
 
 public class DatabaseCommentRepositoryTest {
     JdbcTemplate jdbcTemplate;
@@ -42,8 +41,6 @@ public class DatabaseCommentRepositoryTest {
 
     @Test
     public void test_create_createsAComment() throws Exception {
-        Date startDate = new Date();
-
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
@@ -82,5 +79,45 @@ public class DatabaseCommentRepositoryTest {
         assertThat(actualComment.getContent(), is("New Comment Content"));
         assertThat(actualComment.getCreatedByUserId(), is(userId.longValue()));
         assertThat(actualComment.getRestaurantId(), is(restaurantId));
+    }
+
+    @Test
+    public void test_findForRestaurant_returnsCommentsOnRestaurant() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("joe@pivotal.io", "password", "Joe")
+        );
+
+        Restaurant restaurant = jdbcTemplate.queryForObject(
+                "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
+                        "('TEST RESTAURANT', ?) RETURNING *",
+                (rs, rowNum) -> {
+                    return new Restaurant (
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes"),
+                            rs.getString("created_at"),
+                            rs.getLong("created_by_user_id")
+                    );
+                },
+                userId
+        );
+
+        Comment createdComment = commentRepository.create(
+                new NewComment("New Comment Content"),
+                userId.longValue(),
+                String.valueOf(restaurant.getId())
+        );
+
+
+        List<SerializedComment> actualComments = commentRepository.findForRestaurant(restaurant);
+        assertEquals(actualComments.size(), 1);
+        assertThat(actualComments.get(0).getContent(), is("New Comment Content"));
+        assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));
+        assertThat(actualComments.get(0).getRestaurantId(), is(restaurant.getId()));
     }
 }

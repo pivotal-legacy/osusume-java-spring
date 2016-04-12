@@ -1,6 +1,9 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.application.RestControllerExceptionHandler;
+import com.tokyo.beach.application.comment.Comment;
+import com.tokyo.beach.application.comment.CommentRepository;
+import com.tokyo.beach.application.comment.SerializedComment;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
@@ -44,6 +47,7 @@ public class RestaurantsControllerTest {
     private PhotoRepository photoRepository;
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
+    private CommentRepository commentRepository;
 
     @Before
     public void setUp() {
@@ -51,12 +55,14 @@ public class RestaurantsControllerTest {
         photoRepository = mock(PhotoRepository.class);
         cuisineRepository = mock(CuisineRepository.class);
         userRepository = mock(UserRepository.class);
+        commentRepository = mock(CommentRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
                 photoRepository,
                 cuisineRepository,
-                userRepository
+                userRepository,
+                commentRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -98,15 +104,14 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
     }
 
-
     @Test
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 restaurantRepository,
                 new PhotoRepository(new JdbcTemplate(buildDataSource())),
                 cuisineRepository,
-                userRepository
-        );
+                userRepository,
+                commentRepository);
 
 
         mockMvc = standaloneSetup(controller).build();
@@ -321,8 +326,23 @@ public class RestaurantsControllerTest {
         when(cuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
             expectedCuisine
         );
+        DatabaseUser hanakoDatabaseUser = new DatabaseUser(1L, "hanako@email", "hanako");
         when(userRepository.get(anyLong())).thenReturn(
-                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+                Optional.of(hanakoDatabaseUser)
+        );
+        when(commentRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                singletonList(
+                        new SerializedComment(
+                                new Comment(
+                                        99L,
+                                        "comment-content",
+                                        "2016-04-01 10:10:10.000000",
+                                        1L,
+                                        1L
+                                ),
+                                hanakoDatabaseUser
+                        )
+                )
         );
 
         mockMvc.perform(get("/restaurants/1"))
@@ -331,7 +351,9 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
                 .andExpect(jsonPath("$.cuisine.name", equalTo("Ramen")))
                 .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())))
-                .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")));
+                .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")))
+                .andExpect(jsonPath("$.comments[0].id", equalTo(99)))
+                .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")));
     }
 
     @Test
