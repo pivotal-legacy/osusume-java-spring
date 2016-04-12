@@ -35,6 +35,12 @@ public class TestDatabaseUtils {
         return insert.executeAndReturnKey(params).longValue();
     }
 
+    public static void createDefaultCuisine(JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("INSERT INTO cuisine (id, name) " +
+                "SELECT 0, 'Not Specified' " +
+                "WHERE NOT EXISTS (SELECT id FROM cuisine WHERE id=0)");
+    }
+
     public static Long insertCuisineIntoDatabase(
             JdbcTemplate jdbcTemplate,
             NewCuisine  newCuisine
