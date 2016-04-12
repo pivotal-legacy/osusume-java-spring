@@ -26,9 +26,7 @@ public class UserControllerTest {
     @Before
     public void setUp() throws Exception {
         userRepository = mock(UserRepository.class);
-        mvc = MockMvcBuilders.standaloneSetup(new UserController(
-                userRepository)
-        )
+        mvc = MockMvcBuilders.standaloneSetup(new UserController(userRepository))
                 .setControllerAdvice(createControllerAdvice(new RestControllerExceptionHandler()))
                 .build();
     }

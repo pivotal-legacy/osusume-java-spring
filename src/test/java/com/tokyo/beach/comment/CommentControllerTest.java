@@ -5,7 +5,6 @@ import com.tokyo.beach.application.comment.CommentController;
 import com.tokyo.beach.application.comment.CommentRepository;
 import com.tokyo.beach.application.comment.NewComment;
 import com.tokyo.beach.application.user.DatabaseUser;
-import com.tokyo.beach.application.user.User;
 import com.tokyo.beach.application.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +15,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -26,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class CommentControllerTest {
