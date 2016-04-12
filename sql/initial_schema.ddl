@@ -1,62 +1,49 @@
 -- CUISINE Table
 
-create table cuisine (
-  id BIGSERIAL primary key,
-  name varchar(255) not null,
-  created_at timestamp without time zone default current_timestamp NOT NULL,
-  updated_at timestamp without time zone default current_timestamp NOT NULL
+CREATE TABLE cuisine (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
 
 -- USERS Table
 
 CREATE TABLE users (
-  id integer NOT NULL,
-  email character varying,
-  name character varying,
-  password character varying,
-  created_at timestamp without time zone default current_timestamp NOT NULL,
-  updated_at timestamp without time zone default current_timestamp NOT NULL
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  email VARCHAR(100),
+  name VARCHAR(100),
+  password VARCHAR(100),
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
-ALTER TABLE users OWNER TO pivotal;
-
-CREATE SEQUENCE users_id_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
-
-ALTER TABLE users_id_seq OWNER TO pivotal;
-ALTER SEQUENCE users_id_seq OWNED BY users.id;
-ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
-ALTER TABLE ONLY users ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+CREATE UNIQUE INDEX index_users_on_email ON users USING BTREE (email);
 
 
 -- RESTAURANT Table
 
-create table restaurant (
-    id BIGSERIAL primary key,
-    name varchar(255) not null,
-    address varchar(255),
-    offers_english_menu boolean,
-    walk_ins_ok boolean,
-    accepts_credit_cards boolean,
-    notes text,
+CREATE TABLE restaurant (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    address VARCHAR(255),
+    offers_english_menu BOOLEAN,
+    walk_ins_ok BOOLEAN,
+    accepts_credit_cards BOOLEAN,
+    notes VARCHAR(1000),
     cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0,
-    created_by_user_id BIGSERIAL REFERENCES users(id) NOT NULL,
+    created_by_user_id BIGINT REFERENCES users(id) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
+
 -- COMMENT Table
 
-create table comment (
-    id BIGSERIAL PRIMARY KEY,
-    content CHARACTER VARYING NOT NULL,
+CREATE TABLE comment (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    content VARCHAR(500) NOT NULL,
     restaurant_id BIGINT REFERENCES restaurant(id) NOT NULL,
     created_by_user_id BIGINT REFERENCES users(id) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
@@ -66,30 +53,22 @@ create table comment (
 
 -- PHOTO_URL Table
 
-create table photo_url (
-  id BIGSERIAL primary key,
-  url varchar(255) not null,
+CREATE TABLE photo_url (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  url VARCHAR(500) NOT NULL,
   restaurant_id BIGINT,
-  created_at timestamp without time zone default current_timestamp NOT NULL,
-  updated_at timestamp without time zone default current_timestamp NOT NULL
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
 
 -- SESSION Table
 
 CREATE TABLE session (
-  token character varying NOT NULL,
-  user_id integer NOT NULL,
-  created_at timestamp without time zone default current_timestamp NOT NULL,
-  updated_at timestamp without time zone default current_timestamp NOT NULL
+  token VARCHAR(255) PRIMARY KEY NOT NULL,
+  user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );
 
-ALTER TABLE session OWNER TO pivotal;
-
-ALTER TABLE ONLY session ADD CONSTRAINT session_pkey PRIMARY KEY (token);
-
-CREATE UNIQUE INDEX index_users_on_token ON session USING btree (token);
-
-ALTER TABLE session ADD CONSTRAINT session_user_id_fkey
-FOREIGN KEY (user_id) REFERENCES users (id)
-ON DELETE CASCADE;
+CREATE UNIQUE INDEX index_session_on_token ON session USING BTREE (token);
