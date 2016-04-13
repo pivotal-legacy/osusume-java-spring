@@ -22,9 +22,9 @@ public class RequestFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        AuthorizationValidator authorizationValidator = new AuthorizationValidator(sessionRepository, request);
+        AuthorizationValidator authorizationValidator = new AuthorizationValidator(sessionRepository);
 
-        if (authorizationValidator.authorizeRequest()) {
+        if (authorizationValidator.authorizeRequest(request)) {
             chain.doFilter(request, response);
         } else {
             RequestDispatcher rd = request.getRequestDispatcher("/unauthenticated");

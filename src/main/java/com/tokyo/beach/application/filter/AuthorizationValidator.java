@@ -10,17 +10,12 @@ import java.util.Optional;
 
 public class AuthorizationValidator {
     private SessionRepository sessionRepository;
-    private ServletRequest request;
 
-    public AuthorizationValidator(
-            SessionRepository sessionRepository,
-            ServletRequest request)
-    {
+    public AuthorizationValidator(SessionRepository sessionRepository) {
         this.sessionRepository = sessionRepository;
-        this.request = request;
     }
 
-    public boolean authorizeRequest() throws IOException, ServletException {
+    public boolean authorizeRequest(ServletRequest request) throws IOException, ServletException {
         String servletName = ((HttpServletRequest) request).getServletPath();
 
         if (servletName.equals("/unauthenticated") || servletName.equals("/session")) {

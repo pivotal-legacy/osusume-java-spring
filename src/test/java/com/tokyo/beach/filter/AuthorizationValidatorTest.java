@@ -27,8 +27,7 @@ public class AuthorizationValidatorTest {
         this.servletRequest = mock(HttpServletRequest.class);
 
         this.authorizationValidator = new AuthorizationValidator(
-                sessionRepository,
-                servletRequest
+                sessionRepository
         );
     }
 
@@ -37,7 +36,7 @@ public class AuthorizationValidatorTest {
         when(servletRequest.getServletPath()).thenReturn("/unauthenticated");
 
 
-        boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
 
 
         assertTrue(requestWasAuthorized);
@@ -49,7 +48,7 @@ public class AuthorizationValidatorTest {
         when(servletRequest.getServletPath()).thenReturn("/session");
 
 
-        boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
 
 
         assertTrue(requestWasAuthorized);
@@ -62,7 +61,7 @@ public class AuthorizationValidatorTest {
         when(servletRequest.getHeader("Authorization")).thenReturn(null);
 
 
-        boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
 
 
         assertFalse(requestWasAuthorized);
@@ -80,7 +79,7 @@ public class AuthorizationValidatorTest {
         ArgumentCaptor<Number> attributeValueArgument = ArgumentCaptor.forClass(Number.class);
 
 
-        boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
 
 
         assertTrue(requestWasAuthorized);
@@ -100,7 +99,7 @@ public class AuthorizationValidatorTest {
                 .thenReturn(Optional.empty());
 
 
-        boolean requestWasAuthorized = authorizationValidator.authorizeRequest();
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
 
 
         assertFalse(requestWasAuthorized);
@@ -117,7 +116,7 @@ public class AuthorizationValidatorTest {
         ArgumentCaptor<String> validatedTokenArgument = ArgumentCaptor.forClass(String.class);
 
 
-        authorizationValidator.authorizeRequest();
+        authorizationValidator.authorizeRequest(servletRequest);
 
 
         verify(sessionRepository).validateToken(validatedTokenArgument.capture());
