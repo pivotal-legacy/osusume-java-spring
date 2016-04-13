@@ -1,6 +1,7 @@
 package com.tokyo.beach.like;
 
 import com.tokyo.beach.application.like.DatabaseLikeRepository;
+import com.tokyo.beach.application.like.Like;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
 import com.tokyo.beach.application.user.UserRegistration;
 import org.junit.After;
@@ -11,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class DatabaseLikeRepositoryTest {
@@ -53,14 +55,14 @@ public class DatabaseLikeRepositoryTest {
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
-        likeRepository.create(restaurantId, likeByUserId);
+        Like createdLike = likeRepository.create(restaurantId, likeByUserId);
 
 
-        String sql = "SELECT count(*) FROM likes WHERE restaurant_id = ? and user_id = ?";
-        int count = jdbcTemplate.queryForObject(
+        String sql = "SELECT id FROM likes WHERE restaurant_id = ? and user_id = ?";
+        long persistedLikeId = jdbcTemplate.queryForObject(
                 sql, new Object[] { restaurantId, likeByUserId }, Integer.class
         );
-        assertThat(count, is(1));
+        assertEquals(createdLike.getId(), persistedLikeId);
     }
 
 }

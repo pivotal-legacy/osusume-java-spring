@@ -1,5 +1,6 @@
 package com.tokyo.beach.like;
 
+import com.tokyo.beach.application.like.Like;
 import com.tokyo.beach.application.like.LikeController;
 import com.tokyo.beach.application.like.LikeRepository;
 import org.junit.Before;
@@ -8,8 +9,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LikeControllerTest {
@@ -24,7 +27,7 @@ public class LikeControllerTest {
     }
 
     @Test
-    public void test_create_returnsCreatedHttpStatus() throws Exception {
+    public void test_create_returnsCreatedHTTPStatus() throws Exception {
         ResultActions result = mockMvc.perform(post("/restaurants/99/likes")
                 .requestAttr("userId", 11L));
 
@@ -40,5 +43,18 @@ public class LikeControllerTest {
 
 
         verify(mockLikeRepository, times(1)).create(99L, 11L);
+    }
+
+    @Test
+    public void test_create_returnsLikeIdInResponseJson() throws Exception {
+        when(mockLikeRepository.create(99L, 11L))
+                .thenReturn(new Like(97L));
+
+
+        ResultActions result = mockMvc.perform(post("/restaurants/99/likes")
+                .requestAttr("userId", 11L));
+
+
+        result.andExpect(jsonPath("$.id", equalTo(97)));
     }
 }

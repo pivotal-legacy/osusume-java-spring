@@ -1,5 +1,5 @@
 package com.tokyo.beach.application.like;
 
 public interface LikeRepository {
-    void create(long restaurantId, long userId);
+    Like create(long restaurantId, long userId);
 }
