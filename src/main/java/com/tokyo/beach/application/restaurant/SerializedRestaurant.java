@@ -6,12 +6,10 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.user.DatabaseUser;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.tokyo.beach.application.DateFormatter.formatDateForSerialization;
 
 public class SerializedRestaurant {
     private Restaurant restaurant;
@@ -85,15 +83,7 @@ public class SerializedRestaurant {
 
     @JsonProperty("created_at")
     public String getCreatedDate() {
-        String result = "";
-        try {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
-            Date date = format.parse(restaurant.getCreatedDate());
-            format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            result = format.format(date);
-        } catch (ParseException e) {
-        }
-        return result;
+        return formatDateForSerialization(restaurant.getCreatedDate());
     }
 
     @JsonProperty("photo_urls")
