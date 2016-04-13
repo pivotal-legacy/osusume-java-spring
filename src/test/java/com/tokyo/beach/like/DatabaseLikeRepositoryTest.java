@@ -1,5 +1,6 @@
 package com.tokyo.beach.like;
 
+import com.tokyo.beach.application.comment.Comment;
 import com.tokyo.beach.application.like.DatabaseLikeRepository;
 import com.tokyo.beach.application.like.Like;
 import com.tokyo.beach.application.restaurant.NewRestaurant;
@@ -11,9 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static java.util.Collections.emptyList;
@@ -55,24 +54,33 @@ public class DatabaseLikeRepositoryTest {
                 createdByUserId
         );
 
-        long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
+        Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("yuki@gmail.com", "password", "Yuki")
         );
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
-        Like createdLike = likeRepository.create(restaurantId, likeByUserId);
+        Like createdLike = likeRepository.create(likeByUserId, restaurantId);
 
 
-        String sql = "SELECT id FROM likes WHERE restaurant_id = ? and user_id = ?";
-        long persistedLikeId = jdbcTemplate.queryForObject(
-                sql, new Object[] { restaurantId, likeByUserId }, Integer.class
+        String sql = "SELECT * FROM likes WHERE restaurant_id = ? AND user_id = ?";
+        Like persistedLike = jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+                    return new Like(
+                            rs.getLong("user_id"),
+                            rs.getLong("restaurant_id")
+                    );
+                },
+                restaurantId,
+                likeByUserId.longValue()
         );
-        assertEquals(createdLike.getId(), persistedLikeId);
+
+        assertEquals(persistedLike, createdLike);
     }
 
     @Test
-    public void test_getLikesByUser_returnsRestaurantIdsList() {
+    public void test_findForRestaurant_returnsLikeList() throws Exception {
         createDefaultCuisine(jdbcTemplate);
 
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
@@ -92,26 +100,28 @@ public class DatabaseLikeRepositoryTest {
                 createdByUserId
         );
 
-        long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
+        Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("yuki@gmail.com", "password", "Yuki")
         );
-        SimpleJdbcInsert insertLike = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("likes")
-                .usingColumns("restaurant_id", "user_id");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("restaurant_id", restaurantId);
-        params.put("user_id", likeByUserId);
-
-        insertLike.execute(params);
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
-        List<Long> ids = likeRepository.getLikesByUser(likeByUserId);
+        String sql = "INSERT INTO likes (user_id, restaurant_id) VALUES (?, ?) RETURNING *";
+        Like persistedLike = jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+                    return new Like(
+                            rs.getLong("user_id"),
+                            rs.getLong("restaurant_id")
+                    );
+                },
+                likeByUserId.longValue(),
+                restaurantId
+        );
 
 
-        assertThat(ids.size(), is(1));
-        assertThat(ids.get(0), is(restaurantId));
+        List<Like> likes = likeRepository.findForRestaurant(restaurantId);
+
+        assertEquals(likes.get(0), persistedLike);
     }
-
 }

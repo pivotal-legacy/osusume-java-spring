@@ -6,6 +6,8 @@ import com.tokyo.beach.application.comment.CommentRepository;
 import com.tokyo.beach.application.comment.SerializedComment;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
+import com.tokyo.beach.application.like.Like;
+import com.tokyo.beach.application.like.LikeRepository;
 import com.tokyo.beach.application.photos.NewPhotoUrl;
 import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
@@ -48,6 +50,7 @@ public class RestaurantsControllerTest {
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
     private CommentRepository commentRepository;
+    private LikeRepository mockLikeRepository;
 
     @Before
     public void setUp() {
@@ -56,13 +59,15 @@ public class RestaurantsControllerTest {
         cuisineRepository = mock(CuisineRepository.class);
         userRepository = mock(UserRepository.class);
         commentRepository = mock(CommentRepository.class);
+        mockLikeRepository = mock(LikeRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
                 photoRepository,
                 cuisineRepository,
                 userRepository,
-                commentRepository
+                commentRepository,
+                mockLikeRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -111,7 +116,8 @@ public class RestaurantsControllerTest {
                 new PhotoRepository(new JdbcTemplate(buildDataSource())),
                 cuisineRepository,
                 userRepository,
-                commentRepository);
+                commentRepository,
+                mockLikeRepository);
 
 
         mockMvc = standaloneSetup(controller).build();
@@ -385,6 +391,38 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
                 .andExpect(jsonPath("$.photo_urls[0].url", equalTo("Url1")))
                 .andExpect(jsonPath("$.photo_urls[1].url", equalTo("Url2")));
+    }
+
+    @Test
+    public void test_getRestaurant_returnsRestaurantWithLikeStatus() throws Exception {
+        Restaurant afuriRestaurant = new Restaurant(
+                1,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                "created-date",
+                1
+        );
+        when(restaurantRepository.get(1)).thenReturn(
+                Optional.of(afuriRestaurant)
+        );
+        when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                emptyList()
+        );
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+        );
+        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+                singletonList(new Like(11L, 1L)));
+
+        mockMvc.perform(get("/restaurants/1")
+                        .requestAttr("userId", 11L)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.liked", equalTo(true)));
     }
 
     @Test

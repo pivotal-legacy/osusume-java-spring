@@ -1,19 +1,21 @@
 package com.tokyo.beach.application.like;
 
 public class Like {
-    private long id;
+    private long userId;
 
+    private long restaurantId;
     @SuppressWarnings("unused")
-    public Like() {
+    public Like(long userId, long restaurantId) {
+        this.userId = userId;
+        this.restaurantId = restaurantId;
     }
 
-    @SuppressWarnings("unused")
-    public Like(long id) {
-        this.id = id;
+    public long getUserId() {
+        return userId;
     }
 
-    public long getId() {
-        return id;
+    public long getRestaurantId() {
+        return restaurantId;
     }
 
     @Override
@@ -23,19 +25,24 @@ public class Like {
 
         Like like = (Like) o;
 
-        return id == like.id;
+        if (userId != like.userId) return false;
+        return restaurantId == like.restaurantId;
 
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        int result = (int) (userId ^ (userId >>> 32));
+        result = 31 * result + (int) (restaurantId ^ (restaurantId >>> 32));
+        return result;
     }
 
     @Override
     public String toString() {
         return "Like{" +
-                "id=" + id +
+                "userId=" + userId +
+                ", restaurantId=" + restaurantId +
                 '}';
     }
+
 }

@@ -70,6 +70,16 @@ public class ProfileController {
 
         List<SerializedRestaurant> resultList =
                 restaurantList.stream()
+<<<<<<< a569de0aa125ce58fb7c44ddb97cb7d0246c14ea
+                        .map((restaurant) -> new SerializedRestaurant(
+                                restaurant,
+                                restaurantPhotos.get(restaurant.getId()),
+                                cuisineRepository.findForRestaurant(restaurant),
+                                maybeUser,
+                                emptyList()
+                        ))
+                        .collect(toList());
+=======
                 .map((restaurant) -> new SerializedRestaurant(
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
@@ -79,6 +89,11 @@ public class ProfileController {
                         false
                 ))
                 .collect(toList());
+        System.out.println("resultList = " + resultList);
+        for (SerializedRestaurant restaurant: resultList) {
+            System.out.println("restaurant = " + restaurant);
+        }
+>>>>>>> Return like status with restaurant details
 
         return resultList;
     }
@@ -120,8 +135,7 @@ public class ProfileController {
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
                                 Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
-                                emptyList(),
-                                true
+                                emptyList()
                         ))
                         .collect(toList());
 

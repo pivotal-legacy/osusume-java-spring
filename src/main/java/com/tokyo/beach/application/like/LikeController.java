@@ -29,7 +29,7 @@ public class LikeController {
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
 
-        return likeRepository.create(restaurantId, userId.longValue());
+        return likeRepository.create(userId.longValue(), restaurantId);
     }
 
 }

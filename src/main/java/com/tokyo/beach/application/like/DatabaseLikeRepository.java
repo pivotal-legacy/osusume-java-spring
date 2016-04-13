@@ -19,18 +19,31 @@ public class DatabaseLikeRepository implements LikeRepository {
     }
 
     @Override
-    public Like create(long restaurantId, long userId) {
+    public Like create(long userId, long restaurantId) {
         SimpleJdbcInsert insertLike = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("likes")
-                .usingColumns("restaurant_id", "user_id")
-                .usingGeneratedKeyColumns("id");
+                .usingColumns("restaurant_id", "user_id");
 
         Map<String, Object> params = new HashMap<>();
         params.put("restaurant_id", restaurantId);
         params.put("user_id", userId);
 
-        long createdLikeId = insertLike.executeAndReturnKey(params).longValue();
-        return new Like(createdLikeId);
+        insertLike.execute(params);
+        return new Like(userId, restaurantId);
+    }
+
+    @Override
+    public List<Like> findForRestaurant(long restaurantId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM likes WHERE restaurant_id = ?",
+                (rs, rowNum) -> {
+                    return new Like(
+                            rs.getLong("user_id"),
+                            rs.getLong("restaurant_id")
+                    );
+                },
+                restaurantId
+        );
     }
 
     @Override

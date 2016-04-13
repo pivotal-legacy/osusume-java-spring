@@ -17,19 +17,21 @@ public class SerializedRestaurant {
     private Cuisine cuisine;
     private Optional<DatabaseUser> createdByUser;
     private List<SerializedComment> comments;
+    private boolean currentUserLikesRestaurant;
 
     public SerializedRestaurant(
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
             Optional<DatabaseUser> createdByUser,
-            List<SerializedComment> comments
-    ) {
+            List<SerializedComment> comments,
+            boolean currentUserLikesRestaurant) {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
         this.createdByUser = createdByUser;
         this.comments = comments;
+        this.currentUserLikesRestaurant = currentUserLikesRestaurant;
     }
 
     public long getId() {
@@ -100,6 +102,39 @@ public class SerializedRestaurant {
         return cuisine;
     }
 
+    @JsonProperty("liked")
+    public boolean isCurrentUserLikesRestaurant() {
+        return currentUserLikesRestaurant;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SerializedRestaurant that = (SerializedRestaurant) o;
+
+        if (currentUserLikesRestaurant != that.currentUserLikesRestaurant) return false;
+        if (restaurant != null ? !restaurant.equals(that.restaurant) : that.restaurant != null) return false;
+        if (photoUrls != null ? !photoUrls.equals(that.photoUrls) : that.photoUrls != null) return false;
+        if (cuisine != null ? !cuisine.equals(that.cuisine) : that.cuisine != null) return false;
+        if (createdByUser != null ? !createdByUser.equals(that.createdByUser) : that.createdByUser != null)
+            return false;
+        return comments != null ? comments.equals(that.comments) : that.comments == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = restaurant != null ? restaurant.hashCode() : 0;
+        result = 31 * result + (photoUrls != null ? photoUrls.hashCode() : 0);
+        result = 31 * result + (cuisine != null ? cuisine.hashCode() : 0);
+        result = 31 * result + (createdByUser != null ? createdByUser.hashCode() : 0);
+        result = 31 * result + (comments != null ? comments.hashCode() : 0);
+        result = 31 * result + (currentUserLikesRestaurant ? 1 : 0);
+        return result;
+    }
+
     @Override
     public String toString() {
         return "SerializedRestaurant{" +
@@ -107,6 +142,8 @@ public class SerializedRestaurant {
                 ", photoUrls=" + photoUrls +
                 ", cuisine=" + cuisine +
                 ", createdByUser=" + createdByUser +
+                ", comments=" + comments +
+                ", currentUserLikesRestaurant=" + currentUserLikesRestaurant +
                 '}';
     }
 }

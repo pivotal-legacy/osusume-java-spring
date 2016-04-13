@@ -5,6 +5,8 @@ import com.tokyo.beach.application.comment.CommentRepository;
 import com.tokyo.beach.application.comment.SerializedComment;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
+import com.tokyo.beach.application.like.Like;
+import com.tokyo.beach.application.like.LikeRepository;
 import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.user.DatabaseUser;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -36,6 +39,7 @@ public class RestaurantsController {
     private final CuisineRepository cuisineRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     @Autowired
     public RestaurantsController(
@@ -43,12 +47,14 @@ public class RestaurantsController {
             PhotoRepository photoRepository,
             CuisineRepository cuisineRepository,
             UserRepository userRepository,
-            CommentRepository commentRepository) {
+            CommentRepository commentRepository,
+            LikeRepository likeRepository) {
         this.restaurantRepository = restaurantRepo;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.likeRepository = likeRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -82,7 +88,8 @@ public class RestaurantsController {
                         restaurantPhotos.get(restaurant.getId()),
                         null,
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
-                        emptyList()
+                        emptyList(),
+                        false
                 ))
                 .collect(toList());
     }
@@ -109,12 +116,17 @@ public class RestaurantsController {
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
                 createdByUser,
-                emptyList()
+                emptyList(),
+                false
         );
     }
 
     @RequestMapping(value = "{id}", method = GET)
     public SerializedRestaurant getRestaurant(@PathVariable String id) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
+
         Optional<Restaurant> maybeRestaurant = restaurantRepository.get(Integer.parseInt(id));
 
         maybeRestaurant.orElseThrow(() -> new RestControllerException("Invalid restaurant id."));
@@ -128,12 +140,19 @@ public class RestaurantsController {
 
         List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant);
 
+        List<Like> likes = likeRepository.findForRestaurant(retrievedRestaurant.getId());
+        boolean currentUserLikesRestaurant = likes
+                .stream()
+                .map(Like::getUserId)
+                .anyMatch(Predicate.isEqual(userId));
+
         return new SerializedRestaurant(
                 retrievedRestaurant,
                 photosForRestaurant,
                 cuisineForRestaurant,
                 createdByUser,
-                comments
+                comments,
+                currentUserLikesRestaurant
         );
     }
 }
