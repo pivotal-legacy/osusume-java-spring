@@ -6,6 +6,10 @@ import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.user.DatabaseUser;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +73,6 @@ public class SerializedRestaurant {
     }
 
 
-
     @JsonProperty("created_by_user_name")
     public String getCreatedByUserName() {
         String username = "";
@@ -82,7 +85,15 @@ public class SerializedRestaurant {
 
     @JsonProperty("created_at")
     public String getCreatedDate() {
-        return restaurant.getCreatedDate();
+        String result = "";
+        try {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            Date date = format.parse(restaurant.getCreatedDate());
+            format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            result = format.format(date);
+        } catch (ParseException e) {
+        }
+        return result;
     }
 
     @JsonProperty("photo_urls")

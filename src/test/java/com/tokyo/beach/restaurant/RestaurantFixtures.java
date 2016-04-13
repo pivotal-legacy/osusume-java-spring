@@ -30,4 +30,18 @@ public class RestaurantFixtures {
                 1
         );
     }
+
+    public static Restaurant newRestaurant(int id, String name, String created_at) {
+        return new Restaurant(
+                id,
+                name,
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                created_at,
+                1
+        );
+    }
 }
