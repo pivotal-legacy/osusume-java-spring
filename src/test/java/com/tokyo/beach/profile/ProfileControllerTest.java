@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +22,11 @@ import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class ProfileControllerTest {
@@ -49,7 +45,7 @@ public class ProfileControllerTest {
         userRepository = mock(UserRepository.class);
         likeRepository = mock(LikeRepository.class);
 
-        ProfileController profileController= new ProfileController(
+        ProfileController profileController = new ProfileController(
                 restaurantRepository,
                 photoRepository,
                 cuisineRepository,
@@ -90,7 +86,7 @@ public class ProfileControllerTest {
                 .thenReturn(new Cuisine(10L, "Japanese"));
 
         mockMvc.perform(get("/profile/posts")
-                            .requestAttr("userId", 1L)
+                .requestAttr("userId", 1L)
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
@@ -121,7 +117,7 @@ public class ProfileControllerTest {
     }
 
     @Test
-    public void test_getUserLike_returnsRestaurantList() throws Exception {
+    public void test_getUserLikes_returnsRestaurantList() throws Exception {
         List<Restaurant> posts = singletonList(
                 new Restaurant(
                         1,
@@ -166,5 +162,17 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
     }
 
+    @Test
+    public void test_getUserLikes_returnsEmptyListWhenNoLikes() throws Exception {
+        when(likeRepository.getLikesByUser(99L))
+                .thenReturn(emptyList());
 
+        mockMvc.perform(get("/profile/likes").
+                requestAttr("userId", 99L)
+        )
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+
+        verify(restaurantRepository, times(0)).getRestaurantsByIds(anyList());
+    }
 }

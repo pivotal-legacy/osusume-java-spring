@@ -90,11 +90,11 @@ public class ProfileController {
 
         List<Long> likedRestaurants = likeRepository.getLikesByUser(userId.longValue());
 
-        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(likedRestaurants);
-
-        if (restaurantList.size() == 0) {
+        if (likedRestaurants.size() == 0) {
             return emptyList();
         }
+
+        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(likedRestaurants);
 
         List<DatabaseUser> userList = userRepository.findForUserIds(
                 restaurantList.stream()
