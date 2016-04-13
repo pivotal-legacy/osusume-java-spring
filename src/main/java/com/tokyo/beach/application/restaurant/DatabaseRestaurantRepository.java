@@ -1,7 +1,10 @@
 package com.tokyo.beach.application.restaurant;
 
+import com.tokyo.beach.application.user.DatabaseUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -104,6 +107,30 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getLong("created_by_user_id"));
                 },
                 userId
+        );
+    }
+
+    @Override
+    public List<Restaurant> getRestaurantsByIds(List<Long> restaurantIds) {
+        MapSqlParameterSource parameters =  new MapSqlParameterSource();
+        parameters.addValue("ids", restaurantIds);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedTemplate.query(
+                "SELECT * FROM restaurant WHERE id IN (:ids)",
+                parameters,
+                (rs, rowNum) -> {
+                    return new Restaurant(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes"),
+                            rs.getString("created_at"),
+                            rs.getLong("created_by_user_id"));
+                }
         );
     }
 }

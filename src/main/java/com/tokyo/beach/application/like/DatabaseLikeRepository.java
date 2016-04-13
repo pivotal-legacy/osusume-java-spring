@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -30,5 +31,17 @@ public class DatabaseLikeRepository implements LikeRepository {
 
         long createdLikeId = insertLike.executeAndReturnKey(params).longValue();
         return new Like(createdLikeId);
+    }
+
+    @Override
+    public List<Long> getLikesByUser(long userId) {
+        String sql = "SELECT restaurant_id FROM likes WHERE user_id = ?";
+        List<Long> restaurantIds = jdbcTemplate.queryForList(
+                sql,
+                Long.class,
+                userId
+        );
+
+        return restaurantIds;
     }
 }

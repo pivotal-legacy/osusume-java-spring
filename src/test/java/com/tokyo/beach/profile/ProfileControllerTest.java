@@ -3,6 +3,7 @@ package com.tokyo.beach.profile;
 import com.tokyo.beach.application.RestControllerExceptionHandler;
 import com.tokyo.beach.application.cuisine.Cuisine;
 import com.tokyo.beach.application.cuisine.CuisineRepository;
+import com.tokyo.beach.application.like.LikeRepository;
 import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.profile.ProfileController;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,7 @@ public class ProfileControllerTest {
     private PhotoRepository photoRepository;
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
+    private LikeRepository likeRepository;
 
     @Before
     public void setUp() {
@@ -44,12 +47,14 @@ public class ProfileControllerTest {
         photoRepository = mock(PhotoRepository.class);
         cuisineRepository = mock(CuisineRepository.class);
         userRepository = mock(UserRepository.class);
+        likeRepository = mock(LikeRepository.class);
 
         ProfileController profileController= new ProfileController(
                 restaurantRepository,
                 photoRepository,
                 cuisineRepository,
-                userRepository
+                userRepository,
+                likeRepository
         );
 
         mockMvc = standaloneSetup(profileController)
@@ -114,5 +119,52 @@ public class ProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
+
+    @Test
+    public void test_getUserLike_returnsRestaurantList() throws Exception {
+        List<Restaurant> posts = singletonList(
+                new Restaurant(
+                        1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "とても美味しい",
+                        "created-date",
+                        99
+                )
+        );
+        List<Long> likesList = singletonList(1L);
+
+        when(userRepository.findForUserIds(singletonList(99L)))
+                .thenReturn(singletonList(new DatabaseUser(99L, "user-email", "username")));
+        when(likeRepository.getLikesByUser(99L))
+                .thenReturn(likesList);
+        when(restaurantRepository.getRestaurantsByIds(likesList))
+                .thenReturn(posts);
+        when(photoRepository.findForRestaurants(anyObject()))
+                .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
+
+        when(cuisineRepository.findForRestaurant(anyObject()))
+                .thenReturn(new Cuisine(10L, "Japanese"));
+
+        mockMvc.perform(get("/profile/likes").
+                requestAttr("userId", 99L)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", equalTo(1)))
+                .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
+                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
+                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].cuisine.id", equalTo(10)))
+                .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
+                .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
+                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
+                .andExpect(jsonPath("$[0].user.name", equalTo("username")))
+                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
+    }
+
 
 }

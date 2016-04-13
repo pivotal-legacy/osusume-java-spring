@@ -1,6 +1,7 @@
 package com.tokyo.beach.application.profile;
 
 import com.tokyo.beach.application.cuisine.CuisineRepository;
+import com.tokyo.beach.application.like.LikeRepository;
 import com.tokyo.beach.application.photos.PhotoRepository;
 import com.tokyo.beach.application.photos.PhotoUrl;
 import com.tokyo.beach.application.restaurant.Restaurant;
@@ -9,9 +10,7 @@ import com.tokyo.beach.application.restaurant.SerializedRestaurant;
 import com.tokyo.beach.application.user.DatabaseUser;
 import com.tokyo.beach.application.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,11 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
@@ -33,34 +33,25 @@ public class ProfileController {
     private PhotoRepository photoRepository;
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
+    private LikeRepository likeRepository;
 
     @Autowired
-    public ProfileController(RestaurantRepository restaurantRepository, PhotoRepository photoRepository, CuisineRepository cuisineRepository, UserRepository userRepository) {
+    public ProfileController(
+            RestaurantRepository restaurantRepository,
+            PhotoRepository photoRepository,
+            CuisineRepository cuisineRepository,
+            UserRepository userRepository,
+            LikeRepository likeRepository
+    ) {
         this.restaurantRepository = restaurantRepository;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
     }
 
-    public RestaurantRepository getRestaurantRepository() {
-        return restaurantRepository;
-    }
-
-    public PhotoRepository getPhotoRepository() {
-        return photoRepository;
-    }
-
-    public CuisineRepository getCuisineRepository() {
-        return cuisineRepository;
-    }
-
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    @RequestMapping(value="/profile/posts", method = GET)
-    public List<SerializedRestaurant> posts()
-    {
+    @RequestMapping(value = "/profile/posts", method = GET)
+    public List<SerializedRestaurant> posts() {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
@@ -79,21 +70,59 @@ public class ProfileController {
 
         List<SerializedRestaurant> resultList =
                 restaurantList.stream()
-                .map((restaurant) -> new SerializedRestaurant(
-                        restaurant,
-                        restaurantPhotos.get(restaurant.getId()),
-                        cuisineRepository.findForRestaurant(restaurant),
-                        maybeUser,
-                        emptyList()
-                ))
-                .collect(toList());
-        System.out.println("resultList = " + resultList);
-        for (SerializedRestaurant restaurant: resultList) {
-            System.out.println("restaurant = " + restaurant);
-        }
+                        .map((restaurant) -> new SerializedRestaurant(
+                                restaurant,
+                                restaurantPhotos.get(restaurant.getId()),
+                                cuisineRepository.findForRestaurant(restaurant),
+                                maybeUser,
+                                emptyList()
+                        ))
+                        .collect(toList());
 
         return resultList;
     }
 
+    @RequestMapping(value = "/profile/likes", method = GET)
+    public List<SerializedRestaurant> likes() {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
 
+        List<Long> likedRestaurants = likeRepository.getLikesByUser(userId.longValue());
+
+        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(likedRestaurants);
+
+        if (restaurantList.size() == 0) {
+            return emptyList();
+        }
+
+        List<DatabaseUser> userList = userRepository.findForUserIds(
+                restaurantList.stream()
+                        .map(Restaurant::getCreatedByUserId)
+                        .collect(toList())
+        );
+        Map<Long, DatabaseUser> createdByUsers = userList.stream()
+                .collect(
+                        Collectors.toMap(
+                                DatabaseUser::getId, UnaryOperator.identity()
+                        )
+                );
+
+        List<PhotoUrl> photos = photoRepository.findForRestaurants(restaurantList);
+        Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
+                .collect(groupingBy(PhotoUrl::getRestaurantId));
+
+        List<SerializedRestaurant> resultList =
+                restaurantList.stream()
+                        .map((restaurant) -> new SerializedRestaurant(
+                                restaurant,
+                                restaurantPhotos.get(restaurant.getId()),
+                                cuisineRepository.findForRestaurant(restaurant),
+                                Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
+                                emptyList()
+                        ))
+                        .collect(toList());
+
+        return resultList;
+    }
 }
