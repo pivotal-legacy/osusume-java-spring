@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurants.restaurant;
 
-import com.tokyo.beach.restaurants.RestControllerException;
+import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;

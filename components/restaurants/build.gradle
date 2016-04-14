@@ -6,6 +6,8 @@ dependencies {
     compile("com.fasterxml.jackson.core:jackson-databind:2.6.5")
     compile('com.fasterxml.jackson.core:jackson-annotations:2.6.5')
 
+    compile(project(":components/rest-utils"))
+
     testCompile("org.springframework:spring-test:$springVersion")
     testCompile("org.postgresql:postgresql:$postgresVersion")
     testCompile("com.jayway.jsonpath:json-path:2.0.0")

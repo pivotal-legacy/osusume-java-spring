@@ -1,4 +1,4 @@
-package com.tokyo.beach.restaurants;
+package com.tokyo.beach.restutils;
 
 public class RestControllerException extends RuntimeException {
 

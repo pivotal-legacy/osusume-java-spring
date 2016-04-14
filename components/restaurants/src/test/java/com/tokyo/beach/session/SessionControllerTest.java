@@ -1,6 +1,6 @@
 package com.tokyo.beach.session;
 
-import com.tokyo.beach.restaurants.RestControllerExceptionHandler;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.session.SessionController;
 import com.tokyo.beach.restaurants.session.SessionRepository;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
+import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;

@@ -1,6 +1,6 @@
 package com.tokyo.beach.profile;
 
-import com.tokyo.beach.restaurants.RestControllerExceptionHandler;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
 import com.tokyo.beach.restaurants.like.LikeRepository;
@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
+import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -1,8 +1,6 @@
 package com.tokyo.beach.application;
 
 import com.tokyo.beach.restaurants.filter.RequestFilter;
-import com.tokyo.beach.restaurants.session.DatabaseSessionRepository;
-import com.tokyo.beach.restaurants.session.SessionRepository;
 import com.tokyo.beach.restaurants.session.SessionTokenGenerator;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import org.springframework.boot.SpringApplication;
@@ -11,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.tokyo.beach")

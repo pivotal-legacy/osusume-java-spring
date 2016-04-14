@@ -1,2 +1,3 @@
 include ":applications/api"
 include ":components/restaurants"
+include ":components/rest-utils"

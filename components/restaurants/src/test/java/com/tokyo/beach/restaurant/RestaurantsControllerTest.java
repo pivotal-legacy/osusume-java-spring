@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.restaurants.RestControllerExceptionHandler;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
+import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

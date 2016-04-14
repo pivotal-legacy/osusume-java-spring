@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurants.session;
 
-import com.tokyo.beach.restaurants.RestControllerException;
+import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.user.LogonCredentials;
 import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRepository;

@@ -16,11 +16,8 @@ import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Collections.singletonList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class DatabaseUserRepositoryTest {
 

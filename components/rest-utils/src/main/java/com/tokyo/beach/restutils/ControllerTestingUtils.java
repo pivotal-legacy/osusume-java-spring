@@ -1,6 +1,6 @@
-package com.tokyo.beach;
+package com.tokyo.beach.restutils;
 
-import com.tokyo.beach.restaurants.RestControllerExceptionHandler;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;

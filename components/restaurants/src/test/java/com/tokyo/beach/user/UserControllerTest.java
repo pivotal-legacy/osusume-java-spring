@@ -1,6 +1,6 @@
 package com.tokyo.beach.user;
 
-import com.tokyo.beach.restaurants.RestControllerExceptionHandler;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserController;
 import com.tokyo.beach.restaurants.user.UserRepository;
@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
-import static com.tokyo.beach.ControllerTestingUtils.createControllerAdvice;
+import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
