@@ -16,17 +16,11 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
     compile("org.postgresql:postgresql:$postgresVersion")
     compile('ch.qos.logback:logback-classic:1.1.7')
     compile("com.zaxxer:HikariCP:2.4.4")
+
     compile(project(':components/restaurants'))
-
-    compile("com.fasterxml.jackson.core:jackson-databind:2.7.3")
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.9'
 }

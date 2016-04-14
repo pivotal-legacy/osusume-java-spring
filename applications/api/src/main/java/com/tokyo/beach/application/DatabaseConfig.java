@@ -23,7 +23,7 @@ public class DatabaseConfig {
         String databaseUrl = System.getenv("OSUSUME_DATABASE_URL");
 
         if (databaseUrl == null) {
-            throw new RuntimeException("A DATABASE_URL is required in the environment to start the application.");
+            throw new RuntimeException("A OSUSUME_DATABASE_URL is required in the environment to start the application.");
         }
 
         Matcher matcher = DATABASE_URL_PATTERN.matcher(databaseUrl);
