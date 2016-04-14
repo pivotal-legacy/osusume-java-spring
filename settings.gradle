@@ -1,1 +1,2 @@
-include "applications/api"
+include ":applications/api"
+include ":components/restaurants"
