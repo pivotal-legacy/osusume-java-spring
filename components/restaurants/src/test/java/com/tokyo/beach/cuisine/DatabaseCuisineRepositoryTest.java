@@ -85,7 +85,6 @@ public class DatabaseCuisineRepositoryTest {
         assertFalse(maybeCuisine.isPresent());
     }
 
-
     @Test
     public void testCreateCuisine() {
         NewCuisine newCuisine = new NewCuisine("Test Cuisine");
@@ -169,5 +168,4 @@ public class DatabaseCuisineRepositoryTest {
         assertThat(cuisine.getId(), is(0L));
         assertThat(cuisine.getName(), is("Not Specified"));
     }
-
 }
