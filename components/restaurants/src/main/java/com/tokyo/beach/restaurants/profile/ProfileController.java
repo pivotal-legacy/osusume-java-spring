@@ -76,8 +76,8 @@ public class ProfileController {
                         cuisineRepository.findForRestaurant(restaurant),
                         maybeUser,
                         emptyList(),
-                        false
-                ))
+                        false,
+                        0L))
                 .collect(toList());
 
         return resultList;
@@ -121,8 +121,8 @@ public class ProfileController {
                                 cuisineRepository.findForRestaurant(restaurant),
                                 Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                                 emptyList(),
-                                true
-                        ))
+                                true,
+                                0L))
                         .collect(toList());
 
         return resultList;

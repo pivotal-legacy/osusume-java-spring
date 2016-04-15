@@ -89,8 +89,8 @@ public class RestaurantsController {
                         null,
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
-                        false
-                ))
+                        false,
+                        0L))
                 .collect(toList());
     }
 
@@ -117,8 +117,8 @@ public class RestaurantsController {
                 maybeCuisine.orElse(null),
                 createdByUser,
                 emptyList(),
-                false
-        );
+                false,
+                0L);
     }
 
     @RequestMapping(value = "{id}", method = GET)
@@ -152,7 +152,7 @@ public class RestaurantsController {
                 cuisineForRestaurant,
                 createdByUser,
                 comments,
-                currentUserLikesRestaurant
-        );
+                currentUserLikesRestaurant,
+                likes.size());
     }
 }

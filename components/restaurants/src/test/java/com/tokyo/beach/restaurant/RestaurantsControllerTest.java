@@ -312,7 +312,7 @@ public class RestaurantsControllerTest {
     @Test
     public void test_getRestaurant_returnsRestaurant() throws Exception {
         Restaurant afuriRestaurant = new Restaurant(
-                1,
+                1L,
                 "Afuri",
                 "Roppongi",
                 false,
@@ -320,7 +320,7 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1
+                1L
         );
         Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
         when(restaurantRepository.get(1)).thenReturn(
@@ -330,7 +330,7 @@ public class RestaurantsControllerTest {
                 emptyList()
         );
         when(cuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
-            expectedCuisine
+                expectedCuisine
         );
         DatabaseUser hanakoDatabaseUser = new DatabaseUser(1L, "hanako@email", "hanako");
         when(userRepository.get(anyLong())).thenReturn(
@@ -350,6 +350,11 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
+        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+                asList(
+                        new Like(11L, 1L),
+                        new Like(12L, 1L)
+                ));
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())
@@ -359,7 +364,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())))
                 .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")))
                 .andExpect(jsonPath("$.comments[0].id", equalTo(99)))
-                .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")));
+                .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")))
+                .andExpect(jsonPath("$.num_likes", equalTo(2)));
     }
 
     @Test

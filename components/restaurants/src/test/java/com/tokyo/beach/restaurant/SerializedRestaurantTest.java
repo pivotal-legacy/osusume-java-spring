@@ -13,8 +13,8 @@ public class SerializedRestaurantTest {
                 1, "Afuri", "2016-04-13 16:01:21.094"
         );
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                restaurant, null, null, null, null, false
-        );
+                restaurant, null, null, null, null, false, 0L
+                );
 
         assertEquals(serializedRestaurant.getCreatedDate(), "2016-04-13T16:01:21.094Z");
     }

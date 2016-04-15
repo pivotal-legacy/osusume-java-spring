@@ -18,6 +18,7 @@ public class SerializedRestaurant {
     private Optional<DatabaseUser> createdByUser;
     private List<SerializedComment> comments;
     private boolean currentUserLikesRestaurant;
+    private long numberOfLikes;
 
     public SerializedRestaurant(
             Restaurant restaurant,
@@ -25,13 +26,15 @@ public class SerializedRestaurant {
             Cuisine cuisine,
             Optional<DatabaseUser> createdByUser,
             List<SerializedComment> comments,
-            boolean currentUserLikesRestaurant) {
+            boolean currentUserLikesRestaurant,
+            long numberOfLikes) {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
         this.createdByUser = createdByUser;
         this.comments = comments;
         this.currentUserLikesRestaurant = currentUserLikesRestaurant;
+        this.numberOfLikes = numberOfLikes;
     }
 
     public long getId() {
@@ -72,7 +75,6 @@ public class SerializedRestaurant {
         return restaurant.getNotes();
     }
 
-
     @JsonProperty("created_by_user_name")
     public String getCreatedByUserName() {
         String username = "";
@@ -105,6 +107,11 @@ public class SerializedRestaurant {
     @JsonProperty("liked")
     public boolean isCurrentUserLikesRestaurant() {
         return currentUserLikesRestaurant;
+    }
+
+    @JsonProperty("num_likes")
+    public long getNumberOfLikes() {
+        return numberOfLikes;
     }
 
     @Override
