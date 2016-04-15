@@ -64,3 +64,13 @@ BEGIN
 
 END $$;
 
+
+-- Price Ranges
+
+INSERT INTO pricerange (range) VALUES ('¥0~999');
+INSERT INTO pricerange (range) VALUES ('¥1000~1999');
+INSERT INTO pricerange (range) VALUES ('¥2000~2999');
+INSERT INTO pricerange (range) VALUES ('¥3000~3999');
+INSERT INTO pricerange (range) VALUES ('¥4000~4999');
+INSERT INTO pricerange (range) VALUES ('¥5000~9999');
+INSERT INTO pricerange (range) VALUES ('¥10,000~');

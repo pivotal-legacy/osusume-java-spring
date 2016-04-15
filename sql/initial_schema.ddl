@@ -81,3 +81,13 @@ CREATE TABLE likes (
   restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
   user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );
+
+
+-- PRICERANGE Table
+
+CREATE TABLE pricerange (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  range VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
+);
