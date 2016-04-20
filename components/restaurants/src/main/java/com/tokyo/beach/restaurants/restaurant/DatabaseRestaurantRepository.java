@@ -135,6 +135,31 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
 
     @Override
     public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
-        return null;
+        return jdbcTemplate.queryForObject(
+                "UPDATE restaurant SET " +
+                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) =" +
+                        "(?, ?, ?, ?, ?, ?) " +
+                        "WHERE id = ? " +
+                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id, created_at",
+                (rs, rowNum) -> {
+                    return new Restaurant(
+                            rs.getLong("id"),
+                            rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes"),
+                            rs.getString("created_at"),
+                            rs.getLong("created_by_user_id"));
+                },
+                restaurant.getName(),
+                restaurant.getAddress(),
+                restaurant.getOffersEnglishMenu(),
+                restaurant.getWalkInsOk(),
+                restaurant.getAcceptsCreditCards(),
+                restaurant.getNotes(),
+                restaurantId
+        );
     }
 }

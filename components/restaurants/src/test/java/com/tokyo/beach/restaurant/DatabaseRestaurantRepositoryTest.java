@@ -216,7 +216,7 @@ public class DatabaseRestaurantRepositoryTest {
     }
 
     @Test
-    public void test_geRestaurantByIds_returnsListReaturants() throws Exception {
+    public void test_getRestaurantByIds_returnsListRestaurants() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("user_email", "password", "username")
@@ -245,5 +245,63 @@ public class DatabaseRestaurantRepositoryTest {
         assertThat(restaurantList.get(0).getId(), is(restaurantId));
         assertThat(restaurantList.get(0).getName(), is("restaurant_name"));
 
+    }
+
+    @Test
+    public void test_updateRestaurant_updatesRestaurant() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("rob@pivotal.io", "password", "Rob")
+        );
+
+        NewRestaurant newRestaurant = new NewRestaurant(
+                "KFC",
+                "Shibuya",
+                Boolean.TRUE,
+                Boolean.TRUE,
+                Boolean.TRUE,
+                "Healthy!",
+                0L,
+                emptyList()
+        );
+
+        Long restaurantId = insertRestaurantIntoDatabase(
+                jdbcTemplate,
+                newRestaurant,
+                userId.longValue()
+        );
+
+        NewRestaurant updatedNewRestaurant = new NewRestaurant(
+                "Kentucky",
+                "East Shibuya",
+                Boolean.FALSE,
+                Boolean.FALSE,
+                Boolean.FALSE,
+                "Actually, not really healthy...",
+                0L,
+                emptyList()
+        );
+
+
+        Restaurant updatedRestaurant = restaurantRepository.updateRestaurant(
+                restaurantId,
+                updatedNewRestaurant
+        );
+
+
+        Map<String, Object> map = jdbcTemplate.queryForMap(
+                "SELECT * FROM restaurant WHERE id = ?",
+                restaurantId
+        );
+
+        assertEquals(map.get("id"), updatedRestaurant.getId());
+        assertEquals(map.get("name"), updatedRestaurant.getName());
+        assertEquals(map.get("address"), updatedRestaurant.getAddress());
+        assertEquals(map.get("offers_english_menu"), updatedRestaurant.getOffersEnglishMenu());
+        assertEquals(map.get("walk_ins_ok"), updatedRestaurant.getWalkInsOk());
+        assertEquals(map.get("accepts_credit_cards"), updatedRestaurant.getAcceptsCreditCards());
+        assertEquals(map.get("notes"), updatedRestaurant.getNotes());
+        assertEquals(map.get("created_by_user_id"), userId.longValue());
+        assertEquals(map.get("cuisine_id"), 0L);
     }
 }
