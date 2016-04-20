@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.restaurants.DateFormatter.formatDateForSerialization;
+import static java.util.Collections.emptyList;
 
 public class SerializedRestaurant {
     private Restaurant restaurant;
@@ -35,6 +36,21 @@ public class SerializedRestaurant {
         this.comments = comments;
         this.currentUserLikesRestaurant = currentUserLikesRestaurant;
         this.numberOfLikes = numberOfLikes;
+    }
+
+    public SerializedRestaurant(
+            Restaurant restaurant,
+            List<PhotoUrl> photoUrls,
+            Cuisine cuisine,
+            Optional<DatabaseUser> createdByUser) {
+
+        this.restaurant = restaurant;
+        this.photoUrls = photoUrls;
+        this.cuisine = cuisine;
+        this.createdByUser = createdByUser;
+        this.comments = emptyList();
+        this.currentUserLikesRestaurant = false;
+        this.numberOfLikes = 0L;
     }
 
     public long getId() {

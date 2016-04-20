@@ -132,4 +132,9 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 }
         );
     }
+
+    @Override
+    public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
+        return null;
+    }
 }

@@ -39,6 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -441,6 +442,67 @@ public class RestaurantsControllerTest {
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("{\"error\":\"Invalid restaurant id.\"}"));
+    }
+
+    @Test
+    public void test_update_updatesRestaurantInformation() throws Exception {
+        Restaurant updatedRestaurant = new Restaurant(
+                1,
+                "Updated Name",
+                "Updated Address",
+                false,
+                true,
+                false,
+                "",
+                "",
+                99
+        );
+
+        when(restaurantRepository.updateRestaurant(anyLong(), anyObject())).thenReturn(
+                updatedRestaurant
+        );
+        when(photoRepository.findForRestaurant(updatedRestaurant))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
+        when(cuisineRepository.getCuisine("2")).thenReturn(
+                Optional.of(
+                        new Cuisine(
+                                2,
+                                "Ramen"
+                        )
+                )
+        );
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(
+                        new DatabaseUser(99L, "jiro@mail.com", "jiro")
+                )
+        );
+        String updatedRestaurantPayload = "{\"restaurant\": " +
+                "{\"name\":\"Updated Name\", " +
+                "\"address\": \"Updated Address\", " +
+                "\"offers_english_menu\": false, " +
+                "\"walk_ins_ok\": true, " +
+                "\"accepts_credit_cards\": false, " +
+                "\"notes\": \"\"," +
+                "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
+                "\"cuisine_id\": \"2\"}" +
+                "}";
+
+        mockMvc.perform(
+                patch("/restaurants/1")
+                        .requestAttr("userId", 99L)
+                        .contentType(APPLICATION_JSON_UTF8_VALUE)
+                        .content(updatedRestaurantPayload)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Updated Name")))
+                .andExpect(jsonPath("$.address", is("Updated Address")))
+                .andExpect(jsonPath("$.offers_english_menu", is(false)))
+                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
+                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
+                .andExpect(jsonPath("$.notes", is("")))
+                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+                .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
+                .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
     }
 
 }

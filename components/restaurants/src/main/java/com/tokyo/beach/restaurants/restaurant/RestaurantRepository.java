@@ -13,4 +13,6 @@ public interface RestaurantRepository {
     List<Restaurant> getRestaurantsPostedByUser(long userId);
 
     List<Restaurant> getRestaurantsByIds(List<Long> restaurantIds);
+
+    Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant);
 }

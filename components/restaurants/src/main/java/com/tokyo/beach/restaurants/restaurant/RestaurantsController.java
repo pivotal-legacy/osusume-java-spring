@@ -28,7 +28,9 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -115,10 +117,8 @@ public class RestaurantsController {
                 restaurant,
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
-                createdByUser,
-                emptyList(),
-                false,
-                0L);
+                createdByUser
+        );
     }
 
     @RequestMapping(value = "{id}", method = GET)
@@ -154,5 +154,27 @@ public class RestaurantsController {
                 comments,
                 currentUserLikesRestaurant,
                 likes.size());
+    }
+
+    @RequestMapping(value = "{id}", method = PATCH)
+    @ResponseStatus(OK)
+    public SerializedRestaurant updateRestaurant(
+            @PathVariable String id,
+            @RequestBody NewRestaurantWrapper restaurantWrapper
+    ) {
+        Restaurant restaurant = restaurantRepository.updateRestaurant(
+                new Long(id),
+                restaurantWrapper.getRestaurant()
+        );
+        Optional<DatabaseUser> createdByUser = userRepository.get(restaurant.getCreatedByUserId());
+        List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(restaurant);
+        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId().toString());
+
+        return new SerializedRestaurant(
+                restaurant,
+                photosForRestaurant,
+                maybeCuisine.orElse(null),
+                createdByUser
+        );
     }
 }
