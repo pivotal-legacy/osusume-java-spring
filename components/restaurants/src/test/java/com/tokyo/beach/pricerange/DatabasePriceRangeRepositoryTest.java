@@ -48,7 +48,7 @@ public class DatabasePriceRangeRepositoryTest {
 
     private void insertPriceRange(long priceRangeId, String priceRangeRange) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("pricerange")
+                .withTableName("price_range")
                 .usingColumns("id", "range");
 
         Map<String, Object> params = new HashMap<>();

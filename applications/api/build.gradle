@@ -7,20 +7,20 @@ buildscript {
     }
 }
 
-apply plugin: 'spring-boot'
+apply plugin: "spring-boot"
 
 jar {
-    baseName = 'osusume-java-spring'
-    version = '0.0.1-SNAPSHOT'
+    baseName = "osusume-java-spring"
+    version = "0.0.1-SNAPSHOT"
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
-    compile("org.postgresql:postgresql:$postgresVersion")
-    compile('ch.qos.logback:logback-classic:1.1.7')
-    compile("com.zaxxer:HikariCP:2.4.4")
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.postgresql:postgresql:$postgresVersion"
+    compile "ch.qos.logback:logback-classic:1.1.7"
+    compile "com.zaxxer:HikariCP:2.4.4"
 
-    compile(project(':components/restaurants'))
+    compile project(":components/restaurants")
 }

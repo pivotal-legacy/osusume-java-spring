@@ -1,6 +1,6 @@
 -- Delete existing data
 
-TRUNCATE TABLE restaurant, cuisine, session, comment, users, likes;
+TRUNCATE TABLE restaurant, cuisine, session, comment, users, likes, price_range;
 
 
 -- Users
@@ -45,6 +45,18 @@ BEGIN
   INSERT INTO cuisine (name) VALUES ('Carribean');
 
 
+  -- Price Ranges
+
+  INSERT INTO price_range (id, range) VALUES (0, 'Not Specified');
+  INSERT INTO price_range (range) VALUES ('¥0~999');
+  INSERT INTO price_range (range) VALUES ('¥1000~1999');
+  INSERT INTO price_range (range) VALUES ('¥2000~2999');
+  INSERT INTO price_range (range) VALUES ('¥3000~3999');
+  INSERT INTO price_range (range) VALUES ('¥4000~4999');
+  INSERT INTO price_range (range) VALUES ('¥5000~9999');
+  INSERT INTO price_range (range) VALUES ('¥10,000~');
+
+
   -- Restaurants
 
   INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
@@ -63,14 +75,3 @@ BEGIN
     ('Kaiten Sushi', 'Bottom of the escalator', TRUE, TRUE, TRUE, 'Himawari lunch is cheap with lots of sushi', dannyUserId);
 
 END $$;
-
-
--- Price Ranges
-
-INSERT INTO pricerange (range) VALUES ('¥0~999');
-INSERT INTO pricerange (range) VALUES ('¥1000~1999');
-INSERT INTO pricerange (range) VALUES ('¥2000~2999');
-INSERT INTO pricerange (range) VALUES ('¥3000~3999');
-INSERT INTO pricerange (range) VALUES ('¥4000~4999');
-INSERT INTO pricerange (range) VALUES ('¥5000~9999');
-INSERT INTO pricerange (range) VALUES ('¥10,000~');

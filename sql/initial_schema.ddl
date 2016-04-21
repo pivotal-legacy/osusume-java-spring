@@ -22,6 +22,16 @@ CREATE TABLE users (
 CREATE UNIQUE INDEX index_users_on_email ON users USING BTREE (email);
 
 
+-- PRICERANGE Table
+
+CREATE TABLE price_range (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  range VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
+  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
+);
+
+
 -- RESTAURANT Table
 
 CREATE TABLE restaurant (
@@ -33,6 +43,7 @@ CREATE TABLE restaurant (
     accepts_credit_cards BOOLEAN,
     notes VARCHAR(1000),
     cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0,
+    price_range_id BIGINT REFERENCES price_range(id) NOT NULL DEFAULT 0,
     created_by_user_id BIGINT REFERENCES users(id) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
@@ -80,14 +91,4 @@ CREATE TABLE likes (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
   user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
-);
-
-
--- PRICERANGE Table
-
-CREATE TABLE pricerange (
-  id BIGSERIAL PRIMARY KEY NOT NULL,
-  range VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
-  updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );

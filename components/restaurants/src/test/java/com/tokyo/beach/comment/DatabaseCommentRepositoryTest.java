@@ -27,6 +27,7 @@ public class DatabaseCommentRepositoryTest {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         commentRepository = new DatabaseCommentRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
+        createDefaultPriceRange(jdbcTemplate);
     }
 
     @After

@@ -29,6 +29,7 @@ public class DatabaseRestaurantRepositoryTest {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         restaurantRepository = new DatabaseRestaurantRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
+        createDefaultPriceRange(jdbcTemplate);
     }
 
     @After

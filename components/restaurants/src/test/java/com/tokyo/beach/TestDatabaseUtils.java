@@ -41,6 +41,12 @@ public class TestDatabaseUtils {
                 "WHERE NOT EXISTS (SELECT id FROM cuisine WHERE id=0)");
     }
 
+    public static void createDefaultPriceRange(JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("INSERT INTO price_range (id, range) " +
+                "SELECT 0, 'Not Specified' " +
+                "WHERE NOT EXISTS (SELECT id FROM price_range WHERE id=0)");
+    }
+
     public static Long insertCuisineIntoDatabase(
             JdbcTemplate jdbcTemplate,
             NewCuisine newCuisine
@@ -75,6 +81,6 @@ public class TestDatabaseUtils {
     }
 
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users, comment, likes, pricerange");
+        jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users, comment, likes, price_range");
     }
 }

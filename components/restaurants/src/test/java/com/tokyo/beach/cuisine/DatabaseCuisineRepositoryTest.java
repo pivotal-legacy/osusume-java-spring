@@ -28,6 +28,7 @@ public class DatabaseCuisineRepositoryTest {
     public void setUp() throws Exception {
         cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
+        createDefaultPriceRange(jdbcTemplate);
     }
 
     @After

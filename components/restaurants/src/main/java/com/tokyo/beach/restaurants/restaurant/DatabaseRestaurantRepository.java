@@ -162,4 +162,5 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                 restaurantId
         );
     }
+
 }

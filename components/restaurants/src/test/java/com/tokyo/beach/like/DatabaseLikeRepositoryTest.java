@@ -21,6 +21,8 @@ public class DatabaseLikeRepositoryTest {
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
+        createDefaultCuisine(jdbcTemplate);
+        createDefaultPriceRange(jdbcTemplate);
     }
 
     @After
@@ -30,8 +32,6 @@ public class DatabaseLikeRepositoryTest {
 
     @Test
     public void test_create_persistsToLikesTable() throws Exception {
-        createDefaultCuisine(jdbcTemplate);
-
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("hiro@gmail.com", "password", "Hiro")
         );
@@ -76,8 +76,6 @@ public class DatabaseLikeRepositoryTest {
 
     @Test
     public void test_findForRestaurant_returnsLikeList() throws Exception {
-        createDefaultCuisine(jdbcTemplate);
-
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("hiro@gmail.com", "password", "Hiro")
         );

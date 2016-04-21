@@ -18,7 +18,7 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
     @Override
     public List<PriceRange> getAll() {
         return jdbcTemplate.query(
-                "SELECT * FROM pricerange",
+                "SELECT * FROM price_range",
                 (rs, rowNum) -> {
                     return new PriceRange(
                             rs.getLong("id"),
