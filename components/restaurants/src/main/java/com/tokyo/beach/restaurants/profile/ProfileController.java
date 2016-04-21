@@ -70,15 +70,17 @@ public class ProfileController {
 
         List<SerializedRestaurant> resultList =
                 restaurantList.stream()
-                .map((restaurant) -> new SerializedRestaurant(
-                        restaurant,
-                        restaurantPhotos.get(restaurant.getId()),
-                        cuisineRepository.findForRestaurant(restaurant),
-                        maybeUser,
-                        emptyList(),
-                        false,
-                        0L))
-                .collect(toList());
+                        .map((restaurant) -> new SerializedRestaurant(
+                                restaurant,
+                                restaurantPhotos.get(restaurant.getId()),
+                                cuisineRepository.findForRestaurant(restaurant),
+                                Optional.empty(),
+                                maybeUser,
+                                emptyList(),
+                                false,
+                                0L)
+                        )
+                        .collect(toList());
 
         return resultList;
     }
@@ -119,10 +121,12 @@ public class ProfileController {
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
+                                Optional.empty(),
                                 Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                                 emptyList(),
                                 true,
-                                0L))
+                                0L)
+                        )
                         .collect(toList());
 
         return resultList;

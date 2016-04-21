@@ -1,6 +1,7 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.restutils.RestControllerExceptionHandler;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
@@ -17,6 +18,7 @@ import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
 import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,8 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
+import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -52,6 +54,7 @@ public class RestaurantsControllerTest {
     private UserRepository userRepository;
     private CommentRepository commentRepository;
     private LikeRepository mockLikeRepository;
+    private PriceRangeRepository mockPriceRangeRepository;
 
     @Before
     public void setUp() {
@@ -61,6 +64,7 @@ public class RestaurantsControllerTest {
         userRepository = mock(UserRepository.class);
         commentRepository = mock(CommentRepository.class);
         mockLikeRepository = mock(LikeRepository.class);
+        mockPriceRangeRepository = mock(PriceRangeRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
@@ -68,7 +72,8 @@ public class RestaurantsControllerTest {
                 cuisineRepository,
                 userRepository,
                 commentRepository,
-                mockLikeRepository
+                mockLikeRepository,
+                mockPriceRangeRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -96,6 +101,9 @@ public class RestaurantsControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
         when(userRepository.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
+        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+                Optional.empty()
+        );
 
         mockMvc.perform(get("/restaurants"))
                 .andExpect(status().isOk())
@@ -118,7 +126,9 @@ public class RestaurantsControllerTest {
                 cuisineRepository,
                 userRepository,
                 commentRepository,
-                mockLikeRepository);
+                mockLikeRepository,
+                mockPriceRangeRepository
+        );
 
 
         mockMvc = standaloneSetup(controller).build();
@@ -166,16 +176,29 @@ public class RestaurantsControllerTest {
                         new DatabaseUser(99L, "jiro@mail.com", "jiro")
                 )
         );
+        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+                Optional.of(
+                        new PriceRange(
+                                1,
+                                "~900"
+                        )
+                )
+        );
 
-        String payload = "{\"restaurant\": " +
-                "{\"name\":\"Afuri\", " +
-                "\"address\": \"Roppongi\", " +
-                "\"offers_english_menu\": false, " +
-                "\"walk_ins_ok\": true, " +
-                "\"accepts_credit_cards\": false, " +
-                "\"notes\": \"soooo goood\"," +
-                "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
-                "\"cuisine_id\": \"2\"}" +
+        String payload =
+                "{" +
+                        "\"restaurant\": " +
+                        "{" +
+                            "\"name\":\"Afuri\", " +
+                            "\"address\": \"Roppongi\", " +
+                            "\"offers_english_menu\": false, " +
+                            "\"walk_ins_ok\": true, " +
+                            "\"accepts_credit_cards\": false, " +
+                            "\"notes\": \"soooo goood\", " +
+                            "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
+                            "\"cuisine_id\": \"2\", " +
+                            "\"price_range_id\": \"1\"" +
+                        "}" +
                 "}";
 
 
@@ -194,6 +217,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
+                .andExpect(jsonPath("$.price_range", is("~900")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
 
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
@@ -224,6 +248,9 @@ public class RestaurantsControllerTest {
                 Optional.of(
                         new DatabaseUser(1L, "jiro@mail.com", "jiro")
                 )
+        );
+        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+                Optional.empty()
         );
 
         String payload = "{\"restaurant\": " +
@@ -280,6 +307,9 @@ public class RestaurantsControllerTest {
                 Optional.of(
                         new DatabaseUser(1L, "jiro@mail.com", "jiro")
                 )
+        );
+        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+                Optional.empty()
         );
 
         String payload = "{\"restaurant\": " +
@@ -355,7 +385,11 @@ public class RestaurantsControllerTest {
                 asList(
                         new Like(11L, 1L),
                         new Like(12L, 1L)
-                ));
+                )
+        );
+        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+                new PriceRange(0, "Not Specified")
+        );
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())
@@ -391,6 +425,9 @@ public class RestaurantsControllerTest {
         when(userRepository.get(anyLong())).thenReturn(
                 Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
         );
+        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+                new PriceRange(0, "Not Specified")
+        );
 
         mockMvc.perform(get("/restaurants/1"))
                 .andExpect(status().isOk())
@@ -423,13 +460,53 @@ public class RestaurantsControllerTest {
                 Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
         );
         when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
-                singletonList(new Like(11L, 1L)));
+                singletonList(new Like(11L, 1L))
+        );
+        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+                new PriceRange(0, "Not Specified")
+        );
 
         mockMvc.perform(get("/restaurants/1")
                         .requestAttr("userId", 11L)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.liked", equalTo(true)));
+    }
+
+    @Test
+    public void test_getRestaurant_returnsRestaurantWithPriceRange() throws Exception {
+        Restaurant afuriRestaurant = new Restaurant(
+                1,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                "created-date",
+                1
+        );
+        when(restaurantRepository.get(1)).thenReturn(
+                Optional.of(afuriRestaurant)
+        );
+        when(photoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                emptyList()
+        );
+        when(userRepository.get(anyLong())).thenReturn(
+                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+        );
+        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+                singletonList(new Like(11L, 1L))
+        );
+        when(mockPriceRangeRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+                new PriceRange(1, "~900")
+        );
+
+        mockMvc.perform(get("/restaurants/1")
+                .requestAttr("userId", 11L)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price_range", equalTo("~900")));
     }
 
     @Test

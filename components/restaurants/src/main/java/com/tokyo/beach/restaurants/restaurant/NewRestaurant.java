@@ -28,6 +28,9 @@ public class NewRestaurant {
     @JsonProperty("cuisine_id")
     private Long cuisineId;
 
+    @JsonProperty("price_range_id")
+    private Long priceRangeId;
+
     public NewRestaurant() {
     }
 
@@ -38,7 +41,9 @@ public class NewRestaurant {
                          Boolean acceptsCreditCards,
                          String notes,
                          Long cuisineId,
-                         List<NewPhotoUrl> photoUrls) {
+                         Long priceRangeId,
+                         List<NewPhotoUrl> photoUrls)
+    {
         this.name = name;
         this.address = address;
         this.offersEnglishMenu = offersEnglishMenu;
@@ -46,6 +51,7 @@ public class NewRestaurant {
         this.acceptsCreditCards = acceptsCreditCards;
         this.notes = notes;
         this.cuisineId = cuisineId;
+        this.priceRangeId = priceRangeId;
         this.photoUrls = photoUrls;
     }
 
@@ -92,6 +98,11 @@ public class NewRestaurant {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
+    public Long getPriceRangeId() {
+        return priceRangeId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,7 +119,8 @@ public class NewRestaurant {
             return false;
         if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
         if (photoUrls != null ? !photoUrls.equals(that.photoUrls) : that.photoUrls != null) return false;
-        return cuisineId != null ? cuisineId.equals(that.cuisineId) : that.cuisineId == null;
+        if (cuisineId != null ? !cuisineId.equals(that.cuisineId) : that.cuisineId != null) return false;
+        return priceRangeId != null ? priceRangeId.equals(that.priceRangeId) : that.priceRangeId == null;
 
     }
 
@@ -122,6 +134,7 @@ public class NewRestaurant {
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
         result = 31 * result + (photoUrls != null ? photoUrls.hashCode() : 0);
         result = 31 * result + (cuisineId != null ? cuisineId.hashCode() : 0);
+        result = 31 * result + (priceRangeId != null ? priceRangeId.hashCode() : 0);
         return result;
     }
 
@@ -136,6 +149,7 @@ public class NewRestaurant {
                 ", notes='" + notes + '\'' +
                 ", photoUrls=" + photoUrls +
                 ", cuisineId=" + cuisineId +
+                ", priceRangeId=" + priceRangeId +
                 '}';
     }
 }

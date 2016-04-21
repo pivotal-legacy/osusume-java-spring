@@ -45,6 +45,7 @@ public class DatabaseLikeRepositoryTest {
                         true,
                         "",
                         0L,
+                        0L,
                         emptyList()),
                 createdByUserId
         );
@@ -88,6 +89,7 @@ public class DatabaseLikeRepositoryTest {
                         true,
                         true,
                         "",
+                        0L,
                         0L,
                         emptyList()),
                 createdByUserId

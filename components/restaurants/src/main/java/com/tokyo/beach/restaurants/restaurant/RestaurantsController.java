@@ -1,5 +1,7 @@
 package com.tokyo.beach.restaurants.restaurant;
 
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
@@ -42,6 +44,7 @@ public class RestaurantsController {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final PriceRangeRepository priceRangeRepository;
 
     @Autowired
     public RestaurantsController(
@@ -50,13 +53,15 @@ public class RestaurantsController {
             CuisineRepository cuisineRepository,
             UserRepository userRepository,
             CommentRepository commentRepository,
-            LikeRepository likeRepository) {
+            LikeRepository likeRepository,
+            PriceRangeRepository priceRangeRepository) {
         this.restaurantRepository = restaurantRepo;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
+        this.priceRangeRepository = priceRangeRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -89,10 +94,12 @@ public class RestaurantsController {
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         null,
+                        Optional.empty(),
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
                         false,
-                        0L))
+                        0L)
+                )
                 .collect(toList());
     }
 
@@ -112,13 +119,14 @@ public class RestaurantsController {
                 restaurantWrapper.getPhotoUrls()
         );
         Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId().toString());
+        Optional<PriceRange> maybePriceRange = priceRangeRepository.get(restaurantWrapper.getPriceRangeId());
 
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
-                createdByUser
-        );
+                maybePriceRange,
+                createdByUser);
     }
 
     @RequestMapping(value = "{id}", method = GET)
@@ -137,6 +145,7 @@ public class RestaurantsController {
         );
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
         Cuisine cuisineForRestaurant = cuisineRepository.findForRestaurant(retrievedRestaurant);
+        PriceRange priceRange = priceRangeRepository.findForRestaurant(retrievedRestaurant);
 
         List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant);
 
@@ -150,10 +159,12 @@ public class RestaurantsController {
                 retrievedRestaurant,
                 photosForRestaurant,
                 cuisineForRestaurant,
+                Optional.of(priceRange),
                 createdByUser,
                 comments,
                 currentUserLikesRestaurant,
-                likes.size());
+                likes.size()
+        );
     }
 
     @RequestMapping(value = "{id}", method = PATCH)
@@ -174,6 +185,7 @@ public class RestaurantsController {
                 restaurant,
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
+                Optional.empty(),
                 createdByUser
         );
     }

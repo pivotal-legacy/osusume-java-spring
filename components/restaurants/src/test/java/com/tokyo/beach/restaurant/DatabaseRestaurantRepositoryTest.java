@@ -87,6 +87,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 "Notes",
                 0L,
+                0L,
                 emptyList()
         );
 
@@ -126,6 +127,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 "Notes",
                 null,
+                0L,
                 emptyList()
         );
 
@@ -143,6 +145,7 @@ public class DatabaseRestaurantRepositoryTest {
                         rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
                         rs.getLong("cuisine_id"),
+                        0L,
                         emptyList()
                 ),
                 createdRestaurant.getId()
@@ -205,7 +208,9 @@ public class DatabaseRestaurantRepositoryTest {
                         true,
                         "",
                         cuisineId,
-                        emptyList()),
+                        0L,
+                        emptyList()
+                ),
                 userId.longValue()
         );
 
@@ -236,7 +241,9 @@ public class DatabaseRestaurantRepositoryTest {
                         true,
                         "",
                         cuisineId,
-                        emptyList()),
+                        0L,
+                        emptyList()
+                ),
                 userId.longValue()
         );
 
@@ -263,6 +270,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 "Healthy!",
                 0L,
+                0L,
                 emptyList()
         );
 
@@ -279,6 +287,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.FALSE,
                 Boolean.FALSE,
                 "Actually, not really healthy...",
+                0L,
                 0L,
                 emptyList()
         );

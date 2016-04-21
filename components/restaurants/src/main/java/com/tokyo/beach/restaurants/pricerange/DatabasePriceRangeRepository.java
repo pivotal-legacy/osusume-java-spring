@@ -1,10 +1,12 @@
 package com.tokyo.beach.restaurants.pricerange;
 
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DatabasePriceRangeRepository implements PriceRangeRepository {
@@ -26,5 +28,15 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
                     );
                 }
         );
+    }
+
+    @Override
+    public Optional<PriceRange> get(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public PriceRange findForRestaurant(Restaurant restaurant) {
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.user.DatabaseUser;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
     private Cuisine cuisine;
+    private Optional<PriceRange> priceRange;
     private Optional<DatabaseUser> createdByUser;
     private List<SerializedComment> comments;
     private boolean currentUserLikesRestaurant;
@@ -25,6 +27,7 @@ public class SerializedRestaurant {
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
+            Optional<PriceRange> priceRange,
             Optional<DatabaseUser> createdByUser,
             List<SerializedComment> comments,
             boolean currentUserLikesRestaurant,
@@ -32,6 +35,7 @@ public class SerializedRestaurant {
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
+        this.priceRange = priceRange;
         this.createdByUser = createdByUser;
         this.comments = comments;
         this.currentUserLikesRestaurant = currentUserLikesRestaurant;
@@ -42,11 +46,13 @@ public class SerializedRestaurant {
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
+            Optional<PriceRange> priceRange,
             Optional<DatabaseUser> createdByUser) {
 
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
         this.cuisine = cuisine;
+        this.priceRange = priceRange;
         this.createdByUser = createdByUser;
         this.comments = emptyList();
         this.currentUserLikesRestaurant = false;
@@ -118,6 +124,16 @@ public class SerializedRestaurant {
 
     public Cuisine getCuisine() {
         return cuisine;
+    }
+
+    @JsonProperty("price_range")
+    public String getPriceRange() {
+        String priceRangeRange = "";
+
+        if (priceRange.isPresent()) {
+            priceRangeRange = priceRange.get().getRange();
+        }
+        return priceRangeRange;
     }
 
     @JsonProperty("liked")

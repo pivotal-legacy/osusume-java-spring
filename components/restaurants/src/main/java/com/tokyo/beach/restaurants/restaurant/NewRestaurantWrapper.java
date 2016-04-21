@@ -29,6 +29,10 @@ public class NewRestaurantWrapper {
         return restaurant.getCuisineId();
     }
 
+    public Long getPriceRangeId() {
+        return restaurant.getPriceRangeId();
+    }
+
     public String toString() {
         return restaurant.toString();
     }
