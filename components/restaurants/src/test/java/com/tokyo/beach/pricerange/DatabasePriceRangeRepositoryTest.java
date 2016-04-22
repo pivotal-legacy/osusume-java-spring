@@ -38,16 +38,22 @@ public class DatabasePriceRangeRepositoryTest {
 
     @Test
     public void test_getAll_returnsPriceRanges() throws Exception {
-        insertPriceRange(1, "Price Range #1");
-        insertPriceRange(2, "Price Range #2");
+        Long priceRangeId1 = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                "Price Range #1"
+        );
+        Long priceRangeId2 = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                "Price Range #2"
+        );
 
 
         List<PriceRange> actualPriceRanges = priceRangeRepository.getAll();
 
 
         List<PriceRange> expectedPriceRanges = Arrays.asList(
-                new PriceRange(1, "Price Range #1"),
-                new PriceRange(2, "Price Range #2")
+                new PriceRange(priceRangeId1, "Price Range #1"),
+                new PriceRange(priceRangeId2, "Price Range #2")
         );
 
         assertEquals(expectedPriceRanges, actualPriceRanges);
@@ -55,11 +61,14 @@ public class DatabasePriceRangeRepositoryTest {
 
     @Test
     public void test_get_returnsPriceRange() throws Exception {
-        insertPriceRange(1, "Price Range #1");
+        Long priceRangeId = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                "Price Range #1"
+        );
 
-        PriceRange actualPriceRange = priceRangeRepository.getPriceRange(1L).get();
+        PriceRange actualPriceRange = priceRangeRepository.getPriceRange(priceRangeId).get();
 
-        assertEquals(new PriceRange(1, "Price Range #1"), actualPriceRange);
+        assertEquals(new PriceRange(priceRangeId, "Price Range #1"), actualPriceRange);
     }
 
     @Test
@@ -72,8 +81,10 @@ public class DatabasePriceRangeRepositoryTest {
                 jdbcTemplate,
                 new NewCuisine("cuisine_name")
         );
-        insertPriceRange(1, "Price Range #1");
-
+        Long priceRangeId = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                "Price Range #1"
+        );
         Long insertedRestaurantId = insertRestaurantIntoDatabase(
                 jdbcTemplate,
                 new NewRestaurant(
@@ -84,7 +95,7 @@ public class DatabasePriceRangeRepositoryTest {
                         true,
                         "",
                         cuisineId,
-                        1L,
+                        priceRangeId,
                         emptyList()
                 ),
                 userId.longValue()
@@ -94,18 +105,6 @@ public class DatabasePriceRangeRepositoryTest {
                 RestaurantFixtures.newRestaurant(insertedRestaurantId.intValue())
         );
 
-        assertEquals(new PriceRange(1, "Price Range #1"), actualPriceRange);
-    }
-
-    private void insertPriceRange(long priceRangeId, String priceRangeRange) {
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("price_range")
-                .usingColumns("id", "range");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", priceRangeId);
-        params.put("range", priceRangeRange);
-
-        insert.execute(params);
+        assertEquals(new PriceRange(priceRangeId, "Price Range #1"), actualPriceRange);
     }
 }

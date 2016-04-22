@@ -65,7 +65,7 @@ public class TestDatabaseUtils {
 
     public static Long insertPriceRangeIntoDatabase(
             JdbcTemplate jdbcTemplate,
-            PriceRange priceRange
+            String priceRangeRange
     ) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("price_range")
@@ -73,7 +73,7 @@ public class TestDatabaseUtils {
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("range", priceRange.getRange());
+        params.put("range", priceRangeRange);
 
         return insert.executeAndReturnKey(params).longValue();
     }

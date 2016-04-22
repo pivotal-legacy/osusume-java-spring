@@ -82,7 +82,7 @@ public class DatabaseRestaurantRepositoryTest {
 
         Long priceRangeId = insertPriceRangeIntoDatabase(
                 jdbcTemplate,
-                new PriceRange(1L, "1000~1999")
+                "1000~1999"
         );
 
         Long cuisineId = insertCuisineIntoDatabase(
