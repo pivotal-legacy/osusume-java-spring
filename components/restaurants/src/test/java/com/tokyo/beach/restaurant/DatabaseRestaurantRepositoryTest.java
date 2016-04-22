@@ -1,6 +1,7 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -79,6 +80,11 @@ public class DatabaseRestaurantRepositoryTest {
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
         );
 
+        Long priceRangeId = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                new PriceRange(1L, "1000~1999")
+        );
+
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -87,7 +93,7 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 "Notes",
                 0L,
-                0L,
+                priceRangeId.longValue(),
                 emptyList()
         );
 
@@ -100,7 +106,6 @@ public class DatabaseRestaurantRepositoryTest {
                 createdRestaurant.getId()
         );
 
-
         assertEquals(map.get("id"), createdRestaurant.getId());
         assertEquals(map.get("name"), createdRestaurant.getName());
         assertEquals(map.get("address"), createdRestaurant.getAddress());
@@ -109,7 +114,8 @@ public class DatabaseRestaurantRepositoryTest {
         assertEquals(map.get("accepts_credit_cards"), createdRestaurant.getAcceptsCreditCards());
         assertEquals(map.get("notes"), createdRestaurant.getNotes());
         assertEquals(map.get("created_by_user_id"), userId.longValue());
-        assertEquals(map.get("cuisine_id"), 0L);
+        assertEquals(0L, map.get("cuisine_id"));
+        assertEquals(priceRangeId, map.get("price_range_id"));
     }
 
     @Test

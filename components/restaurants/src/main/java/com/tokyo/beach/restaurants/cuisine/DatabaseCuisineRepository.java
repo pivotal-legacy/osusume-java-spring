@@ -48,8 +48,6 @@ public class DatabaseCuisineRepository implements CuisineRepository {
         }
     }
 
-
-
     @Override
     public Cuisine createCuisine(NewCuisine newCuisine) {
         return jdbcTemplate.queryForObject(

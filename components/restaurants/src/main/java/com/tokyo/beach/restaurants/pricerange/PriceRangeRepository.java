@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PriceRangeRepository {
     List<PriceRange> getAll();
-    Optional<PriceRange> get(Long id);
+    Optional<PriceRange> getPriceRange(Long id);
     PriceRange findForRestaurant(Restaurant restaurant);
 }

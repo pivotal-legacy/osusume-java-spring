@@ -31,12 +31,39 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
     }
 
     @Override
-    public Optional<PriceRange> get(Long id) {
+    public Optional<PriceRange> getPriceRange(Long id) {
+        List<PriceRange> priceRanges = jdbcTemplate.query(
+                "SELECT * FROM price_range WHERE id = ?",
+                (rs, rowNum) -> {
+                    return new PriceRange(
+                            rs.getLong("id"),
+                            rs.getString("range")
+                    );
+                },
+                id
+        );
+
+        if (priceRanges.size() == 1) {
+            return Optional.of(priceRanges.get(0));
+        }
+
         return Optional.empty();
     }
 
     @Override
     public PriceRange findForRestaurant(Restaurant restaurant) {
-        return null;
+        List<PriceRange> priceRanges = jdbcTemplate.query(
+                "SELECT * FROM price_range WHERE id = " +
+                        "(SELECT price_range_id FROM restaurant WHERE id = ?)",
+                (rs, rowNum) -> {
+                    return new PriceRange(
+                            rs.getLong("id"),
+                            rs.getString("range")
+                    );
+                },
+                restaurant.getId()
+        );
+
+        return priceRanges.get(0);
     }
 }

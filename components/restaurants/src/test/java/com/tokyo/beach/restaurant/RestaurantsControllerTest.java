@@ -101,7 +101,7 @@ public class RestaurantsControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
         when(userRepository.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
-        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
                 Optional.empty()
         );
 
@@ -176,7 +176,7 @@ public class RestaurantsControllerTest {
                         new DatabaseUser(99L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
                 Optional.of(
                         new PriceRange(
                                 1,
@@ -249,7 +249,7 @@ public class RestaurantsControllerTest {
                         new DatabaseUser(1L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
                 Optional.empty()
         );
 
@@ -308,7 +308,7 @@ public class RestaurantsControllerTest {
                         new DatabaseUser(1L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.get(anyLong())).thenReturn(
+        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
                 Optional.empty()
         );
 

@@ -119,7 +119,7 @@ public class RestaurantsController {
                 restaurantWrapper.getPhotoUrls()
         );
         Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId().toString());
-        Optional<PriceRange> maybePriceRange = priceRangeRepository.get(restaurantWrapper.getPriceRangeId());
+        Optional<PriceRange> maybePriceRange = priceRangeRepository.getPriceRange(restaurantWrapper.getPriceRangeId());
 
         return new SerializedRestaurant(
                 restaurant,

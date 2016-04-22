@@ -1,6 +1,7 @@
 package com.tokyo.beach;
 
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -62,6 +63,21 @@ public class TestDatabaseUtils {
         return insert.executeAndReturnKey(params).longValue();
     }
 
+    public static Long insertPriceRangeIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            PriceRange priceRange
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("price_range")
+                .usingColumns("range")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("range", priceRange.getRange());
+
+        return insert.executeAndReturnKey(params).longValue();
+    }
+
     public static Long insertRestaurantIntoDatabase(
             JdbcTemplate jdbcTemplate,
             NewRestaurant newRestaurant,
@@ -69,13 +85,14 @@ public class TestDatabaseUtils {
     ) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("restaurant")
-                .usingColumns("name", "cuisine_id", "created_by_user_id")
+                .usingColumns("name", "cuisine_id", "created_by_user_id", "price_range_id")
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
         params.put("name", newRestaurant.getName());
         params.put("cuisine_id", newRestaurant.getCuisineId());
         params.put("created_by_user_id", userId);
+        params.put("price_range_id", newRestaurant.getPriceRangeId());
 
         return insert.executeAndReturnKey(params).longValue();
     }
