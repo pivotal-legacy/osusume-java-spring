@@ -85,6 +85,13 @@ public class DatabaseRestaurantRepositoryTest {
                 new PriceRange(1L, "1000~1999")
         );
 
+        Long cuisineId = insertCuisineIntoDatabase(
+                jdbcTemplate,
+                new NewCuisine(
+                        "Fried Chicken"
+                )
+        );
+
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
@@ -92,8 +99,8 @@ public class DatabaseRestaurantRepositoryTest {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 "Notes",
-                0L,
-                priceRangeId.longValue(),
+                cuisineId,
+                priceRangeId,
                 emptyList()
         );
 
@@ -106,15 +113,15 @@ public class DatabaseRestaurantRepositoryTest {
                 createdRestaurant.getId()
         );
 
-        assertEquals(map.get("id"), createdRestaurant.getId());
-        assertEquals(map.get("name"), createdRestaurant.getName());
-        assertEquals(map.get("address"), createdRestaurant.getAddress());
-        assertEquals(map.get("offers_english_menu"), createdRestaurant.getOffersEnglishMenu());
-        assertEquals(map.get("walk_ins_ok"), createdRestaurant.getWalkInsOk());
-        assertEquals(map.get("accepts_credit_cards"), createdRestaurant.getAcceptsCreditCards());
-        assertEquals(map.get("notes"), createdRestaurant.getNotes());
-        assertEquals(map.get("created_by_user_id"), userId.longValue());
-        assertEquals(0L, map.get("cuisine_id"));
+        assertEquals(createdRestaurant.getId(), map.get("id"));
+        assertEquals(createdRestaurant.getName(), map.get("name"));
+        assertEquals(createdRestaurant.getAddress(), map.get("address"));
+        assertEquals(createdRestaurant.getOffersEnglishMenu(), map.get("offers_english_menu"));
+        assertEquals(createdRestaurant.getWalkInsOk(), map.get("walk_ins_ok"));
+        assertEquals(createdRestaurant.getAcceptsCreditCards(), map.get("accepts_credit_cards"));
+        assertEquals(createdRestaurant.getNotes(), map.get("notes"));
+        assertEquals(userId.longValue(), map.get("created_by_user_id"));
+        assertEquals(cuisineId, map.get("cuisine_id"));
         assertEquals(priceRangeId, map.get("price_range_id"));
     }
 
@@ -157,9 +164,9 @@ public class DatabaseRestaurantRepositoryTest {
                 createdRestaurant.getId()
         );
 
-        assertThat(actualRestaurant.getName(), is("KFC"));
-        assertThat(actualRestaurant.getAddress(), is("Shibuya"));
-        assertThat(actualRestaurant.getCuisineId(), is(0L));
+        assertEquals("KFC", actualRestaurant.getName());
+        assertEquals("Shibuya", actualRestaurant.getAddress());
+        assertEquals(0L, actualRestaurant.getCuisineId().longValue());
     }
 
     @Test
