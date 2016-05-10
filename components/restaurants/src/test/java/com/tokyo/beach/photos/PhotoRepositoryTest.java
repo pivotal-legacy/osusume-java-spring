@@ -1,7 +1,7 @@
 package com.tokyo.beach.photos;
 
 import com.tokyo.beach.TestDatabaseUtils;
-import com.tokyo.beach.restaurant.RestaurantFixtures;
+import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
@@ -42,7 +42,7 @@ public class PhotoRepositoryTest {
                 "VALUES ('http://some-url', 1)");
 
         List<PhotoUrl> photos = photoRepository.findForRestaurants(singletonList(
-                RestaurantFixtures.newRestaurant(1)
+                new RestaurantFixture().withId(1L).build()
         ));
 
         assertThat(photos, hasSize(1));
@@ -85,7 +85,7 @@ public class PhotoRepositoryTest {
         jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) VALUES ('http://some-url', 1)");
 
 
-        List<PhotoUrl> photos = photoRepository.findForRestaurant(RestaurantFixtures.newRestaurant(1));
+        List<PhotoUrl> photos = photoRepository.findForRestaurant(new RestaurantFixture().withId(1L).build());
 
 
         assertThat(photos, hasSize(1));

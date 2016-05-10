@@ -43,7 +43,7 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
@@ -78,19 +78,19 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         Long priceRangeId = insertPriceRangeIntoDatabase(
                 jdbcTemplate,
                 "1000~1999"
-        );
+        ).getId();
 
         Long cuisineId = insertCuisineIntoDatabase(
                 jdbcTemplate,
                 new NewCuisine(
                         "Fried Chicken"
                 )
-        );
+        ).getId();
 
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
@@ -130,7 +130,7 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
@@ -174,7 +174,7 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         long id = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, created_by_user_id) " +
@@ -206,11 +206,11 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("user_email", "password", "username")
-        );
+        ).getId();
         Long cuisineId = insertCuisineIntoDatabase(
                 jdbcTemplate,
                 new NewCuisine("cuisine_name")
-        );
+        ).getId();
         Long restaurantId = insertRestaurantIntoDatabase(
                 jdbcTemplate,
                 new NewRestaurant(
@@ -225,7 +225,7 @@ public class DatabaseRestaurantRepositoryTest {
                         emptyList()
                 ),
                 userId.longValue()
-        );
+        ).getId();
 
         List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(userId.longValue());
 
@@ -239,11 +239,11 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("user_email", "password", "username")
-        );
+        ).getId();
         Long cuisineId = insertCuisineIntoDatabase(
                 jdbcTemplate,
                 new NewCuisine("cuisine_name")
-        );
+        ).getId();
         Long restaurantId = insertRestaurantIntoDatabase(
                 jdbcTemplate,
                 new NewRestaurant(
@@ -258,7 +258,7 @@ public class DatabaseRestaurantRepositoryTest {
                         emptyList()
                 ),
                 userId.longValue()
-        );
+        ).getId();
 
         List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(singletonList(restaurantId));
 
@@ -273,7 +273,7 @@ public class DatabaseRestaurantRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("rob@pivotal.io", "password", "Rob")
-        );
+        ).getId();
 
         NewRestaurant newRestaurant = new NewRestaurant(
                 "KFC",
@@ -291,7 +291,7 @@ public class DatabaseRestaurantRepositoryTest {
                 jdbcTemplate,
                 newRestaurant,
                 userId.longValue()
-        );
+        ).getId();
 
         NewRestaurant updatedNewRestaurant = new NewRestaurant(
                 "Kentucky",

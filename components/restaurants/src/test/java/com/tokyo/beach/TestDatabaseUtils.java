@@ -1,7 +1,11 @@
 package com.tokyo.beach;
 
+import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
+import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +22,19 @@ public class TestDatabaseUtils {
         return dataSource;
     }
 
-    public static Long insertUserIntoDatabase(
+    public static void createDefaultCuisine(JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("INSERT INTO cuisine (id, name) " +
+                "SELECT 0, 'Not Specified' " +
+                "WHERE NOT EXISTS (SELECT id FROM cuisine WHERE id=0)");
+    }
+
+    public static void createDefaultPriceRange(JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.update("INSERT INTO price_range (id, range) " +
+                "SELECT 0, 'Not Specified' " +
+                "WHERE NOT EXISTS (SELECT id FROM price_range WHERE id=0)");
+    }
+
+    public static DatabaseUser insertUserIntoDatabase(
             JdbcTemplate jdbcTemplate,
             UserRegistration userRegistration
     ) {
@@ -32,22 +48,11 @@ public class TestDatabaseUtils {
         params.put("password", userRegistration.getPassword());
         params.put("name", userRegistration.getName());
 
-        return insert.executeAndReturnKey(params).longValue();
+        long id = insert.executeAndReturnKey(params).longValue();
+        return new DatabaseUser(id, userRegistration.getEmail(), userRegistration.getName());
     }
 
-    public static void createDefaultCuisine(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.update("INSERT INTO cuisine (id, name) " +
-                "SELECT 0, 'Not Specified' " +
-                "WHERE NOT EXISTS (SELECT id FROM cuisine WHERE id=0)");
-    }
-
-    public static void createDefaultPriceRange(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.update("INSERT INTO price_range (id, range) " +
-                "SELECT 0, 'Not Specified' " +
-                "WHERE NOT EXISTS (SELECT id FROM price_range WHERE id=0)");
-    }
-
-    public static Long insertCuisineIntoDatabase(
+    public static Cuisine insertCuisineIntoDatabase(
             JdbcTemplate jdbcTemplate,
             NewCuisine newCuisine
     ) {
@@ -59,10 +64,11 @@ public class TestDatabaseUtils {
         Map<String, Object> params = new HashMap<>();
         params.put("name", newCuisine.getName());
 
-        return insert.executeAndReturnKey(params).longValue();
+        long id = insert.executeAndReturnKey(params).longValue();
+        return new Cuisine(id, newCuisine.getName());
     }
 
-    public static Long insertPriceRangeIntoDatabase(
+    public static PriceRange insertPriceRangeIntoDatabase(
             JdbcTemplate jdbcTemplate,
             String priceRangeRange
     ) {
@@ -74,10 +80,11 @@ public class TestDatabaseUtils {
         Map<String, Object> params = new HashMap<>();
         params.put("range", priceRangeRange);
 
-        return insert.executeAndReturnKey(params).longValue();
+        long id = insert.executeAndReturnKey(params).longValue();
+        return new PriceRange(id, priceRangeRange);
     }
 
-    public static Long insertRestaurantIntoDatabase(
+    public static Restaurant insertRestaurantIntoDatabase(
             JdbcTemplate jdbcTemplate,
             NewRestaurant newRestaurant,
             Long userId
@@ -93,7 +100,24 @@ public class TestDatabaseUtils {
         params.put("created_by_user_id", userId);
         params.put("price_range_id", newRestaurant.getPriceRangeId());
 
-        return insert.executeAndReturnKey(params).longValue();
+        long id = insert.executeAndReturnKey(params).longValue();
+        return jdbcTemplate.queryForObject(
+                "SELECT * from restaurant where id = ?",
+                (rs, rowNum) -> {
+                    return new Restaurant(
+                            id,
+                            rs.getString("name"),
+                            rs.getString("address"),
+                            rs.getBoolean("offers_english_menu"),
+                            rs.getBoolean("walk_ins_ok"),
+                            rs.getBoolean("accepts_credit_cards"),
+                            rs.getString("notes"),
+                            rs.getString("created_at"),
+                            rs.getLong("created_by_user_id")
+                    );
+                },
+                id
+        );
     }
 
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {

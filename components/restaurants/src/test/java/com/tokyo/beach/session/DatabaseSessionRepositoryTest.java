@@ -43,7 +43,7 @@ public class DatabaseSessionRepositoryTest {
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
-        userId = insertUserIntoDatabase(jdbcTemplate, userRegistration);
+        userId = insertUserIntoDatabase(jdbcTemplate, userRegistration).getId();
         user = new DatabaseUser(
                 userId, userRegistration.getEmail(), userRegistration.getName()
         );

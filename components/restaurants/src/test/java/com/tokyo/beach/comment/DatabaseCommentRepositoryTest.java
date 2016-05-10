@@ -40,7 +40,7 @@ public class DatabaseCommentRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         long restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
@@ -82,7 +82,7 @@ public class DatabaseCommentRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         Restaurant restaurant = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, created_by_user_id) VALUES " +

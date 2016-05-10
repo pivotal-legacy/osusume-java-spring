@@ -34,7 +34,7 @@ public class DatabaseLikeRepositoryTest {
     public void test_create_persistsToLikesTable() throws Exception {
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("hiro@gmail.com", "password", "Hiro")
-        );
+        ).getId();
 
         long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
                 new NewRestaurant(
@@ -48,11 +48,11 @@ public class DatabaseLikeRepositoryTest {
                         0L,
                         emptyList()),
                 createdByUserId
-        );
+        ).getId();
 
         Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("yuki@gmail.com", "password", "Yuki")
-        );
+        ).getId();
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
@@ -79,7 +79,7 @@ public class DatabaseLikeRepositoryTest {
     public void test_findForRestaurant_returnsLikeList() throws Exception {
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("hiro@gmail.com", "password", "Hiro")
-        );
+        ).getId();
 
         long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
                 new NewRestaurant(
@@ -93,11 +93,11 @@ public class DatabaseLikeRepositoryTest {
                         0L,
                         emptyList()),
                 createdByUserId
-        );
+        ).getId();
 
         Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
                 new UserRegistration("yuki@gmail.com", "password", "Yuki")
-        );
+        ).getId();
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);

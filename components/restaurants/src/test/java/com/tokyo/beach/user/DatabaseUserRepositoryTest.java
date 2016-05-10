@@ -112,7 +112,7 @@ public class DatabaseUserRepositoryTest {
         UserRegistration userRegistration = new UserRegistration(
                 "user@gmail.com", "password", "Username"
         );
-        Number userId = insertUserIntoDatabase(jdbcTemplate, userRegistration);
+        Number userId = insertUserIntoDatabase(jdbcTemplate, userRegistration).getId();
 
 
         Optional<DatabaseUser> maybeUser = databaseUserRepository.get(userId.longValue());

@@ -107,7 +107,7 @@ public class DatabaseCuisineRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         Long cuisineId = jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine (name) VALUES " +
@@ -144,7 +144,7 @@ public class DatabaseCuisineRepositoryTest {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
                 new UserRegistration("joe@pivotal.io", "password", "Joe")
-        );
+        ).getId();
 
         Restaurant restaurant = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (name, created_by_user_id) VALUES " +

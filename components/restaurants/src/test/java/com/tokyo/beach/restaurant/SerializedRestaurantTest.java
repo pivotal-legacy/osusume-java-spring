@@ -9,9 +9,12 @@ import static org.junit.Assert.assertEquals;
 public class SerializedRestaurantTest {
     @Test
     public void test_getCreatedDate() throws Exception {
-        Restaurant restaurant = RestaurantFixtures.newRestaurant(
-                1, "Afuri", "2016-04-13 16:01:21.094"
-        );
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1L)
+                .withName("Afuri")
+                .withCreatedAt("2016-04-13 16:01:21.094")
+                .build();
+
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant, null, null, null, null, null, false, 0L
         );

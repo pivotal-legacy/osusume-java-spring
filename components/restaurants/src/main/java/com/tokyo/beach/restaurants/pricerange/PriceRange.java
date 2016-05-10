@@ -12,6 +12,10 @@ public class PriceRange {
         this.range = range;
     }
 
+    public PriceRange(String range) {
+        this.range = range;
+    }
+
     public long getId() {
         return id;
     }
