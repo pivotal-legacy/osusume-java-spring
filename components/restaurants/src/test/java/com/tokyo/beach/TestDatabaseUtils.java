@@ -1,7 +1,6 @@
 package com.tokyo.beach;
 
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.user.UserRegistration;
 import org.postgresql.ds.PGSimpleDataSource;

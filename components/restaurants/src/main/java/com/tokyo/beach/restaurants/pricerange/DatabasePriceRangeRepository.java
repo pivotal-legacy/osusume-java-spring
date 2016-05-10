@@ -3,10 +3,14 @@ package com.tokyo.beach.restaurants.pricerange;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class DatabasePriceRangeRepository implements PriceRangeRepository {
@@ -65,5 +69,27 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
         );
 
         return priceRanges.get(0);
+    }
+
+    @Override
+    public List<PriceRange> findForRestaurants(List<Restaurant> restaurants) {
+        List<Long> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", ids);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedTemplate.query(
+                "SELECT * FROM price_range INNER JOIN restaurant ON " +
+                        "price_range.id = restaurant.price_range_id " +
+                        "WHERE restaurant.id IN (:ids)",
+                parameters,
+                (rs, rowNum) -> {
+                    return new PriceRange(
+                            rs.getLong("id"),
+                            rs.getString("range")
+                    );
+                }
+        );
     }
 }

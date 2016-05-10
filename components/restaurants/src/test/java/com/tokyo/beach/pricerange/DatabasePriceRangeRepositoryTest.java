@@ -11,15 +11,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static com.tokyo.beach.restaurant.NewRestaurantFixtures.newNewRestaurant;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
 public class DatabasePriceRangeRepositoryTest {
@@ -51,7 +51,7 @@ public class DatabasePriceRangeRepositoryTest {
         List<PriceRange> actualPriceRanges = priceRangeRepository.getAll();
 
 
-        List<PriceRange> expectedPriceRanges = Arrays.asList(
+        List<PriceRange> expectedPriceRanges = asList(
                 new PriceRange(priceRangeId1, "Price Range #1"),
                 new PriceRange(priceRangeId2, "Price Range #2")
         );
@@ -106,5 +106,92 @@ public class DatabasePriceRangeRepositoryTest {
         );
 
         assertEquals(new PriceRange(priceRangeId, "Price Range #1"), actualPriceRange);
+    }
+
+    @Test
+    public void test_findForRestaurants_findsPriceRangesForRestaurantList() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("user_email", "password", "username")
+        );
+        Long cuisineId = insertCuisineIntoDatabase(
+                jdbcTemplate,
+                new NewCuisine("cuisine_name")
+        );
+
+        Long priceRangeId = insertPriceRangeIntoDatabase(
+                jdbcTemplate,
+                "Price Range #1"
+        );
+
+        List<Long> restaurants = asList(
+                insertRestaurantIntoDatabase(
+                        jdbcTemplate,
+                        newNewRestaurant(priceRangeId, cuisineId),
+                        userId.longValue()
+                ),
+                insertRestaurantIntoDatabase(
+                        jdbcTemplate,
+                        newNewRestaurant(priceRangeId, cuisineId),
+                        userId.longValue()
+                )
+        );
+
+        List<PriceRange> actualPriceRanges = priceRangeRepository.findForRestaurants(
+                asList(RestaurantFixtures.newRestaurant(restaurants.get(0).intValue()),
+                        RestaurantFixtures.newRestaurant(restaurants.get(1).intValue())
+                )
+        );
+
+        assertThat(actualPriceRanges, hasSize(restaurants.size()));
+        assertEquals(actualPriceRanges.get(0).getRange(), "Price Range #1");
+        assertEquals(actualPriceRanges.get(1).getRange(), "Price Range #1");
+    }
+
+    @Test
+    public void test_findForRestaurants_findsDifferentPriceRangesForRestaurantList() throws Exception {
+        Number userId = insertUserIntoDatabase(
+                jdbcTemplate,
+                new UserRegistration("user_email", "password", "username")
+        );
+        Long cuisineId = insertCuisineIntoDatabase(
+                jdbcTemplate,
+                new NewCuisine("cuisine_name")
+        );
+
+        Long priceRangeId1 =
+                insertPriceRangeIntoDatabase(
+                        jdbcTemplate,
+                        "Price Range #1"
+                );
+        Long priceRangeId2 =
+                insertPriceRangeIntoDatabase(
+                        jdbcTemplate,
+                        "Price Range #2"
+                );
+
+
+        List<Long> restaurants = asList(
+                insertRestaurantIntoDatabase(
+                        jdbcTemplate,
+                        newNewRestaurant(priceRangeId1, cuisineId),
+                        userId.longValue()
+                ),
+                insertRestaurantIntoDatabase(
+                        jdbcTemplate,
+                        newNewRestaurant(priceRangeId2, cuisineId),
+                        userId.longValue()
+                )
+        );
+
+        List<PriceRange> actualPriceRanges = priceRangeRepository.findForRestaurants(
+                asList(RestaurantFixtures.newRestaurant(restaurants.get(0).intValue()),
+                        RestaurantFixtures.newRestaurant(restaurants.get(1).intValue())
+                )
+        );
+
+        assertThat(actualPriceRanges, hasSize(restaurants.size()));
+        assertEquals(actualPriceRanges.get(0).getRange(), "Price Range #1");
+        assertEquals(actualPriceRanges.get(1).getRange(), "Price Range #2");
     }
 }
