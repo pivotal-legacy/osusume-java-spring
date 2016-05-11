@@ -107,8 +107,8 @@ public class RestaurantsController {
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
                         false,
-                        restaurantLikes.get(restaurant.getId()).size())
-                )
+                        restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
+                ))
                 .collect(toList());
     }
 

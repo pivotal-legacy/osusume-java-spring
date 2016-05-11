@@ -125,6 +125,49 @@ public class RestaurantsControllerTest {
     }
 
     @Test
+    public void test_getAll_returnsRestaurantsWithoutLikes() throws Exception {
+        List<Restaurant> restaurants = singletonList(
+                new Restaurant(
+                        1,
+                        "Afuri",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "とても美味しい",
+                        "created-date",
+                        1
+                )
+        );
+        when(restaurantRepository.getAll()).thenReturn(restaurants);
+        when(photoRepository.findForRestaurants(anyObject()))
+                .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
+        when(userRepository.findForUserIds(anyList()))
+                .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
+        when(mockPriceRangeRepository.findForRestaurants(restaurants)).thenReturn(
+                asList(new PriceRange(1L, "100yen", 1L))
+        );
+        when(mockLikeRepository.findForRestaurants(restaurants)).thenReturn(
+                emptyList()
+        );
+
+
+        mockMvc.perform(get("/restaurants"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", equalTo(1)))
+                .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
+                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
+                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
+                .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
+                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
+                .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
+                .andExpect(jsonPath("$[0].num_likes", equalTo(0)))
+                .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
+    }
+
+    @Test
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 restaurantRepository,

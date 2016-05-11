@@ -152,4 +152,19 @@ public class DatabaseLikeRepositoryTest {
         assertTrue(likes.contains(like1));
         assertTrue(likes.contains(like2));
     }
+
+    @Test
+    public void test_findForRestaurants_returnsEmptyList() throws Exception {
+        Restaurant restaurant1 = new RestaurantFixture()
+                .withName("restaurant_name1")
+                .postedByUser(new DatabaseUserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .persist(jdbcTemplate);
+
+
+        List<Like> likes = new DatabaseLikeRepository(jdbcTemplate)
+                .findForRestaurants(asList(restaurant1));
+
+
+        assertTrue(likes.isEmpty());
+    }
 }
