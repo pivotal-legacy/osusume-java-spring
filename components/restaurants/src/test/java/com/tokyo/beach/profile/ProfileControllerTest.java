@@ -158,9 +158,14 @@ public class ProfileControllerTest {
                 .thenReturn(posts);
         when(photoRepository.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
-
         when(cuisineRepository.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
+        when(mockPriceRangeRepository.findForRestaurants(posts)).thenReturn(
+                asList(new PriceRange(1L, "¥1000 ~ ¥2000", 1L))
+        );
+        when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
+                asList(new Like(99L, 1L), new Like(98L, 1L))
+        );
 
         mockMvc.perform(get("/profile/likes").
                 requestAttr("userId", 99L)
@@ -176,6 +181,8 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
                 .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
+                .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
     }
 

@@ -130,17 +130,27 @@ public class ProfileController {
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
+        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
+        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+
+        List<Like> likes = likeRepository.findForRestaurants(restaurantList);
+        Map<Long, List<Like>> restaurantLikes = likes
+                .stream()
+                .collect(groupingBy(Like::getRestaurantId));
+
+
         List<SerializedRestaurant> resultList =
                 restaurantList.stream()
                         .map((restaurant) -> new SerializedRestaurant(
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
-                                Optional.empty(),
+                                Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
                                 Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                                 emptyList(),
                                 true,
-                                0L)
+                                restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size())
                         )
                         .collect(toList());
 
