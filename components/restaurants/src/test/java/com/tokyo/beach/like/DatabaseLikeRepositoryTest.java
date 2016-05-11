@@ -1,9 +1,12 @@
 package com.tokyo.beach.like;
 
+import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.like.DatabaseLikeRepository;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.user.DatabaseUserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +15,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DatabaseLikeRepositoryTest {
     private JdbcTemplate jdbcTemplate;
@@ -118,5 +123,33 @@ public class DatabaseLikeRepositoryTest {
         List<Like> likes = likeRepository.findForRestaurant(restaurantId);
 
         assertEquals(likes.get(0), persistedLike);
+    }
+
+    @Test
+    public void test_findForRestaurants_returnsLikesList() throws Exception {
+        Restaurant restaurant1 = new RestaurantFixture()
+                .withName("restaurant_name1")
+                .postedByUser(new DatabaseUserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .persist(jdbcTemplate);
+        Restaurant restaurant2 = new RestaurantFixture()
+                .withName("restaurant_name2")
+                .postedByUser(new DatabaseUserFixture().withEmail("mail2").persist(jdbcTemplate))
+                .persist(jdbcTemplate);
+        Like like1 = new LikeFixture()
+                .withRestaurantId(restaurant1.getId())
+                .withUserId(restaurant1.getCreatedByUserId())
+                .persist(jdbcTemplate);
+        Like like2 = new LikeFixture()
+                .withRestaurantId(restaurant2.getId())
+                .withUserId(new DatabaseUserFixture().withEmail("mail3").persist(jdbcTemplate).getId())
+                .persist(jdbcTemplate);
+
+
+        List<Like> likes = new DatabaseLikeRepository(jdbcTemplate)
+                .findForRestaurants(asList(restaurant1, restaurant2));
+
+
+        assertTrue(likes.contains(like1));
+        assertTrue(likes.contains(like2));
     }
 }

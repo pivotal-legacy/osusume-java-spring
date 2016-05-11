@@ -101,9 +101,13 @@ public class RestaurantsControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
         when(userRepository.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
-        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
-                Optional.empty()
+        when(mockPriceRangeRepository.findForRestaurants(restaurants)).thenReturn(
+                asList(new PriceRange(1L, "100yen", 1L))
         );
+        when(mockLikeRepository.findForRestaurants(restaurants)).thenReturn(
+                asList(new Like(1L, 1L), new Like(2L, 1L))
+        );
+
 
         mockMvc.perform(get("/restaurants"))
                 .andExpect(status().isOk())
@@ -115,6 +119,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
+                .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
+                .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
     }
 

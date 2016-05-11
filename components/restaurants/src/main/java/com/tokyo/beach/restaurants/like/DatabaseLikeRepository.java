@@ -1,13 +1,18 @@
 package com.tokyo.beach.restaurants.like;
 
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class DatabaseLikeRepository implements LikeRepository {
@@ -56,5 +61,25 @@ public class DatabaseLikeRepository implements LikeRepository {
         );
 
         return restaurantIds;
+    }
+
+    @Override
+    public List<Like> findForRestaurants(List<Restaurant> restaurants) {
+        List<Long> restaurantIds = restaurants.stream().map(Restaurant::getId).collect(toList());
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", restaurantIds);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        return namedTemplate.query(
+                "SELECT * FROM likes WHERE restaurant_id IN (:ids)",
+                parameters,
+                (rs, rowNum) -> {
+                    return new Like(
+                            rs.getLong("user_id"),
+                            rs.getLong("restaurant_id")
+                    );
+                }
+        );
     }
 }

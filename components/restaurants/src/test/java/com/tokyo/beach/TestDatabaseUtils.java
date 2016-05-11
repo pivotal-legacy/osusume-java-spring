@@ -2,6 +2,7 @@ package com.tokyo.beach;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
+import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -118,6 +119,23 @@ public class TestDatabaseUtils {
                 },
                 id
         );
+    }
+
+    public static Like insertLikeIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            Like like
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("likes")
+                .usingColumns("restaurant_id", "user_id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("restaurant_id", like.getRestaurantId());
+        params.put("user_id", like.getUserId());
+
+        insert.execute(params);
+
+        return like;
     }
 
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {

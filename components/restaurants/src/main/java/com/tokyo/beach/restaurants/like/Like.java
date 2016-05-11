@@ -2,8 +2,8 @@ package com.tokyo.beach.restaurants.like;
 
 public class Like {
     private long userId;
-
     private long restaurantId;
+
     @SuppressWarnings("unused")
     public Like(long userId, long restaurantId) {
         this.userId = userId;

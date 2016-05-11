@@ -111,7 +111,9 @@ public class DatabasePriceRangeRepositoryTest {
 
         assertThat(actualPriceRanges, hasSize(restaurants.size()));
         assertEquals(actualPriceRanges.get(0).getRange(), "Price Range #1");
+        assertEquals(actualPriceRanges.get(0).getRestaurantId().get(), restaurants.get(0));
         assertEquals(actualPriceRanges.get(1).getRange(), "Price Range #1");
+        assertEquals(actualPriceRanges.get(1).getRestaurantId().get(), restaurants.get(1));
     }
 
     @Test
@@ -139,6 +141,9 @@ public class DatabasePriceRangeRepositoryTest {
 
         assertThat(actualPriceRanges, hasSize(restaurants.size()));
         assertEquals(actualPriceRanges.get(0).getRange(), "Price Range #1");
+        assertEquals(actualPriceRanges.get(0).getRestaurantId().get(), restaurants.get(0));
         assertEquals(actualPriceRanges.get(1).getRange(), "Price Range #2");
+        assertEquals(actualPriceRanges.get(1).getRestaurantId().get(), restaurants.get(1));
+
     }
 }

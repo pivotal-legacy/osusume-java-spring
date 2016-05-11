@@ -80,14 +80,17 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 
         return namedTemplate.query(
-                "SELECT * FROM price_range INNER JOIN restaurant ON " +
-                        "price_range.id = restaurant.price_range_id " +
+                "SELECT restaurant.id as restaurant_id, restaurant.price_range_id as " +
+                        "price_range_id, price_range.range as range FROM restaurant " +
+                        "INNER JOIN price_range " +
+                        "ON price_range.id = restaurant.price_range_id " +
                         "WHERE restaurant.id IN (:ids)",
                 parameters,
                 (rs, rowNum) -> {
                     return new PriceRange(
-                            rs.getLong("id"),
-                            rs.getString("range")
+                            rs.getLong("price_range_id"),
+                            rs.getString("range"),
+                            rs.getLong("restaurant_id")
                     );
                 }
         );

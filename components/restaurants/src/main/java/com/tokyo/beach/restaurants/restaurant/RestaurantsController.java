@@ -19,6 +19,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,6 +88,14 @@ public class RestaurantsController {
                                 DatabaseUser::getId, UnaryOperator.identity()
                         )
                 );
+        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
+        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+
+        List<Like> likes = likeRepository.findForRestaurants(restaurantList);
+        Map<Long, List<Like>> restaurantLikes = likes
+                .stream()
+                .collect(groupingBy(Like::getRestaurantId));
 
         return restaurantList
                 .stream()
@@ -94,11 +103,11 @@ public class RestaurantsController {
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         null,
-                        Optional.empty(),
+                        Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
                         false,
-                        0L)
+                        restaurantLikes.get(restaurant.getId()).size())
                 )
                 .collect(toList());
     }
