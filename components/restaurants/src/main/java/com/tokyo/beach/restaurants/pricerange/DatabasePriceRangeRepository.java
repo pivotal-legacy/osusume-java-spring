@@ -84,7 +84,8 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
                         "price_range_id, price_range.range as range FROM restaurant " +
                         "INNER JOIN price_range " +
                         "ON price_range.id = restaurant.price_range_id " +
-                        "WHERE restaurant.id IN (:ids)",
+                        "WHERE restaurant.id IN (:ids) " +
+                        "ORDER BY restaurant.id",
                 parameters,
                 (rs, rowNum) -> {
                     return new PriceRange(
