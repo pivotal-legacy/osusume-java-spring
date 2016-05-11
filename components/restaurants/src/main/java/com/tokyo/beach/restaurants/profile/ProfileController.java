@@ -1,9 +1,12 @@
 package com.tokyo.beach.restaurants.profile;
 
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.SerializedRestaurant;
@@ -16,6 +19,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +38,7 @@ public class ProfileController {
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
     private LikeRepository likeRepository;
+    private PriceRangeRepository priceRangeRepository;
 
     @Autowired
     public ProfileController(
@@ -41,13 +46,14 @@ public class ProfileController {
             PhotoRepository photoRepository,
             CuisineRepository cuisineRepository,
             UserRepository userRepository,
-            LikeRepository likeRepository
-    ) {
+            LikeRepository likeRepository,
+            PriceRangeRepository priceRangeRepository) {
         this.restaurantRepository = restaurantRepository;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
+        this.priceRangeRepository = priceRangeRepository;
     }
 
     @RequestMapping(value = "/profile/posts", method = GET)
@@ -68,17 +74,26 @@ public class ProfileController {
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
+        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
+        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+
+        List<Like> likes = likeRepository.findForRestaurants(restaurantList);
+        Map<Long, List<Like>> restaurantLikes = likes
+                .stream()
+                .collect(groupingBy(Like::getRestaurantId));
+
         List<SerializedRestaurant> resultList =
                 restaurantList.stream()
                         .map((restaurant) -> new SerializedRestaurant(
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
-                                Optional.empty(),
+                                Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
                                 maybeUser,
                                 emptyList(),
                                 false,
-                                0L)
+                                restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size())
                         )
                         .collect(toList());
 

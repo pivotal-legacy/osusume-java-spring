@@ -1,5 +1,8 @@
 package com.tokyo.beach.profile;
 
+import com.tokyo.beach.restaurants.like.Like;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
@@ -11,6 +14,7 @@ import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRepository;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +40,8 @@ public class ProfileControllerTest {
     private PhotoRepository photoRepository;
     private CuisineRepository cuisineRepository;
     private UserRepository userRepository;
-    private LikeRepository likeRepository;
+    private LikeRepository mockLikeRepository;
+    private PriceRangeRepository mockPriceRangeRepository;
 
     @Before
     public void setUp() {
@@ -43,14 +49,16 @@ public class ProfileControllerTest {
         photoRepository = mock(PhotoRepository.class);
         cuisineRepository = mock(CuisineRepository.class);
         userRepository = mock(UserRepository.class);
-        likeRepository = mock(LikeRepository.class);
+        mockLikeRepository = mock(LikeRepository.class);
+        mockPriceRangeRepository = mock(PriceRangeRepository.class);
 
         ProfileController profileController = new ProfileController(
                 restaurantRepository,
                 photoRepository,
                 cuisineRepository,
                 userRepository,
-                likeRepository
+                mockLikeRepository,
+                mockPriceRangeRepository
         );
 
         mockMvc = standaloneSetup(profileController)
@@ -85,6 +93,13 @@ public class ProfileControllerTest {
         when(cuisineRepository.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
 
+        when(mockPriceRangeRepository.findForRestaurants(posts)).thenReturn(
+                asList(new PriceRange(1L, "¥1000 ~ ¥2000", 1L))
+        );
+        when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
+                asList(new Like(1L, 1L), new Like(2L, 1L))
+        );
+
         mockMvc.perform(get("/profile/posts")
                 .requestAttr("userId", 1L)
         )
@@ -99,6 +114,8 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
                 .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
+                .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
     }
 
@@ -135,7 +152,7 @@ public class ProfileControllerTest {
 
         when(userRepository.findForUserIds(singletonList(99L)))
                 .thenReturn(singletonList(new DatabaseUser(99L, "user-email", "username")));
-        when(likeRepository.getLikesByUser(99L))
+        when(mockLikeRepository.getLikesByUser(99L))
                 .thenReturn(likesList);
         when(restaurantRepository.getRestaurantsByIds(likesList))
                 .thenReturn(posts);
@@ -164,7 +181,7 @@ public class ProfileControllerTest {
 
     @Test
     public void test_getUserLikes_returnsEmptyListWhenNoLikes() throws Exception {
-        when(likeRepository.getLikesByUser(99L))
+        when(mockLikeRepository.getLikesByUser(99L))
                 .thenReturn(emptyList());
 
         mockMvc.perform(get("/profile/likes").
