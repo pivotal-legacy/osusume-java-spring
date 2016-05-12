@@ -1,40 +1,40 @@
 package com.tokyo.beach.user;
 
 import com.tokyo.beach.TestDatabaseUtils;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class DatabaseUserFixture {
+public class UserFixture {
     private long id = 0;
     private String name = "Not Specified";
     private String email = "Not Specified";
 
-    public DatabaseUserFixture withId(long id) {
+    public UserFixture withId(long id) {
         this.id = id;
         return this;
     }
 
-    public DatabaseUserFixture withName(String name) {
+    public UserFixture withName(String name) {
         this.name = name;
         return this;
     }
 
-    public DatabaseUserFixture withEmail(String email) {
+    public UserFixture withEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public DatabaseUser build() {
-        return new DatabaseUser(
+    public User build() {
+        return new User(
                 id,
                 email,
                 name
         );
     }
 
-    public DatabaseUser persist(JdbcTemplate jdbcTemplate) {
-        UserRegistration userRegistration = new UserRegistration(
+    public User persist(JdbcTemplate jdbcTemplate) {
+        NewUser newUser = new NewUser(
                 email,
                 null,
                 name
@@ -42,7 +42,7 @@ public class DatabaseUserFixture {
 
         return TestDatabaseUtils.insertUserIntoDatabase(
                 jdbcTemplate,
-                userRegistration
+                newUser
         );
     }
 }

@@ -16,7 +16,7 @@ import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.junit.Before;
@@ -101,7 +101,7 @@ public class RestaurantsControllerTest {
         when(photoRepository.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
         when(userRepository.findForUserIds(anyList()))
-                .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
+                .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
         when(mockPriceRangeRepository.getAll()).thenReturn(
                 asList(new PriceRange(1L, "100yen"))
         );
@@ -145,7 +145,7 @@ public class RestaurantsControllerTest {
         when(photoRepository.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
         when(userRepository.findForUserIds(anyList()))
-                .thenReturn(Arrays.asList(new DatabaseUser(1L, "taro@email.com", "taro")));
+                .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
         when(mockPriceRangeRepository.getAll()).thenReturn(
                 asList(new PriceRange(1L, "100yen"))
         );
@@ -225,7 +225,7 @@ public class RestaurantsControllerTest {
         );
         when(userRepository.get(anyLong())).thenReturn(
                 Optional.of(
-                        new DatabaseUser(99L, "jiro@mail.com", "jiro")
+                        new User(99L, "jiro@mail.com", "jiro")
                 )
         );
         when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
@@ -299,7 +299,7 @@ public class RestaurantsControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
         when(userRepository.get(anyLong())).thenReturn(
                 Optional.of(
-                        new DatabaseUser(1L, "jiro@mail.com", "jiro")
+                        new User(1L, "jiro@mail.com", "jiro")
                 )
         );
         when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
@@ -361,7 +361,7 @@ public class RestaurantsControllerTest {
         );
         when(userRepository.get(anyLong())).thenReturn(
                 Optional.of(
-                        new DatabaseUser(1L, "jiro@mail.com", "jiro")
+                        new User(1L, "jiro@mail.com", "jiro")
                 )
         );
         when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
@@ -423,9 +423,9 @@ public class RestaurantsControllerTest {
         when(cuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
                 expectedCuisine
         );
-        DatabaseUser hanakoDatabaseUser = new DatabaseUser(1L, "hanako@email", "hanako");
+        User hanakoUser = new User(1L, "hanako@email", "hanako");
         when(userRepository.get(anyLong())).thenReturn(
-                Optional.of(hanakoDatabaseUser)
+                Optional.of(hanakoUser)
         );
         when(commentRepository.findForRestaurant(afuriRestaurant)).thenReturn(
                 singletonList(
@@ -437,7 +437,7 @@ public class RestaurantsControllerTest {
                                         1L,
                                         1L
                                 ),
-                                hanakoDatabaseUser
+                                hanakoUser
                         )
                 )
         );
@@ -485,7 +485,7 @@ public class RestaurantsControllerTest {
                 asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
         );
         when(userRepository.get(anyLong())).thenReturn(
-                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+                Optional.of(new User(1L, "hanako@email", "hanako"))
         );
         when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
                 new PriceRange(0, "Not Specified")
@@ -520,7 +520,7 @@ public class RestaurantsControllerTest {
                 emptyList()
         );
         when(userRepository.get(anyLong())).thenReturn(
-                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+                Optional.of(new User(1L, "hanako@email", "hanako"))
         );
         when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(new Like(11L, 1L))
@@ -557,7 +557,7 @@ public class RestaurantsControllerTest {
                 emptyList()
         );
         when(userRepository.get(anyLong())).thenReturn(
-                Optional.of(new DatabaseUser(1L, "hanako@email", "hanako"))
+                Optional.of(new User(1L, "hanako@email", "hanako"))
         );
         when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(new Like(11L, 1L))
@@ -615,7 +615,7 @@ public class RestaurantsControllerTest {
         );
         when(userRepository.get(anyLong())).thenReturn(
                 Optional.of(
-                        new DatabaseUser(99L, "jiro@mail.com", "jiro")
+                        new User(99L, "jiro@mail.com", "jiro")
                 )
         );
         String updatedRestaurantPayload = "{\"restaurant\": " +

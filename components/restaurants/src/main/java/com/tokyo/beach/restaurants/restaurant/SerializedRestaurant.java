@@ -5,7 +5,7 @@ import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class SerializedRestaurant {
     private List<PhotoUrl> photoUrls;
     private Cuisine cuisine;
     private Optional<PriceRange> priceRange;
-    private Optional<DatabaseUser> createdByUser;
+    private Optional<User> createdByUser;
     private List<SerializedComment> comments;
     private boolean currentUserLikesRestaurant;
     private long numberOfLikes;
@@ -28,7 +28,7 @@ public class SerializedRestaurant {
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
             Optional<PriceRange> priceRange,
-            Optional<DatabaseUser> createdByUser,
+            Optional<User> createdByUser,
             List<SerializedComment> comments,
             boolean currentUserLikesRestaurant,
             long numberOfLikes) {
@@ -47,7 +47,7 @@ public class SerializedRestaurant {
             List<PhotoUrl> photoUrls,
             Cuisine cuisine,
             Optional<PriceRange> priceRange,
-            Optional<DatabaseUser> createdByUser) {
+            Optional<User> createdByUser) {
 
         this.restaurant = restaurant;
         this.photoUrls = photoUrls;
@@ -68,7 +68,7 @@ public class SerializedRestaurant {
     }
 
     @JsonProperty("user")
-    public DatabaseUser getCreatedByUser() {
+    public User getCreatedByUser() {
         return createdByUser.orElse(null);
     }
 

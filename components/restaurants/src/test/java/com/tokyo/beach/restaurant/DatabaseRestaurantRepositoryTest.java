@@ -4,7 +4,7 @@ import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.NewUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void test_getAll() {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         Integer restaurantId = jdbcTemplate.queryForObject(
@@ -78,7 +78,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void testCreateRestaurant() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         Long priceRangeId = insertPriceRangeIntoDatabase(
@@ -130,7 +130,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void testCreateRestaurant_withoutCuisineId() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
@@ -174,7 +174,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void test_get_returnsRestaurant() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         long id = jdbcTemplate.queryForObject(
@@ -206,7 +206,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void test_getRestaurantsPostedByUser() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("user_email", "password", "username")
+                new NewUser("user_email", "password", "username")
         ).getId();
         Long cuisineId = insertCuisineIntoDatabase(
                 jdbcTemplate,
@@ -239,7 +239,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void test_getRestaurantByIds_returnsListRestaurants() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("user_email", "password", "username")
+                new NewUser("user_email", "password", "username")
         ).getId();
         Long cuisineId = insertCuisineIntoDatabase(
                 jdbcTemplate,
@@ -273,7 +273,7 @@ public class DatabaseRestaurantRepositoryTest {
     public void test_updateRestaurant_updatesRestaurant() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("rob@pivotal.io", "password", "Rob")
+                new NewUser("rob@pivotal.io", "password", "Rob")
         ).getId();
 
         NewRestaurant newRestaurant = new NewRestaurant(

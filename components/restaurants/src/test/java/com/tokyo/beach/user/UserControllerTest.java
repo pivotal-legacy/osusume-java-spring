@@ -1,7 +1,7 @@
 package com.tokyo.beach.user;
 
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserController;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.junit.Before;
@@ -55,7 +55,7 @@ public class UserControllerTest {
     @Test
     public void test_postToUser_returnsUserObject() throws Exception {
         when(userRepository.create("jmiller@gmail.com", "mypassword", "Joe Miller"))
-                .thenReturn(new DatabaseUser(6, "jmiller@gmail.com", "Joe Miller"));
+                .thenReturn(new User(6, "jmiller@gmail.com", "Joe Miller"));
 
         mvc.perform(post("/users")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
@@ -70,7 +70,7 @@ public class UserControllerTest {
     public void test_getUser_returnsUserObject() throws Exception {
         when(userRepository.get(12))
                 .thenReturn(Optional.of(
-                        new DatabaseUser(12, "jmiller@gmail.com", "Joe Miller")
+                        new User(12, "jmiller@gmail.com", "Joe Miller")
                 ));
 
 

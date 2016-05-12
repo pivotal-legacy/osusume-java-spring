@@ -1,7 +1,5 @@
 package com.tokyo.beach.restaurants.pricerange;
 
-import java.util.Optional;
-
 public class PriceRange {
     private long id;
     private String range;

@@ -1,8 +1,7 @@
 package com.tokyo.beach.restaurants.session;
 
 import com.tokyo.beach.restutils.RestControllerException;
-import com.tokyo.beach.restaurants.user.LogonCredentials;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class SessionController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public UserSession create(@RequestBody LogonCredentials credentials) {
-        Optional<DatabaseUser> maybeUser = userRepository.get(credentials);
+        Optional<User> maybeUser = userRepository.get(credentials);
 
         maybeUser.orElseThrow(() -> new RestControllerException("Invalid email or password."));
 

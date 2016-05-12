@@ -1,12 +1,14 @@
 package com.tokyo.beach.restaurants.user;
 
+import com.tokyo.beach.restaurants.session.LogonCredentials;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
-    DatabaseUser create(String email, String password, String name);
-    Optional<DatabaseUser> get(LogonCredentials credentials);
-    Optional<DatabaseUser> get(long userId);
+    User create(String email, String password, String name);
+    Optional<User> get(LogonCredentials credentials);
+    Optional<User> get(long userId);
 
-    List<DatabaseUser> findForUserIds(List<Long> ids);
+    List<User> findForUserIds(List<Long> ids);
 }

@@ -10,7 +10,7 @@ import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.SerializedRestaurant;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,7 +62,7 @@ public class ProfileController {
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
 
-        Optional<DatabaseUser> maybeUser = userRepository.get(userId.longValue());
+        Optional<User> maybeUser = userRepository.get(userId.longValue());
 
         List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(userId.longValue());
 
@@ -114,15 +114,15 @@ public class ProfileController {
 
         List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(likedRestaurants);
 
-        List<DatabaseUser> userList = userRepository.findForUserIds(
+        List<User> userList = userRepository.findForUserIds(
                 restaurantList.stream()
                         .map(Restaurant::getCreatedByUserId)
                         .collect(toList())
         );
-        Map<Long, DatabaseUser> createdByUsers = userList.stream()
+        Map<Long, User> createdByUsers = userList.stream()
                 .collect(
                         Collectors.toMap(
-                                DatabaseUser::getId, UnaryOperator.identity()
+                                User::getId, UnaryOperator.identity()
                         )
                 );
 

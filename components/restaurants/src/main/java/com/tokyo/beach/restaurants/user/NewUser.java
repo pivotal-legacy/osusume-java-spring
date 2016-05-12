@@ -1,13 +1,14 @@
 package com.tokyo.beach.restaurants.user;
 
-public class UserRegistration {
+public class NewUser {
     private String email;
     private String password;
     private String name;
 
-    public UserRegistration() {}
+    @SuppressWarnings("unused")
+    public NewUser() {}
 
-    public UserRegistration(String email, String password, String name) {
+    public NewUser(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -30,7 +31,7 @@ public class UserRegistration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserRegistration that = (UserRegistration) o;
+        NewUser that = (NewUser) o;
 
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
@@ -48,7 +49,7 @@ public class UserRegistration {
 
     @Override
     public String toString() {
-        return "UserRegistration{" +
+        return "NewUser{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +

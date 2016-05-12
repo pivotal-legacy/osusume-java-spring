@@ -5,8 +5,8 @@ import com.tokyo.beach.restaurants.like.DatabaseLikeRepository;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.UserRegistration;
-import com.tokyo.beach.user.DatabaseUserFixture;
+import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class DatabaseLikeRepositoryTest {
     @Test
     public void test_create_persistsToLikesTable() throws Exception {
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new UserRegistration("hiro@gmail.com", "password", "Hiro")
+                new NewUser("hiro@gmail.com", "password", "Hiro")
         ).getId();
 
         long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
@@ -56,7 +56,7 @@ public class DatabaseLikeRepositoryTest {
         ).getId();
 
         Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new UserRegistration("yuki@gmail.com", "password", "Yuki")
+                new NewUser("yuki@gmail.com", "password", "Yuki")
         ).getId();
 
 
@@ -83,7 +83,7 @@ public class DatabaseLikeRepositoryTest {
     @Test
     public void test_findForRestaurant_returnsLikeList() throws Exception {
         long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new UserRegistration("hiro@gmail.com", "password", "Hiro")
+                new NewUser("hiro@gmail.com", "password", "Hiro")
         ).getId();
 
         long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
@@ -101,7 +101,7 @@ public class DatabaseLikeRepositoryTest {
         ).getId();
 
         Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new UserRegistration("yuki@gmail.com", "password", "Yuki")
+                new NewUser("yuki@gmail.com", "password", "Yuki")
         ).getId();
 
 
@@ -129,11 +129,11 @@ public class DatabaseLikeRepositoryTest {
     public void test_findForRestaurants_returnsLikesList() throws Exception {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("restaurant_name1")
-                .postedByUser(new DatabaseUserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .postedByUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
         Restaurant restaurant2 = new RestaurantFixture()
                 .withName("restaurant_name2")
-                .postedByUser(new DatabaseUserFixture().withEmail("mail2").persist(jdbcTemplate))
+                .postedByUser(new UserFixture().withEmail("mail2").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
         Like like1 = new LikeFixture()
                 .withRestaurantId(restaurant1.getId())
@@ -141,7 +141,7 @@ public class DatabaseLikeRepositoryTest {
                 .persist(jdbcTemplate);
         Like like2 = new LikeFixture()
                 .withRestaurantId(restaurant2.getId())
-                .withUserId(new DatabaseUserFixture().withEmail("mail3").persist(jdbcTemplate).getId())
+                .withUserId(new UserFixture().withEmail("mail3").persist(jdbcTemplate).getId())
                 .persist(jdbcTemplate);
 
 
@@ -157,7 +157,7 @@ public class DatabaseLikeRepositoryTest {
     public void test_findForRestaurants_returnsEmptyList() throws Exception {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("restaurant_name1")
-                .postedByUser(new DatabaseUserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .postedByUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
 
 

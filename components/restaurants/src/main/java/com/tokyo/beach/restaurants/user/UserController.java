@@ -23,12 +23,12 @@ public class UserController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public DatabaseUser profile() {
+    public User profile() {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         Long userId = (Long) request.getAttribute("userId");
 
-        Optional<DatabaseUser> maybeUser = userRepository.get(userId);
+        Optional<User> maybeUser = userRepository.get(userId);
 
         maybeUser.orElseThrow(() -> new RestControllerException("Invalid user id."));
         return maybeUser.get();
@@ -37,11 +37,11 @@ public class UserController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public DatabaseUser registerUser(@RequestBody UserRegistration userRegistration) {
+    public User registerUser(@RequestBody NewUser newUser) {
         return userRepository.create(
-                userRegistration.getEmail(),
-                userRegistration.getPassword(),
-                userRegistration.getName()
+                newUser.getEmail(),
+                newUser.getPassword(),
+                newUser.getName()
         );
     }
 }

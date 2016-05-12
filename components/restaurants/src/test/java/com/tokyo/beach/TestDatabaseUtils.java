@@ -6,8 +6,8 @@ import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -35,9 +35,9 @@ public class TestDatabaseUtils {
                 "WHERE NOT EXISTS (SELECT id FROM price_range WHERE id=0)");
     }
 
-    public static DatabaseUser insertUserIntoDatabase(
+    public static User insertUserIntoDatabase(
             JdbcTemplate jdbcTemplate,
-            UserRegistration userRegistration
+            NewUser newUser
     ) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
@@ -45,12 +45,12 @@ public class TestDatabaseUtils {
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("email", userRegistration.getEmail());
-        params.put("password", userRegistration.getPassword());
-        params.put("name", userRegistration.getName());
+        params.put("email", newUser.getEmail());
+        params.put("password", newUser.getPassword());
+        params.put("name", newUser.getName());
 
         long id = insert.executeAndReturnKey(params).longValue();
-        return new DatabaseUser(id, userRegistration.getEmail(), userRegistration.getName());
+        return new User(id, newUser.getEmail(), newUser.getName());
     }
 
     public static Cuisine insertCuisineIntoDatabase(

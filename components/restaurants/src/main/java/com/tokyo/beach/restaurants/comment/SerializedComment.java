@@ -1,16 +1,16 @@
 package com.tokyo.beach.restaurants.comment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 
 import static com.tokyo.beach.restaurants.DateFormatter.formatDateForSerialization;
 
 public class SerializedComment {
     private Comment comment;
-    private DatabaseUser user;
+    private User user;
 
     @SuppressWarnings("unused")
-    public SerializedComment(Comment comment, DatabaseUser user) {
+    public SerializedComment(Comment comment, User user) {
         this.comment = comment;
         this.user = user;
     }
@@ -34,7 +34,7 @@ public class SerializedComment {
         return comment.getRestaurantId();
     }
 
-    public DatabaseUser getUser() {
+    public User getUser() {
         return user;
     }
 }

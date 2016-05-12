@@ -5,7 +5,7 @@ import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class RestaurantFixture {
@@ -14,7 +14,7 @@ public class RestaurantFixture {
     private String createdAt = "created-date";
     private Cuisine cuisine = new Cuisine("Not Specified");
     private PriceRange priceRange = new PriceRange("Not Specified");
-    private DatabaseUser user = new DatabaseUser(0, "email@email", "Not Specified");
+    private User user = new User(0, "email@email", "Not Specified");
 
     public RestaurantFixture withId(long id) {
         this.id = id;
@@ -41,7 +41,7 @@ public class RestaurantFixture {
         return this;
     }
 
-    public RestaurantFixture postedByUser(DatabaseUser user) {
+    public RestaurantFixture postedByUser(User user) {
         this.user = user;
         return this;
     }

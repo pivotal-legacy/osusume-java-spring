@@ -1,12 +1,12 @@
 package com.tokyo.beach.session;
 
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.session.SessionController;
 import com.tokyo.beach.restaurants.session.SessionRepository;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
-import com.tokyo.beach.restaurants.user.LogonCredentials;
+import com.tokyo.beach.restaurants.session.LogonCredentials;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class SessionControllerTest {
     private TokenGenerator tokenGenerator;
 
     private LogonCredentials credentials;
-    private Optional<DatabaseUser> maybeUser;
+    private Optional<User> maybeUser;
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +45,7 @@ public class SessionControllerTest {
                 .build();
 
         credentials = new LogonCredentials("jmiller@gmail.com", "mypassword");
-        maybeUser = Optional.of(new DatabaseUser(999, "jmiller@gmail.com", "Joe Miller"));
+        maybeUser = Optional.of(new User(999, "jmiller@gmail.com", "Joe Miller"));
         when(userRepository.get(credentials))
                 .thenReturn(maybeUser);
     }

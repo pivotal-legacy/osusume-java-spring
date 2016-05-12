@@ -1,4 +1,4 @@
-package com.tokyo.beach.restaurants.user;
+package com.tokyo.beach.restaurants.session;
 
 public class LogonCredentials {
 

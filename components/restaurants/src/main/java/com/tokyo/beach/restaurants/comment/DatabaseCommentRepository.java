@@ -1,7 +1,7 @@
 package com.tokyo.beach.restaurants.comment;
 
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -53,7 +53,7 @@ public class DatabaseCommentRepository implements CommentRepository {
                                     rs.getLong("restaurant_id"),
                                     rs.getLong("created_by_user_id")
                             ),
-                            new DatabaseUser(
+                            new User(
                                     rs.getLong("user_id"),
                                     rs.getString("email"),
                                     rs.getString("name")

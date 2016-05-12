@@ -2,6 +2,7 @@ package com.tokyo.beach.restaurants.restaurant;
 
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
@@ -11,7 +12,6 @@ import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -77,15 +77,15 @@ public class RestaurantsController {
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
-        List<DatabaseUser> userList = userRepository.findForUserIds(
+        List<User> userList = userRepository.findForUserIds(
                 restaurantList.stream()
                         .map(Restaurant::getCreatedByUserId)
                         .collect(toList())
         );
-        Map<Long, DatabaseUser> createdByUsers = userList.stream()
+        Map<Long, User> createdByUsers = userList.stream()
                 .collect(
                         Collectors.toMap(
-                                DatabaseUser::getId, UnaryOperator.identity()
+                                User::getId, UnaryOperator.identity()
                         )
                 );
         List<PriceRange> priceRangeList = priceRangeRepository.getAll();
@@ -122,7 +122,7 @@ public class RestaurantsController {
         Restaurant restaurant = restaurantRepository.createRestaurant(
                 restaurantWrapper.getRestaurant(), userId.longValue()
         );
-        Optional<DatabaseUser> createdByUser = userRepository.get(restaurant.getCreatedByUserId());
+        Optional<User> createdByUser = userRepository.get(restaurant.getCreatedByUserId());
         List<PhotoUrl> photosForRestaurant = photoRepository.createPhotosForRestaurant(
                 restaurant.getId(),
                 restaurantWrapper.getPhotoUrls()
@@ -149,7 +149,7 @@ public class RestaurantsController {
         maybeRestaurant.orElseThrow(() -> new RestControllerException("Invalid restaurant id."));
 
         Restaurant retrievedRestaurant = maybeRestaurant.get();
-        Optional<DatabaseUser> createdByUser = userRepository.get(
+        Optional<User> createdByUser = userRepository.get(
                 retrievedRestaurant.getCreatedByUserId()
         );
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(retrievedRestaurant);
@@ -186,7 +186,7 @@ public class RestaurantsController {
                 new Long(id),
                 restaurantWrapper.getRestaurant()
         );
-        Optional<DatabaseUser> createdByUser = userRepository.get(restaurant.getCreatedByUserId());
+        Optional<User> createdByUser = userRepository.get(restaurant.getCreatedByUserId());
         List<PhotoUrl> photosForRestaurant = photoRepository.findForRestaurant(restaurant);
         Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine(restaurantWrapper.getCuisineId().toString());
 

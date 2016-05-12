@@ -1,5 +1,6 @@
 package com.tokyo.beach.restaurants.user;
 
+import com.tokyo.beach.restaurants.session.LogonCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,7 +23,7 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public DatabaseUser create(String email, String password, String name) {
+    public User create(String email, String password, String name) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingColumns("email", "password", "name")
@@ -35,16 +36,16 @@ public class DatabaseUserRepository implements UserRepository {
 
         Number id = insert.executeAndReturnKey(params);
 
-        return new DatabaseUser(id.longValue(), email, name);
+        return new User(id.longValue(), email, name);
     }
 
     @Override
-    public Optional<DatabaseUser> get(LogonCredentials credentials) {
+    public Optional<User> get(LogonCredentials credentials) {
         String sql = "SELECT id, email, name FROM users WHERE lower(email) = ? AND password = ?";
-        List<DatabaseUser> users = jdbcTemplate.query(
+        List<User> users = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> {
-                    return new DatabaseUser(
+                    return new User(
                             rs.getLong("id"),
                             rs.getString("email"),
                             rs.getString("name")
@@ -62,12 +63,12 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<DatabaseUser> get(long userId) {
+    public Optional<User> get(long userId) {
         String sql = "SELECT id, email, name FROM users WHERE id = ?";
-        List<DatabaseUser> users = jdbcTemplate.query(
+        List<User> users = jdbcTemplate.query(
                 sql,
                 (rs, rowNum) -> {
-                    return new DatabaseUser(
+                    return new User(
                             rs.getLong("id"),
                             rs.getString("email"),
                             rs.getString("name")
@@ -84,7 +85,7 @@ public class DatabaseUserRepository implements UserRepository {
     }
 
     @Override
-    public List<DatabaseUser> findForUserIds(List<Long> ids) {
+    public List<User> findForUserIds(List<Long> ids) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("ids", ids);
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
@@ -93,7 +94,7 @@ public class DatabaseUserRepository implements UserRepository {
                 "SELECT * FROM users WHERE id IN (:ids)",
                 parameters,
                 (rs, rowNum) -> {
-                    return new DatabaseUser(
+                    return new User(
                             rs.getLong("id"),
                             rs.getString("email"),
                             rs.getString("name"));

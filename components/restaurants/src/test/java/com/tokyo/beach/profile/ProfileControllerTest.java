@@ -3,6 +3,7 @@ package com.tokyo.beach.profile;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
@@ -12,7 +13,6 @@ import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.profile.ProfileController;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -84,7 +84,7 @@ public class ProfileControllerTest {
         );
 
         when(userRepository.get(anyLong()))
-                .thenReturn(Optional.of(new DatabaseUser(1L, "user-email", "username")));
+                .thenReturn(Optional.of(new User(1L, "user-email", "username")));
 
         when(restaurantRepository.getRestaurantsPostedByUser(1L)).thenReturn(posts);
 
@@ -123,7 +123,7 @@ public class ProfileControllerTest {
     @Test
     public void test_getUserPostsWhenUserHasntPosted_returnsEmptyList() throws Exception {
         when(userRepository.get(anyLong()))
-                .thenReturn(Optional.of(new DatabaseUser(1L, "user-email", "username")));
+                .thenReturn(Optional.of(new User(1L, "user-email", "username")));
 
         when(restaurantRepository.getRestaurantsPostedByUser(1L)).thenReturn(emptyList());
 
@@ -153,7 +153,7 @@ public class ProfileControllerTest {
         List<Long> likesList = singletonList(1L);
 
         when(userRepository.findForUserIds(singletonList(99L)))
-                .thenReturn(singletonList(new DatabaseUser(99L, "user-email", "username")));
+                .thenReturn(singletonList(new User(99L, "user-email", "username")));
         when(mockLikeRepository.getLikesByUser(99L))
                 .thenReturn(likesList);
         when(restaurantRepository.getRestaurantsByIds(likesList))

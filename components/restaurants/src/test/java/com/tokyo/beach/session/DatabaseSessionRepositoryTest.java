@@ -3,8 +3,8 @@ package com.tokyo.beach.session;
 import com.tokyo.beach.restaurants.session.DatabaseSessionRepository;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.User;
+import com.tokyo.beach.restaurants.user.NewUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class DatabaseSessionRepositoryTest {
     private JdbcTemplate jdbcTemplate;
 
     private TokenGenerator mockTokenGenerator;
-    private DatabaseUser user;
+    private User user;
     private Long userId;
 
     @Before
@@ -37,15 +37,15 @@ public class DatabaseSessionRepositoryTest {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
         this.databaseSessionRepository = new DatabaseSessionRepository(this.jdbcTemplate);
 
-        UserRegistration userRegistration = new UserRegistration(
+        NewUser newUser = new NewUser(
                 "jmiller@gmail.com", "password", "Joe Miller"
         );
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
-        userId = insertUserIntoDatabase(jdbcTemplate, userRegistration).getId();
-        user = new DatabaseUser(
-                userId, userRegistration.getEmail(), userRegistration.getName()
+        userId = insertUserIntoDatabase(jdbcTemplate, newUser).getId();
+        user = new User(
+                userId, newUser.getEmail(), newUser.getName()
         );
     }
 

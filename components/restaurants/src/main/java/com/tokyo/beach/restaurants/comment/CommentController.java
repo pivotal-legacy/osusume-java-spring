@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurants.comment;
 
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class CommentController {
                 userId.longValue(),
                 restaurantId
         );
-        DatabaseUser currentUser = userRepository.get(userId.longValue()).get();
+        User currentUser = userRepository.get(userId.longValue()).get();
         return new SerializedComment(persistedComment, currentUser);
     }
 

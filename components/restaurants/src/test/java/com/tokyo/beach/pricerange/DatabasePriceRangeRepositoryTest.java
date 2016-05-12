@@ -6,7 +6,7 @@ import com.tokyo.beach.restaurants.pricerange.DatabasePriceRangeRepository;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.user.DatabaseUserFixture;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +74,7 @@ public class DatabasePriceRangeRepositoryTest {
         Restaurant persistedRestaurant = new RestaurantFixture()
                 .withPriceRange(persistedPriceRange)
                 .withCuisine(new CuisineFixture().persist(jdbcTemplate))
-                .postedByUser(new DatabaseUserFixture().withEmail("email1").persist(jdbcTemplate))
+                .postedByUser(new UserFixture().withEmail("email1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
 
         PriceRange actualPriceRange = priceRangeRepository.findForRestaurant(

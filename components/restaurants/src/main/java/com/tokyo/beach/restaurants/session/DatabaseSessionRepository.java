@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurants.session;
 
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -21,7 +21,7 @@ public class DatabaseSessionRepository implements SessionRepository {
     }
 
     @Override
-    public UserSession create(TokenGenerator generator, DatabaseUser user) {
+    public UserSession create(TokenGenerator generator, User user) {
         UserSession userSession = new UserSession(generator, user.getEmail());
 
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)

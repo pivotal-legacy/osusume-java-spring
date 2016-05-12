@@ -5,7 +5,7 @@ import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
 import com.tokyo.beach.restaurants.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.NewUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,7 +106,7 @@ public class DatabaseCuisineRepositoryTest {
     public void test_findForRestaurant_returnCuisine() {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         Long cuisineId = jdbcTemplate.queryForObject(
@@ -144,7 +144,7 @@ public class DatabaseCuisineRepositoryTest {
     public void test_findForRestaurant_returnNotSpecified_whenCuisineTypeNotSpecified() {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         Restaurant restaurant = jdbcTemplate.queryForObject(

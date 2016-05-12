@@ -4,7 +4,7 @@ import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.CommentController;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.NewComment;
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class CommentControllerTest {
         ArgumentCaptor<String> attributeRestaurantId = ArgumentCaptor.forClass(String.class);
         when(mockUserRepository.get(99))
                 .thenReturn(Optional.of(
-                        new DatabaseUser(
+                        new User(
                                 99,
                                 "user-email",
                                 "user-name"

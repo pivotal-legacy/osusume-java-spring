@@ -1,9 +1,9 @@
 package com.tokyo.beach.user;
 
-import com.tokyo.beach.restaurants.user.DatabaseUser;
+import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.DatabaseUserRepository;
-import com.tokyo.beach.restaurants.user.LogonCredentials;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.session.LogonCredentials;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,27 +37,27 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_create_insertsUserCredentialsIntoDB() throws Exception {
-        UserRegistration userRegistration = new UserRegistration(
+        NewUser newUser = new NewUser(
                 "jmiller@gmail.com", "myPassword123", "Joe Miller"
         );
 
         String sql = "SELECT count(*) FROM users WHERE email = ?";
         int count = this.jdbcTemplate.queryForObject(
-                sql, new Object[]{userRegistration.getEmail()}, Integer.class
+                sql, new Object[]{newUser.getEmail()}, Integer.class
         );
         assertThat(count, is(0));
 
 
-        DatabaseUser user = this.databaseUserRepository.create(
-                userRegistration.getEmail(),
-                userRegistration.getPassword(),
-                userRegistration.getName()
+        User user = this.databaseUserRepository.create(
+                newUser.getEmail(),
+                newUser.getPassword(),
+                newUser.getName()
         );
 
 
         sql = "SELECT count(*) FROM USERS WHERE email = ?";
         count = this.jdbcTemplate.queryForObject(
-                sql, new Object[]{userRegistration.getEmail()}, Integer.class
+                sql, new Object[]{newUser.getEmail()}, Integer.class
         );
         assertThat(count, is(1));
         assertTrue(user.getId() > 0);
@@ -66,14 +66,14 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
-        UserRegistration userRegistration = new UserRegistration(
+        NewUser newUser = new NewUser(
                 "user@gmail.com", "password", "Username"
         );
-        insertUserIntoDatabase(jdbcTemplate, userRegistration);
+        insertUserIntoDatabase(jdbcTemplate, newUser);
 
 
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(
-                new LogonCredentials(userRegistration.getEmail(), userRegistration.getPassword())
+        Optional<User> maybeUser = databaseUserRepository.get(
+                new LogonCredentials(newUser.getEmail(), newUser.getPassword())
         );
 
 
@@ -83,14 +83,14 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getExistingUser_isCaseInsenitive() throws Exception {
-        UserRegistration userRegistration = new UserRegistration(
+        NewUser newUser = new NewUser(
                 "user@gmail.com", "password", "Username"
         );
-        insertUserIntoDatabase(jdbcTemplate, userRegistration);
+        insertUserIntoDatabase(jdbcTemplate, newUser);
 
 
         LogonCredentials queryCredentials = new LogonCredentials("User@gMail.com", "password");
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(queryCredentials);
+        Optional<User> maybeUser = databaseUserRepository.get(queryCredentials);
 
 
         assertTrue(maybeUser.isPresent());
@@ -101,7 +101,7 @@ public class DatabaseUserRepositoryTest {
         LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
 
 
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(credentials);
+        Optional<User> maybeUser = databaseUserRepository.get(credentials);
 
 
         assertFalse(maybeUser.isPresent());
@@ -109,13 +109,13 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getExistingUserWithUserId_returnsUser() throws Exception {
-        UserRegistration userRegistration = new UserRegistration(
+        NewUser newUser = new NewUser(
                 "user@gmail.com", "password", "Username"
         );
-        Number userId = insertUserIntoDatabase(jdbcTemplate, userRegistration).getId();
+        Number userId = insertUserIntoDatabase(jdbcTemplate, newUser).getId();
 
 
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(userId.longValue());
+        Optional<User> maybeUser = databaseUserRepository.get(userId.longValue());
 
 
         assertTrue(maybeUser.get().getId() == userId.longValue());
@@ -124,7 +124,7 @@ public class DatabaseUserRepositoryTest {
 
     @Test
     public void test_getNonExistentUserWithUserId_returnsEmptyOptional() throws Exception {
-        Optional<DatabaseUser> maybeUser = databaseUserRepository.get(999);
+        Optional<User> maybeUser = databaseUserRepository.get(999);
 
 
         assertFalse(maybeUser.isPresent());
@@ -135,13 +135,13 @@ public class DatabaseUserRepositoryTest {
         jdbcTemplate.update("INSERT INTO users (id, email, name) " +
                 "VALUES (1, 'jiro@user.com', 'jiro')");
 
-        List<DatabaseUser> databaseUsers = databaseUserRepository.findForUserIds(
+        List<User> users = databaseUserRepository.findForUserIds(
                 singletonList(1L)
         );
 
-        assertEquals(databaseUsers.size(), 1);
+        assertEquals(users.size(), 1);
 
-        DatabaseUser databaseUser = databaseUsers.get(0);
-        assertEquals(databaseUser.getName(), "jiro");
+        User user = users.get(0);
+        assertEquals(user.getName(), "jiro");
     }
 }

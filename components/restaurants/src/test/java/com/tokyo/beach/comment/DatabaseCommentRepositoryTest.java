@@ -5,7 +5,7 @@ import com.tokyo.beach.restaurants.comment.DatabaseCommentRepository;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.UserRegistration;
+import com.tokyo.beach.restaurants.user.NewUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class DatabaseCommentRepositoryTest {
     public void test_create_createsAComment() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         long restaurantId = jdbcTemplate.queryForObject(
@@ -81,7 +81,7 @@ public class DatabaseCommentRepositoryTest {
     public void test_findForRestaurant_returnsCommentsOnRestaurant() throws Exception {
         Number userId = insertUserIntoDatabase(
                 jdbcTemplate,
-                new UserRegistration("joe@pivotal.io", "password", "Joe")
+                new NewUser("joe@pivotal.io", "password", "Joe")
         ).getId();
 
         Restaurant restaurant = jdbcTemplate.queryForObject(
