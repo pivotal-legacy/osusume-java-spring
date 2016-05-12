@@ -93,7 +93,8 @@ public class RestaurantsControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        1
+                        1,
+                        1L
                 )
         );
         when(restaurantRepository.getAll()).thenReturn(restaurants);
@@ -136,7 +137,8 @@ public class RestaurantsControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        1
+                        1,
+                        1L
                 )
         );
         when(restaurantRepository.getAll()).thenReturn(restaurants);
@@ -206,7 +208,8 @@ public class RestaurantsControllerTest {
                         false,
                         "soooo goood",
                         "created-date",
-                        99
+                        99,
+                        1L
                 )
         );
 
@@ -284,7 +287,8 @@ public class RestaurantsControllerTest {
                         false,
                         "soooo goood",
                         "created-date",
-                        1
+                        1,
+                        0L
                 )
         );
 
@@ -299,7 +303,9 @@ public class RestaurantsControllerTest {
                 )
         );
         when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
-                Optional.empty()
+                Optional.of(
+                        new PriceRange(0L, "Not Specified")
+                )
         );
 
         String payload = "{\"restaurant\": " +
@@ -327,8 +333,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Not Specified")))
-                .andExpect(jsonPath("$.cuisine.id", is(0)));
-
+                .andExpect(jsonPath("$.cuisine.id", is(0)))
+                .andExpect(jsonPath("$.price_range", is("Not Specified")));
     }
 
     @Test
@@ -343,7 +349,8 @@ public class RestaurantsControllerTest {
                         false,
                         "soooo goood",
                         "created-date",
-                        1
+                        1,
+                        0L
                 )
         );
 
@@ -358,7 +365,9 @@ public class RestaurantsControllerTest {
                 )
         );
         when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
-                Optional.empty()
+                Optional.of(
+                        new PriceRange(0L, "Not Specified")
+                )
         );
 
         String payload = "{\"restaurant\": " +
@@ -386,6 +395,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
                 .andExpect(jsonPath("$.notes", is("soooo goood")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+                .andExpect(jsonPath("$.price_range", is("Not Specified")))
                 .andExpect(jsonPath("$.cuisine", isEmptyOrNullString()));
     }
 
@@ -400,7 +410,8 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1L
+                1L,
+                0L
         );
         Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
         when(restaurantRepository.get(1)).thenReturn(
@@ -437,7 +448,7 @@ public class RestaurantsControllerTest {
                 )
         );
         when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
-                new PriceRange(0, "Not Specified")
+                new PriceRange(0L, "Not Specified")
         );
 
         mockMvc.perform(get("/restaurants/1"))
@@ -449,7 +460,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")))
                 .andExpect(jsonPath("$.comments[0].id", equalTo(99)))
                 .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")))
-                .andExpect(jsonPath("$.num_likes", equalTo(2)));
+                .andExpect(jsonPath("$.num_likes", equalTo(2)))
+                .andExpect(jsonPath("$.price_range", is("Not Specified")));
     }
 
     @Test
@@ -463,7 +475,8 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1
+                1,
+                0L
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
@@ -497,7 +510,8 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1
+                1,
+                0L
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
@@ -512,7 +526,7 @@ public class RestaurantsControllerTest {
                 singletonList(new Like(11L, 1L))
         );
         when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
-                new PriceRange(0, "Not Specified")
+                new PriceRange(0L, "Not Specified")
         );
 
         mockMvc.perform(get("/restaurants/1")
@@ -533,7 +547,8 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1
+                1,
+                1L
         );
         when(restaurantRepository.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
@@ -581,7 +596,8 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "",
-                99
+                99,
+                0L
         );
 
         when(restaurantRepository.updateRestaurant(anyLong(), anyObject())).thenReturn(

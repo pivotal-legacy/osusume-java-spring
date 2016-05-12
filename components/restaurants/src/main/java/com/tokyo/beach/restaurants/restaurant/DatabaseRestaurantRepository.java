@@ -31,7 +31,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id"));
                 });
     }
 
@@ -49,7 +50,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                                     rs.getBoolean("accepts_credit_cards"),
                                     rs.getString("notes"),
                                     rs.getString("created_at"),
-                                    rs.getLong("created_by_user_id"));
+                                    rs.getLong("created_by_user_id"),
+                                    rs.getLong("price_range_id"));
                         },
                         id
                 );
@@ -70,7 +72,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                         "RETURNING " +
                         "id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, " +
-                        "notes, created_by_user_id, created_at",
+                        "notes, created_by_user_id, price_range_id, created_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -81,7 +83,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id"));
                 },
                 newRestaurant.getName(),
                 newRestaurant.getAddress(),
@@ -108,7 +111,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id"));
                 },
                 userId
         );
@@ -133,7 +137,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id"));
                 }
         );
     }
@@ -145,7 +150,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                         "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) =" +
                         "(?, ?, ?, ?, ?, ?) " +
                         "WHERE id = ? " +
-                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id, created_at",
+                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id, price_range_id, created_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -156,7 +161,8 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id"));
                 },
                 restaurant.getName(),
                 restaurant.getAddress(),

@@ -56,7 +56,8 @@ public class RestaurantFixture {
                 false,
                 "",
                 createdAt,
-                user.getId()
+                user.getId(),
+                priceRange.getId()
         );
     }
 

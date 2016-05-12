@@ -15,6 +15,7 @@ public class Restaurant {
     private String notes;
     private String createdDate;
     private long createdByUserId;
+    private long priceRangeId;
 
     public Restaurant(
             long id,
@@ -25,7 +26,8 @@ public class Restaurant {
             Boolean acceptsCreditCards,
             String notes,
             String createdDate,
-            long createdByUserId) {
+            long createdByUserId,
+            long priceRangeId) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -35,6 +37,7 @@ public class Restaurant {
         this.notes = notes;
         this.createdDate = createdDate;
         this.createdByUserId = createdByUserId;
+        this.priceRangeId = priceRangeId;
     }
 
     @SuppressWarnings("unused")
@@ -48,7 +51,8 @@ public class Restaurant {
                 restaurant.getAcceptsCreditCards(),
                 restaurant.getNotes(),
                 restaurant.getCreatedDate(),
-                restaurant.getCreatedByUserId());
+                restaurant.getCreatedByUserId(),
+                restaurant.getPriceRangeId());
     }
 
     public long getId() {
@@ -93,6 +97,11 @@ public class Restaurant {
         return createdDate;
     }
 
+
+    public long getPriceRangeId() {
+        return priceRangeId;
+    }
+
     @Override
     public String toString() {
         return "Restaurant{" +
@@ -103,7 +112,9 @@ public class Restaurant {
                 ", walkInsOk=" + walkInsOk +
                 ", acceptsCreditCards=" + acceptsCreditCards +
                 ", notes='" + notes + '\'' +
+                ", createdDate='" + createdDate + '\'' +
                 ", createdByUserId=" + createdByUserId +
+                ", priceRangeId=" + priceRangeId +
                 '}';
     }
 
@@ -116,6 +127,7 @@ public class Restaurant {
 
         if (id != that.id) return false;
         if (createdByUserId != that.createdByUserId) return false;
+        if (priceRangeId != that.priceRangeId) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (offersEnglishMenu != null ? !offersEnglishMenu.equals(that.offersEnglishMenu) : that.offersEnglishMenu != null)
@@ -137,6 +149,8 @@ public class Restaurant {
         result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
         result = 31 * result + (int) (createdByUserId ^ (createdByUserId >>> 32));
+        result = 31 * result + (int) (priceRangeId ^ (priceRangeId >>> 32));
         return result;
     }
+
 }

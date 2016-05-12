@@ -114,7 +114,8 @@ public class TestDatabaseUtils {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id")
+                            rs.getLong("created_by_user_id"),
+                            rs.getLong("price_range_id")
                     );
                 },
                 id

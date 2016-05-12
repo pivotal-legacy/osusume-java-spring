@@ -1,7 +1,6 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -47,7 +46,8 @@ public class DatabaseRestaurantRepositoryTest {
 
         Integer restaurantId = jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant " +
-                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id)" +
+                        "(name, address, offers_english_menu, walk_ins_ok, " +
+                        "accepts_credit_cards, notes, created_by_user_id)" +
                         "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '', ?)" +
                         "RETURNING *",
                 (rs, rowNum) -> {
@@ -68,7 +68,8 @@ public class DatabaseRestaurantRepositoryTest {
                 false,
                 "",
                 "created-date",
-                userId.longValue());
+                userId.longValue(),
+                0L);
 
         assertThat(restaurants, is(singletonList(expectedRestaurant)));
     }

@@ -78,7 +78,8 @@ public class ProfileControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        1
+                        1,
+                        1L
                 )
         );
 
@@ -145,7 +146,8 @@ public class ProfileControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        99
+                        99,
+                        1L
                 )
         );
         List<Long> likesList = singletonList(1L);

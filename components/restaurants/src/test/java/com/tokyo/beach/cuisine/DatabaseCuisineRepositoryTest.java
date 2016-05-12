@@ -127,7 +127,8 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            0L);
                 },
                 cuisineId,
                 userId
@@ -159,7 +160,8 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
-                            rs.getLong("created_by_user_id"));
+                            rs.getLong("created_by_user_id"),
+                            0L);
                 },
                 userId
         );
