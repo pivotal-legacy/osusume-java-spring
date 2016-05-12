@@ -74,9 +74,9 @@ public class ProfileController {
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
-        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
-        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
-        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+        List<PriceRange> priceRangeList = priceRangeRepository.getAll();
+        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
 
         List<Like> likes = likeRepository.findForRestaurants(restaurantList);
         Map<Long, List<Like>> restaurantLikes = likes
@@ -89,7 +89,7 @@ public class ProfileController {
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
-                                Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
+                                Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
                                 maybeUser,
                                 emptyList(),
                                 false,
@@ -130,9 +130,9 @@ public class ProfileController {
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
-        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
-        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
-        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+        List<PriceRange> priceRangeList = priceRangeRepository.getAll();
+        Map<Long, PriceRange> priceRangeMape = new HashMap<>();
+        priceRangeList.forEach(priceRange -> priceRangeMape.put(priceRange.getId(), priceRange));
 
         List<Like> likes = likeRepository.findForRestaurants(restaurantList);
         Map<Long, List<Like>> restaurantLikes = likes
@@ -146,7 +146,7 @@ public class ProfileController {
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineRepository.findForRestaurant(restaurant),
-                                Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
+                                Optional.of(priceRangeMape.get(restaurant.getPriceRangeId())),
                                 Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                                 emptyList(),
                                 true,

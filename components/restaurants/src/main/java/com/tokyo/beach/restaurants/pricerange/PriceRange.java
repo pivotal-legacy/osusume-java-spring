@@ -5,7 +5,6 @@ import java.util.Optional;
 public class PriceRange {
     private long id;
     private String range;
-    private Optional<Long> restaurantId = Optional.empty();
 
     @SuppressWarnings("unused")
     public PriceRange() {}
@@ -14,12 +13,6 @@ public class PriceRange {
         this.id = id;
         this.range = range;
     }
-
-    public PriceRange(long id, String range, long restaurantId) {
-        this(id, range);
-        this.restaurantId = Optional.of(restaurantId);
-    }
-
 
     public PriceRange(String range) {
         this.range = range;
@@ -32,10 +25,6 @@ public class PriceRange {
     @SuppressWarnings("unused")
     public String getRange() {
         return range;
-    }
-
-    public Optional<Long> getRestaurantId() {
-        return restaurantId;
     }
 
     @Override

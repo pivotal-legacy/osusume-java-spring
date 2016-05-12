@@ -70,30 +70,4 @@ public class DatabasePriceRangeRepository implements PriceRangeRepository {
 
         return priceRanges.get(0);
     }
-
-    @Override
-    public List<PriceRange> findForRestaurants(List<Restaurant> restaurants) {
-        List<Long> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
-
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("ids", ids);
-        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-
-        return namedTemplate.query(
-                "SELECT restaurant.id as restaurant_id, restaurant.price_range_id as " +
-                        "price_range_id, price_range.range as range FROM restaurant " +
-                        "INNER JOIN price_range " +
-                        "ON price_range.id = restaurant.price_range_id " +
-                        "WHERE restaurant.id IN (:ids) " +
-                        "ORDER BY restaurant.id",
-                parameters,
-                (rs, rowNum) -> {
-                    return new PriceRange(
-                            rs.getLong("price_range_id"),
-                            rs.getString("range"),
-                            rs.getLong("restaurant_id")
-                    );
-                }
-        );
-    }
 }

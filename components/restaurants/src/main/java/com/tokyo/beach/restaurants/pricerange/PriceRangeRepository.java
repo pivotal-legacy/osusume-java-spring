@@ -9,5 +9,4 @@ public interface PriceRangeRepository {
     List<PriceRange> getAll();
     Optional<PriceRange> getPriceRange(Long id);
     PriceRange findForRestaurant(Restaurant restaurant);
-    List<PriceRange> findForRestaurants(List<Restaurant> restaurants);
 }

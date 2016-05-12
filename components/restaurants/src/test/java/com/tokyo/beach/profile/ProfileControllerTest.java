@@ -94,8 +94,8 @@ public class ProfileControllerTest {
         when(cuisineRepository.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
 
-        when(mockPriceRangeRepository.findForRestaurants(posts)).thenReturn(
-                asList(new PriceRange(1L, "¥1000 ~ ¥2000", 1L))
+        when(mockPriceRangeRepository.getAll()).thenReturn(
+                asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );
         when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
                 asList(new Like(1L, 1L), new Like(2L, 1L))
@@ -162,8 +162,8 @@ public class ProfileControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
         when(cuisineRepository.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
-        when(mockPriceRangeRepository.findForRestaurants(posts)).thenReturn(
-                asList(new PriceRange(1L, "¥1000 ~ ¥2000", 1L))
+        when(mockPriceRangeRepository.getAll()).thenReturn(
+                asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );
         when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
                 asList(new Like(99L, 1L), new Like(98L, 1L))

@@ -88,9 +88,9 @@ public class RestaurantsController {
                                 DatabaseUser::getId, UnaryOperator.identity()
                         )
                 );
-        List<PriceRange> priceRangeList = priceRangeRepository.findForRestaurants(restaurantList);
-        Map<Long, PriceRange> restaurantPriceRangeMap = new HashMap<>();
-        priceRangeList.forEach(priceRange -> restaurantPriceRangeMap.put(priceRange.getRestaurantId().get(), priceRange));
+        List<PriceRange> priceRangeList = priceRangeRepository.getAll();
+        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
 
         List<Like> likes = likeRepository.findForRestaurants(restaurantList);
         Map<Long, List<Like>> restaurantLikes = likes
@@ -103,7 +103,7 @@ public class RestaurantsController {
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         null,
-                        Optional.of(restaurantPriceRangeMap.get(restaurant.getId())),
+                        Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
                         false,
