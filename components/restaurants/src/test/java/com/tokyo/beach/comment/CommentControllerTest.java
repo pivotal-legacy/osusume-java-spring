@@ -17,8 +17,8 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -81,5 +81,82 @@ public class CommentControllerTest {
 
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
         assertEquals("88", attributeRestaurantId.getValue());
+    }
+
+    @Test
+    public void test_delete_deletesCommentsMadeByCurrentUser() throws Exception {
+        when(mockCommentRepository.get(1))
+                .thenReturn(Optional.of(
+                        new Comment(
+                                1,
+                                "comment",
+                                "2016-02-29 06:07:55.000000",
+                                10L,
+                                99L
+                        )
+                ));
+        when(mockUserRepository.get(99))
+                .thenReturn(Optional.of(
+                        new User(
+                                99,
+                                "user-email",
+                                "user-name"
+                        ))
+                );
+        ResultActions result = mockMvc.perform(delete("/comments/1")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk());
+        verify(mockCommentRepository, times(1)).get(1);
+        verify(mockCommentRepository, times(1)).delete(1);
+    }
+
+    @Test
+    public void test_delete_doesntDeleteCommentsMadeByADifferentUser() throws Exception {
+        when(mockCommentRepository.get(1))
+                .thenReturn(Optional.of(
+                        new Comment(
+                                1,
+                                "comment",
+                                "2016-02-29 06:07:55.000000",
+                                10L,
+                                100L
+                        )
+                ));
+        when(mockUserRepository.get(99))
+                .thenReturn(Optional.of(
+                        new User(
+                                99,
+                                "user-email",
+                                "user-name"
+                        ))
+                );
+        ResultActions result = mockMvc.perform(delete("/comments/1")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk());
+        verify(mockCommentRepository, times(1)).get(1);
+        verify(mockCommentRepository, never()).delete(1);
+    }
+
+    @Test
+    public void test_delete_doesntDeleteNonExistentComment() throws Exception {
+        when(mockCommentRepository.get(1))
+                .thenReturn(Optional.empty()
+                );
+        when(mockUserRepository.get(99))
+                .thenReturn(Optional.of(
+                        new User(
+                                99,
+                                "user-email",
+                                "user-name"
+                        ))
+                );
+        ResultActions result = mockMvc.perform(delete("/comments/1")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk());
+        verify(mockCommentRepository, times(1)).get(1);
+        verify(mockCommentRepository, never()).delete(1);
     }
 }

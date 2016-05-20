@@ -1,5 +1,7 @@
 package com.tokyo.beach;
 
+import com.tokyo.beach.restaurants.comment.Comment;
+import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.like.Like;
@@ -15,6 +17,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class TestDatabaseUtils {
     public static DataSource buildDataSource() {
@@ -137,6 +140,39 @@ public class TestDatabaseUtils {
         insert.execute(params);
 
         return like;
+    }
+
+    public static Comment insertCommentIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            NewComment newComment,
+            long createdByUserId,
+            long restaurantId
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("comment")
+                .usingColumns("content", "restaurant_id", "created_by_user_id")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("content", newComment.getContent());
+        params.put("restaurant_id", restaurantId);
+        params.put("created_by_user_id", createdByUserId);
+
+        long id = insert.executeAndReturnKey(params).longValue();
+
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM comment WHERE id = ?",
+                (rs, rowNum) -> {
+                    return new Comment(
+                            id,
+                            rs.getString("content"),
+                            rs.getString("created_at"),
+                            rs.getLong("restaurant_id"),
+                            rs.getLong("created_by_user_id")
+                    );
+                },
+                id
+        );
     }
 
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {

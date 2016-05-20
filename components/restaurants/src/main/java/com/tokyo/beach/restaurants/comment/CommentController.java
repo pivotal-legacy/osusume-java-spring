@@ -9,7 +9,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -36,6 +38,21 @@ public class CommentController {
         );
         User currentUser = userRepository.get(userId.longValue()).get();
         return new SerializedComment(persistedComment, currentUser);
+    }
+
+    @RequestMapping(value = "comments/{commentId}", method = DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable String commentId) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
+
+        Optional<Comment> maybeCommentToDelete = commentRepository.get(Long.parseLong(commentId));
+
+        if (maybeCommentToDelete.isPresent() &&
+                userId.longValue() == maybeCommentToDelete.get().getCreatedByUserId()) {
+            commentRepository.delete(maybeCommentToDelete.get().getId());
+        }
     }
 
 }

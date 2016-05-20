@@ -52,7 +52,7 @@ public class SessionControllerTest {
 
     @Test
     public void test_postToSession_returnsAcceptedHttpStatus() throws Exception {
-        UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
+        UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com", maybeUser.get().getId());
         when(sessionRepository.create(tokenGenerator, maybeUser.get()))
                 .thenReturn(userSession);
 
@@ -80,18 +80,19 @@ public class SessionControllerTest {
     public void test_postToSession_returnsValidSession() throws Exception {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
-        UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com");
+        UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com", 1L);
         when(sessionRepository.create(tokenGenerator, maybeUser.get()))
                 .thenReturn(userSession);
 
 
         mvc.perform(post("/session")
                 .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\"}")
+                .content("{\"email\":\"jmiller@gmail.com\",\"password\":\"mypassword\",\"id\":1}")
                 .accept(APPLICATION_JSON_UTF8_VALUE)
         )
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.email", is("jmiller@gmail.com")))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.token", is("abcde12345")));
     }
 

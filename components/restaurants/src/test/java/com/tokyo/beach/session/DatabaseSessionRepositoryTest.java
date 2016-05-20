@@ -62,7 +62,7 @@ public class DatabaseSessionRepositoryTest {
         );
 
 
-        UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com");
+        UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com", userId);
         assertEquals(actualUserSession, expectedUserSession);
     }
 

@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DatabaseCommentRepository implements CommentRepository {
@@ -64,4 +65,34 @@ public class DatabaseCommentRepository implements CommentRepository {
                 restaurant.getId()
         );
     }
+
+    @Override
+    public Optional<Comment> get(long commentId) {
+        List<Comment> comments = jdbcTemplate.query(
+                "SELECT * FROM comment WHERE id = ?",
+                (rs, rowNum) -> {
+                    return new Comment(
+                            rs.getLong("id"),
+                            rs.getString("content"),
+                            rs.getString("created_at"),
+                            rs.getLong("restaurant_id"),
+                            rs.getLong("created_by_user_id")
+                    );
+                },
+                commentId
+        );
+
+        if ( comments.size() > 0 ) {
+            return Optional.of(comments.get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void delete(long commentId) {
+        jdbcTemplate.update("DELETE FROM comment WHERE id = ?", commentId);
+    }
+
+
 }

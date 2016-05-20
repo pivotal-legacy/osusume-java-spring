@@ -1,17 +1,21 @@
 package com.tokyo.beach.comment;
 
+import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.DatabaseCommentRepository;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -116,5 +120,55 @@ public class DatabaseCommentRepositoryTest {
         assertThat(actualComments.get(0).getContent(), is("New Comment Content"));
         assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));
         assertThat(actualComments.get(0).getRestaurantId(), is(restaurant.getId()));
+    }
+
+    @Test
+    public void test_delete_deletesComment() throws Exception {
+        User user = new UserFixture().withEmail("email1").persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .postedByUser(user)
+                .persist(jdbcTemplate);
+        Comment comment = new CommentFixture()
+                .withContent("content")
+                .withCreatedByUserId(user.getId())
+                .withRestaurantId(restaurant.getId())
+                .persist(jdbcTemplate);
+
+        commentRepository.delete(comment.getId());
+
+        int count = jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM comment WHERE id = ?",
+                new Object[]{comment.getId()},
+                Integer.class
+        );
+
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void test_get_returnsCommentMatchingId() throws Exception {
+        User user = new UserFixture().withEmail("email1").persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .postedByUser(user)
+                .persist(jdbcTemplate);
+        Comment persistedComment = new CommentFixture()
+                .withContent("content")
+                .withCreatedByUserId(user.getId())
+                .withRestaurantId(restaurant.getId())
+                .persist(jdbcTemplate);
+
+
+        Comment retrievedComment = commentRepository.get(persistedComment.getId()).get();
+
+
+        assertEquals(persistedComment, retrievedComment);
+    }
+
+    @Test
+    public void test_get_returnsEmptyOptionalWhenCommentDoesntExistWithId() throws Exception {
+        Optional<Comment> retrievedComment = commentRepository.get(991);
+
+
+        assertEquals(retrievedComment, Optional.empty());
     }
 }
