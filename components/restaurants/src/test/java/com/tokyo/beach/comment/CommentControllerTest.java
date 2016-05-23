@@ -6,6 +6,7 @@ import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +37,33 @@ public class CommentControllerTest {
         mockUserRepository = mock(UserRepository.class);
         commentController = new CommentController(mockCommentRepository, mockUserRepository);
         mockMvc = standaloneSetup(commentController).build();
+    }
+
+    @Test
+    public void test_create_returnsCreatedHTTPStatus() throws Exception {
+        when(mockUserRepository.get(anyLong()))
+                .thenReturn(
+                        Optional.of(
+                                new UserFixture().build()
+                        )
+                );
+        when(mockCommentRepository.create(
+                anyObject(),
+                anyLong(),
+                anyString()
+        )).thenReturn(
+                new CommentFixture().build()
+        );
+
+
+        ResultActions result = mockMvc.perform(post("/restaurants/88/comments")
+                .requestAttr("userId", 11L)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content("{\"comment\":{\"content\":\"New Comment Text\"}}")
+        );
+
+
+        result.andExpect(status().isCreated());
     }
 
     @Test
@@ -81,6 +109,21 @@ public class CommentControllerTest {
 
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
         assertEquals("88", attributeRestaurantId.getValue());
+    }
+
+    @Test
+    public void test_delete_returnsOkHTTPStatus() throws Exception {
+        when(mockCommentRepository.get(
+                anyLong()
+        )).thenReturn(Optional.empty());
+
+
+        ResultActions result = mockMvc.perform(delete("/comments/88")
+                .requestAttr("userId", 11L)
+        );
+
+
+        result.andExpect(status().isOk());
     }
 
     @Test
