@@ -92,3 +92,5 @@ CREATE TABLE likes (
   restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
   user_id BIGINT REFERENCES users(id) ON DELETE CASCADE NOT NULL
 );
+
+CREATE UNIQUE INDEX restaurant_id_user_id on likes (restaurant_id, user_id);

@@ -2,6 +2,7 @@ package com.tokyo.beach.restaurants.like;
 
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -33,7 +34,12 @@ public class DatabaseLikeRepository implements LikeRepository {
         params.put("restaurant_id", restaurantId);
         params.put("user_id", userId);
 
-        insertLike.execute(params);
+        try {
+            insertLike.execute(params);
+        } catch (DuplicateKeyException dke) {
+            // Duplicate entries are not allowed at the DB level.
+        }
+
         return new Like(userId, restaurantId);
     }
 

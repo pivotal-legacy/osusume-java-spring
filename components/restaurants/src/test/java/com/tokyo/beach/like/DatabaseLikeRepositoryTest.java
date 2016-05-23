@@ -11,6 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.List;
 
@@ -78,6 +80,51 @@ public class DatabaseLikeRepositoryTest {
         );
 
         assertEquals(persistedLike, createdLike);
+    }
+
+    @Test
+    public void test_create_doesNotPersistDuplicates() throws Exception {
+        long restaurantId = new RestaurantFixture()
+                .postedByUser(new UserFixture()
+                        .withEmail("email@a.com")
+                        .persist(jdbcTemplate)
+                )
+                .persist(jdbcTemplate)
+                .getId();
+
+        Long likeByUserId = new UserFixture()
+                .persist(jdbcTemplate)
+                .getId();
+
+        new LikeFixture()
+                .withRestaurantId(restaurantId)
+                .withUserId(likeByUserId)
+                .persist(jdbcTemplate);
+
+
+        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        Like createdLike = likeRepository.create(likeByUserId, restaurantId);
+
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("restaurant_id", restaurantId);
+        parameters.addValue("user_id", likeByUserId);
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        String sql = "SELECT * FROM likes WHERE restaurant_id = :restaurant_id AND user_id = :user_id";
+        List<Like> likes = namedTemplate.query(
+                sql,
+                parameters,
+                (rs, rowNum) -> {
+                    return new Like(
+                            rs.getLong("user_id"),
+                            rs.getLong("restaurant_id")
+                    );
+                }
+        );
+
+        assertEquals(1, likes.size());
+        assertEquals(createdLike, likes.get(0));
     }
 
     @Test
