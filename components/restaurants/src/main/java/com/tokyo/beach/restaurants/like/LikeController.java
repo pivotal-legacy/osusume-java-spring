@@ -11,6 +11,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -30,6 +32,16 @@ public class LikeController {
         Number userId = (Number) request.getAttribute("userId");
 
         return likeRepository.create(userId.longValue(), restaurantId);
+    }
+
+    @RequestMapping(value = "restaurants/{restaurantId}/likes", method = DELETE)
+    @ResponseStatus(OK)
+    public void delete(@PathVariable long restaurantId) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
+
+        likeRepository.delete(userId.longValue(), restaurantId);
     }
 
 }

@@ -19,7 +19,9 @@ import java.util.List;
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseLikeRepositoryTest {
@@ -39,27 +41,18 @@ public class DatabaseLikeRepositoryTest {
 
     @Test
     public void test_create_persistsToLikesTable() throws Exception {
-        long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new NewUser("hiro@gmail.com", "password", "Hiro")
-        ).getId();
+        long restaurantId = new RestaurantFixture()
+                .postedByUser(new UserFixture()
+                        .withEmail("daniel@gmail.com")
+                        .persist(jdbcTemplate)
+                )
+                .persist(jdbcTemplate)
+                .getId();
 
-        long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
-                new NewRestaurant(
-                        "restaurant_name",
-                        "address",
-                        true,
-                        true,
-                        true,
-                        "",
-                        0L,
-                        0L,
-                        emptyList()),
-                createdByUserId
-        ).getId();
-
-        Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new NewUser("yuki@gmail.com", "password", "Yuki")
-        ).getId();
+        Long likeByUserId = new UserFixture()
+                        .withEmail("yuki@gmail.com")
+                        .persist(jdbcTemplate)
+                        .getId();
 
 
         DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
@@ -125,6 +118,40 @@ public class DatabaseLikeRepositoryTest {
 
         assertEquals(1, likes.size());
         assertEquals(createdLike, likes.get(0));
+    }
+
+    @Test
+    public void test_delete_deletesRowFromTable() throws Exception {
+        long restaurantId = new RestaurantFixture()
+                .postedByUser(new UserFixture()
+                        .withEmail("daniel@gmail.com")
+                        .persist(jdbcTemplate)
+                )
+                .persist(jdbcTemplate)
+                .getId();
+
+        Long likeByUserId = new LikeFixture()
+                .withUserId(new UserFixture()
+                        .withEmail("yuki@gmail.com")
+                        .persist(jdbcTemplate)
+                        .getId()
+                )
+                .withRestaurantId(restaurantId)
+                .persist(jdbcTemplate)
+                .getUserId();
+
+
+        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        likeRepository.delete(likeByUserId, restaurantId);
+
+
+        String sql = "SELECT count(*) FROM likes WHERE user_id = ? and restaurant_id = ?";
+        int count = this.jdbcTemplate.queryForObject(
+                sql,
+                new Object[] { likeByUserId, restaurantId },
+                Integer.class
+        );
+        assertThat(count, is(0));
     }
 
     @Test

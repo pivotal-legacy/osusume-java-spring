@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,7 +30,8 @@ public class LikeControllerTest {
     @Test
     public void test_create_returnsCreatedHTTPStatus() throws Exception {
         ResultActions result = mockMvc.perform(post("/restaurants/99/likes")
-                .requestAttr("userId", 11L));
+                .requestAttr("userId", 11L)
+        );
 
 
         result.andExpect(status().isCreated());
@@ -57,5 +59,26 @@ public class LikeControllerTest {
 
         result.andExpect(jsonPath("$.userId", equalTo(99)));
         result.andExpect(jsonPath("$.restaurantId", equalTo(11)));
+    }
+
+    @Test
+    public void test_delete_returnsHttpStatusOk() throws Exception {
+        ResultActions result = mockMvc.perform(delete("/restaurants/99/likes")
+                .requestAttr("userId", 11L)
+        );
+
+
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_delete_callsDeleteMyLikeOnLikeRepo() throws Exception {
+        mockMvc.perform(delete("/restaurants/99/likes")
+                .requestAttr("userId", 11L)
+        );
+
+
+        verify(mockLikeRepository, times(1))
+                .delete(11L, 99L);
     }
 }

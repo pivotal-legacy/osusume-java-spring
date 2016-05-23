@@ -44,6 +44,14 @@ public class DatabaseLikeRepository implements LikeRepository {
     }
 
     @Override
+    public void delete(long userId, long restaurantId) {
+        jdbcTemplate.update("DELETE FROM likes WHERE user_id = ? AND restaurant_id = ?",
+                userId,
+                restaurantId
+        );
+    }
+
+    @Override
     public List<Like> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT * FROM likes WHERE restaurant_id = ?",
