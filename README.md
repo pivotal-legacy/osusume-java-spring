@@ -19,3 +19,17 @@ Please use the makefile which contains a few useful commands:
 The project is broken down into an "application" and a "components" directory, therefore to start the server please locate the jar under the 'applications' directory:
 
 `java -jar applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar`
+
+## Sample curl statements
+
+Create a session (logon) and receive a token (please pass in a valid username and password):
+
+`curl -i -X POST http://localhost:8080/session -H "content-type: application/json" -d '{"email":"name","password":"password"}'`
+
+Retrieve a list of restaurants (please replace `<token>` with a valid token):
+
+`curl http://localhost:8080/restaurants -H "Authorization: Bearer <token>" | jq .`
+
+Retrieve details for a specific restaurant (please replace `<token>` with a valid token):
+
+`curl http://localhost:8080/restaurants/14 -H "Authorization: Bearer <token>" | jq .`
