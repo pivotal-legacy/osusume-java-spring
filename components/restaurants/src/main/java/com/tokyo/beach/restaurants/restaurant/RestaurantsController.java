@@ -36,6 +36,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/restaurants")
 public class RestaurantsController {
