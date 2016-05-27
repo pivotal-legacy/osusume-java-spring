@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,8 @@ public class DatabaseCuisineRepository implements CuisineRepository {
     }
 
     @Override
-    public List<Cuisine> getAll() {
+    public List<Cuisine> getAll()
+    {
         return jdbcTemplate.query("SELECT * FROM cuisine", (rs, rowNum) -> {
             return new Cuisine(
                     rs.getLong("id"),
@@ -80,4 +82,5 @@ public class DatabaseCuisineRepository implements CuisineRepository {
         }
         return cuisines.get(0);
     }
+
 }

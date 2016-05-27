@@ -128,7 +128,9 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getLong("created_by_user_id"),
-                            0L);
+                            0L,
+                            rs.getLong("cuisine_id")
+                    );
                 },
                 cuisineId,
                 userId
@@ -161,7 +163,9 @@ public class DatabaseCuisineRepositoryTest {
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getLong("created_by_user_id"),
-                            0L);
+                            0L,
+                            rs.getLong("cuisine_id")
+                    );
                 },
                 userId
         );

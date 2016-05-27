@@ -17,7 +17,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class TestDatabaseUtils {
     public static DataSource buildDataSource() {
@@ -118,7 +117,8 @@ public class TestDatabaseUtils {
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id")
+                            rs.getLong("price_range_id"),
+                            rs.getLong("cuisine_id")
                     );
                 },
                 id

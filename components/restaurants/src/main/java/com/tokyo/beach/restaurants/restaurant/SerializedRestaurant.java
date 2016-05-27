@@ -122,6 +122,7 @@ public class SerializedRestaurant {
         return comments;
     }
 
+    @JsonProperty("cuisine")
     public Cuisine getCuisine() {
         return cuisine;
     }
