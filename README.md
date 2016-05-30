@@ -4,7 +4,7 @@ Osusume back-end built in Java Spring Boot.
 ## Configuration
 A environment variable for the database URL needs to be configured for PostgreSQL, such as:
 
-`OSUSUME_DATABASE_URL=jdbc:postgresql://pivotal:@localhost/osusume-test`
+`OSUSUME_DATABASE_URL=jdbc:postgresql://pivotal:@localhost/osusume-dev`
 
 For accessing the Gurunavi API, an API is necessary:
 

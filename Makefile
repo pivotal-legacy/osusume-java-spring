@@ -1,11 +1,15 @@
 ci: refreshdb tests
 
 refreshdb:
+	@dropdb -e osusume-dev
+	@createdb -e osusume-dev
+	@psql -d osusume-dev -f ./sql/initial_schema.ddl
 	@dropdb -e osusume-test
 	@createdb -e osusume-test
 	@psql -d osusume-test -f ./sql/initial_schema.ddl
 
 loadsampledata:
+	@psql -q -d osusume-dev -f ./sql/SampleData.sql
 	@psql -q -d osusume-test -f ./sql/SampleData.sql
 
 alltests:
