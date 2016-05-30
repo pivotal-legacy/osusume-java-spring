@@ -32,6 +32,17 @@ public class AuthorizationValidatorTest {
     }
 
     @Test
+    public void test_returnsTrue_forOptionRequest() throws Exception {
+        when(servletRequest.getServletPath()).thenReturn("/");
+        when(servletRequest.getMethod()).thenReturn("OPTIONS");
+
+        boolean requestWasAuthorized = authorizationValidator.authorizeRequest(servletRequest);
+
+        assertTrue(requestWasAuthorized);
+        verify(servletRequest, times(0)).setAttribute(anyString(), anyObject());
+    }
+
+    @Test
     public void test_returnsTrue_forUnauthenticatedRequests() throws Exception {
         when(servletRequest.getServletPath()).thenReturn("/unauthenticated");
 
@@ -57,7 +68,8 @@ public class AuthorizationValidatorTest {
 
     @Test
     public void test_returnsFalse_whenDoesNotHaveAuthorizationHeader() throws Exception {
-        when(servletRequest.getServletPath()).thenReturn(anyString());
+        when(servletRequest.getServletPath()).thenReturn("/");
+        when(servletRequest.getMethod()).thenReturn("GET");
         when(servletRequest.getHeader("Authorization")).thenReturn(null);
 
 
@@ -70,7 +82,8 @@ public class AuthorizationValidatorTest {
 
     @Test
     public void test_returnsTrue_withValidToken() throws Exception {
-        when(servletRequest.getServletPath()).thenReturn(anyString());
+        when(servletRequest.getServletPath()).thenReturn("/");
+        when(servletRequest.getMethod()).thenReturn(anyString());
         when(servletRequest.getHeader("Authorization")).thenReturn("valid-token");
         when(sessionRepository.validateToken(anyObject()))
                 .thenReturn(Optional.of(new Long(12)));
@@ -93,7 +106,8 @@ public class AuthorizationValidatorTest {
 
     @Test
     public void test_returnsFalse_withInvalidToken() throws Exception {
-        when(servletRequest.getServletPath()).thenReturn(anyString());
+        when(servletRequest.getServletPath()).thenReturn("/");
+        when(servletRequest.getMethod()).thenReturn("GET");
         when(servletRequest.getHeader("Authorization")).thenReturn("invalid-token");
         when(sessionRepository.validateToken(anyObject()))
                 .thenReturn(Optional.empty());
@@ -108,7 +122,8 @@ public class AuthorizationValidatorTest {
 
     @Test
     public void test_bearerTextRemovedFromAuthorization() throws Exception {
-        when(servletRequest.getServletPath()).thenReturn(anyString());
+        when(servletRequest.getServletPath()).thenReturn("/");
+        when(servletRequest.getMethod()).thenReturn("GET");
         when(servletRequest.getHeader("Authorization")).thenReturn("Bearer ABCDEFG");
         when(sessionRepository.validateToken(anyObject()))
                 .thenReturn(Optional.empty());

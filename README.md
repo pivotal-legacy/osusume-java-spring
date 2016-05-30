@@ -6,6 +6,10 @@ A environment variable for the database URL needs to be configured for PostgreSQ
 
 `OSUSUME_DATABASE_URL=jdbc:postgresql://pivotal:@localhost/osusume-test`
 
+For accessing the Gurunavi API, an API is necessary:
+
+`GNAVI_KEY=<Gurunavi API Key>`
+
 ## Makefile
 Please use the makefile which contains a few useful commands:
 

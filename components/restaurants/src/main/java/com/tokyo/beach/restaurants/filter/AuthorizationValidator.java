@@ -17,8 +17,9 @@ public class AuthorizationValidator {
 
     public boolean authorizeRequest(ServletRequest request) throws IOException, ServletException {
         String servletName = ((HttpServletRequest) request).getServletPath();
+        String method = ((HttpServletRequest)request).getMethod();
 
-        if (servletName.equals("/unauthenticated") || servletName.equals("/session")) {
+        if (servletName.equals("/unauthenticated") || servletName.equals("/session") || method.equalsIgnoreCase("options")) {
             return true;
         }
 
