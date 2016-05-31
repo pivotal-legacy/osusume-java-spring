@@ -20,8 +20,7 @@ public class DatabaseCuisineRepository implements CuisineRepository {
     }
 
     @Override
-    public List<Cuisine> getAll()
-    {
+    public List<Cuisine> getAll() {
         return jdbcTemplate.query("SELECT * FROM cuisine", (rs, rowNum) -> {
             return new Cuisine(
                     rs.getLong("id"),

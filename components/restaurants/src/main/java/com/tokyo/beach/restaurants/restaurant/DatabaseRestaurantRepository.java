@@ -21,7 +21,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     @Override
     public List<Restaurant> getAll() {
         return jdbcTemplate
-                .query("SELECT * FROM restaurant", (rs, rowNum) -> {
+                .query("SELECT * FROM restaurant ORDER BY created_at DESC", (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
                             rs.getString("name"),

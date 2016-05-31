@@ -90,30 +90,21 @@ public class RestaurantsController {
                         )
                 );
         List<PriceRange> priceRangeList = priceRangeRepository.getAll();
-        Map<Long, PriceRange> priceRangeMap = new HashMap<Long, PriceRange>();
+        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
         priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
 
         List<Cuisine> cuisineList = cuisineRepository.getAll();
-        Map<Long, Cuisine> cuisineMap = new HashMap<Long, Cuisine>();
+        Map<Long, Cuisine> cuisineMap = new HashMap<>();
         cuisineList.forEach(cuisine -> cuisineMap.put(cuisine.getId(), cuisine));
-
 
         List<Like> likes = likeRepository.findForRestaurants(restaurantList);
         Map<Long, List<Like>> restaurantLikes = likes
                 .stream()
                 .collect(groupingBy(Like::getRestaurantId));
 
-        Restaurant debugRestaurant = restaurantList.get(0);
-        System.out.println("debugRestaurant = " + debugRestaurant);
-
-        System.out.println("cuisineMap.get(restaurant.getCuisineId()) = " +
-                cuisineMap.get(debugRestaurant.getCuisineId()));
-
-
         return restaurantList
                 .stream()
-                .map((restaurant) ->
-                        new SerializedRestaurant(
+                .map((restaurant) -> new SerializedRestaurant(
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
                         cuisineMap.get(restaurant.getCuisineId()),

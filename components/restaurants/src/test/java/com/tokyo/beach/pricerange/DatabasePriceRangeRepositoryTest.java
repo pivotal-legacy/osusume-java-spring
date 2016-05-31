@@ -74,7 +74,7 @@ public class DatabasePriceRangeRepositoryTest {
         Restaurant persistedRestaurant = new RestaurantFixture()
                 .withPriceRange(persistedPriceRange)
                 .withCuisine(new CuisineFixture().persist(jdbcTemplate))
-                .postedByUser(new UserFixture().withEmail("email1").persist(jdbcTemplate))
+                .withUser(new UserFixture().withEmail("email1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
 
         PriceRange actualPriceRange = priceRangeRepository.findForRestaurant(

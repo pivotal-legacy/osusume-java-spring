@@ -42,7 +42,7 @@ public class DatabaseLikeRepositoryTest {
     @Test
     public void test_create_persistsToLikesTable() throws Exception {
         long restaurantId = new RestaurantFixture()
-                .postedByUser(new UserFixture()
+                .withUser(new UserFixture()
                         .withEmail("daniel@gmail.com")
                         .persist(jdbcTemplate)
                 )
@@ -78,7 +78,7 @@ public class DatabaseLikeRepositoryTest {
     @Test
     public void test_create_doesNotPersistDuplicates() throws Exception {
         long restaurantId = new RestaurantFixture()
-                .postedByUser(new UserFixture()
+                .withUser(new UserFixture()
                         .withEmail("email@a.com")
                         .persist(jdbcTemplate)
                 )
@@ -123,7 +123,7 @@ public class DatabaseLikeRepositoryTest {
     @Test
     public void test_delete_deletesRowFromTable() throws Exception {
         long restaurantId = new RestaurantFixture()
-                .postedByUser(new UserFixture()
+                .withUser(new UserFixture()
                         .withEmail("daniel@gmail.com")
                         .persist(jdbcTemplate)
                 )
@@ -203,11 +203,11 @@ public class DatabaseLikeRepositoryTest {
     public void test_findForRestaurants_returnsLikesList() throws Exception {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("restaurant_name1")
-                .postedByUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .withUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
         Restaurant restaurant2 = new RestaurantFixture()
                 .withName("restaurant_name2")
-                .postedByUser(new UserFixture().withEmail("mail2").persist(jdbcTemplate))
+                .withUser(new UserFixture().withEmail("mail2").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
         Like like1 = new LikeFixture()
                 .withRestaurantId(restaurant1.getId())
@@ -231,7 +231,7 @@ public class DatabaseLikeRepositoryTest {
     public void test_findForRestaurants_returnsEmptyList() throws Exception {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("restaurant_name1")
-                .postedByUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
+                .withUser(new UserFixture().withEmail("mail1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
 
 

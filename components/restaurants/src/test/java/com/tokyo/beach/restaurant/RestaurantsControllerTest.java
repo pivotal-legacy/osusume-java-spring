@@ -109,7 +109,6 @@ public class RestaurantsControllerTest {
         when(mockLikeRepository.findForRestaurants(restaurants)).thenReturn(
                 asList(new Like(1L, 1L), new Like(2L, 1L))
         );
-
         when(mockCuisineRepository.getAll()).thenReturn(
                 asList(new Cuisine(20L, "Swedish"))
         );

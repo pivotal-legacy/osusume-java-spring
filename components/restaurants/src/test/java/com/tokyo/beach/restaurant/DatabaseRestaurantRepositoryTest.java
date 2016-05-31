@@ -5,6 +5,8 @@ import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,42 +41,56 @@ public class DatabaseRestaurantRepositoryTest {
     }
 
     @Test
-    public void test_getAll() {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("joe@pivotal.io", "password", "Joe")
-        ).getId();
+    public void test_getAll_returnsSortedList() {
+        User user = new UserFixture()
+                .withEmail("joe@pivotal.io")
+                .withName("Joe")
+                .persist(jdbcTemplate);
 
-        Integer restaurantId = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant " +
-                        "(name, address, offers_english_menu, walk_ins_ok, " +
-                        "accepts_credit_cards, notes, created_by_user_id)" +
-                        "VALUES ('Afuri', 'Roppongi', FALSE, TRUE, FALSE, '', ?)" +
-                        "RETURNING *",
-                (rs, rowNum) -> {
-                    return rs.getInt("id");
-                },
-                userId
-        );
+        Restaurant restaurant1 = new RestaurantFixture()
+                .withName("Afuri")
+                .withUser(user)
+                .persist(jdbcTemplate);
+
+        Restaurant restaurant2 = new RestaurantFixture()
+                .withName("Butagumi")
+                .withUser(user)
+                .persist(jdbcTemplate);
+
 
         List<Restaurant> restaurants = restaurantRepository.getAll();
 
 
-        Restaurant expectedRestaurant = new Restaurant(
-                restaurantId,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "created-date",
-                userId.longValue(),
-                0L,
-                0L
-        );
+        List<Restaurant> expectedRestaurants = asList(
+                new Restaurant(
+                        restaurant2.getId(),
+                        "Butagumi",
+                        "Roppongi",
+                        false,
+                        true,
+                        false,
+                        "",
+                        restaurant2.getCreatedDate(),
+                        user.getId(),
+                        0L,
+                        0L
+                ),
+                new Restaurant(
+                    restaurant1.getId(),
+                    "Afuri",
+                    "Roppongi",
+                    false,
+                    true,
+                    false,
+                    "",
+                    restaurant1.getCreatedDate(),
+                    user.getId(),
+                    0L,
+                    0L
+                )
+            );
 
-        assertThat(restaurants, is(singletonList(expectedRestaurant)));
+        assertThat(restaurants, is(expectedRestaurants));
     }
 
     @Test

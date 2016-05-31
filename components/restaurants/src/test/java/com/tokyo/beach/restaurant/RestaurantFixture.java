@@ -41,7 +41,7 @@ public class RestaurantFixture {
         return this;
     }
 
-    public RestaurantFixture postedByUser(User user) {
+    public RestaurantFixture withUser(User user) {
         this.user = user;
         return this;
     }

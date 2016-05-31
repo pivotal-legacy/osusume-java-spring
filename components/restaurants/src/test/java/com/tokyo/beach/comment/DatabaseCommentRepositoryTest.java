@@ -127,7 +127,7 @@ public class DatabaseCommentRepositoryTest {
     public void test_delete_deletesComment() throws Exception {
         User user = new UserFixture().withEmail("email1").persist(jdbcTemplate);
         Restaurant restaurant = new RestaurantFixture()
-                .postedByUser(user)
+                .withUser(user)
                 .persist(jdbcTemplate);
         Comment comment = new CommentFixture()
                 .withContent("content")
@@ -150,7 +150,7 @@ public class DatabaseCommentRepositoryTest {
     public void test_get_returnsCommentMatchingId() throws Exception {
         User user = new UserFixture().withEmail("email1").persist(jdbcTemplate);
         Restaurant restaurant = new RestaurantFixture()
-                .postedByUser(user)
+                .withUser(user)
                 .persist(jdbcTemplate);
         Comment persistedComment = new CommentFixture()
                 .withContent("content")
