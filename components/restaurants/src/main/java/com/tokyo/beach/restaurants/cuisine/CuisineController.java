@@ -10,6 +10,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 @RequestMapping("/cuisines")
+@CrossOrigin
 public class CuisineController {
     private CuisineRepository cuisineRepository;
 
