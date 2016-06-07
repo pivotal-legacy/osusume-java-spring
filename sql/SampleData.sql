@@ -27,6 +27,10 @@ BEGIN
   INSERT INTO users (name, email, password) VALUES ('Whitney', 'whitney', 'whitney');
   INSERT INTO users (name, email, password) VALUES ('Yuki', 'yuki', 'yuki');
 
+  INSERT INTO users (name, email, password) VALUES ('Hiroko', 'hiroko', 'hiroko');
+  INSERT INTO users (name, email, password) VALUES ('Seiji', 'seiji', 'seiji');
+  INSERT INTO users (name, email, password) VALUES ('Lisa', 'lisa', 'lisa');
+
 
   -- Cuisines
 
