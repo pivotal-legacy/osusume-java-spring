@@ -1,9 +1,5 @@
 package com.tokyo.beach.restaurants.restaurant;
 
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
-import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
@@ -12,8 +8,13 @@ import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restutils.RestControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,9 +33,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @CrossOrigin
 @RestController
@@ -202,5 +201,16 @@ public class RestaurantsController {
                 Optional.empty(),
                 createdByUser
         );
+    }
+
+    @RequestMapping(value = "{restaurantId}/photoUrls/{photoUrlId}", method = DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deletePhotoUrl(@PathVariable String restaurantId, @PathVariable String photoUrlId) {
+        Optional<PhotoUrl> maybePhotoUrl = photoRepository.get(Long.parseLong(photoUrlId));
+
+        if (maybePhotoUrl.isPresent()) {
+            photoRepository.delete(Long.parseLong(photoUrlId));
+        }
+
     }
 }

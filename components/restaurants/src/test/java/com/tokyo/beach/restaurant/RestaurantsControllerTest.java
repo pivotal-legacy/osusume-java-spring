@@ -1,5 +1,6 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.comment.Comment;
@@ -10,7 +11,7 @@ import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
-import com.tokyo.beach.restaurants.photos.PhotoRepository;
+import com.tokyo.beach.restaurants.photos.DatabasePhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,12 +39,10 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -181,7 +181,7 @@ public class RestaurantsControllerTest {
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 mockRestaurantRepository,
-                new PhotoRepository(new JdbcTemplate(buildDataSource())),
+                new DatabasePhotoRepository(new JdbcTemplate(buildDataSource())),
                 mockCuisineRepository,
                 mockUserRepository,
                 mockCommentRepository,
@@ -661,6 +661,57 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
+    }
+
+
+
+    @Test
+    public void test_delete_returnsOkHTTPStatus() throws Exception {
+        when(mockPhotoRepository.get(
+                anyLong()
+        )).thenReturn(Optional.empty());
+
+
+        ResultActions result = mockMvc.perform(delete("/restaurants/10/photoUrls/20")
+                .requestAttr("userId", 11L)
+        );
+
+
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_delete_deletesPhotoUrlMadeByCurrentUser() throws Exception {
+        when(mockPhotoRepository.get(10))
+                .thenReturn(Optional.of(
+                        new PhotoUrl(
+                                10,
+                                "http://hoge/image.jpg",
+                                20
+                        )
+                ));
+
+        ResultActions result = mockMvc.perform(delete("/restaurants/20/photoUrls/10")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk());
+        verify(mockPhotoRepository, times(1)).get(10);
+        verify(mockPhotoRepository, times(1)).delete(10);
+    }
+
+
+    @Test
+    public void test_delete_doesntDeleteNonExistentPhotoUrl() throws Exception {
+        when(mockPhotoRepository.get(10))
+                .thenReturn(Optional.empty()
+                );
+
+        ResultActions result = mockMvc.perform(delete("/restaurants/20/photoUrls/10")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk());
+        verify(mockPhotoRepository, times(1)).get(10);
+        verify(mockPhotoRepository, never()).delete(10);
     }
 
 }

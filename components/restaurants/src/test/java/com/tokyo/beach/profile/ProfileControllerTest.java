@@ -1,19 +1,19 @@
 package com.tokyo.beach.profile;
 
-import com.tokyo.beach.restaurants.like.Like;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
-import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
 import com.tokyo.beach.restaurants.profile.ProfileController;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;

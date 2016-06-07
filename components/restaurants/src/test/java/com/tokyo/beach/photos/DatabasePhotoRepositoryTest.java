@@ -3,7 +3,7 @@ package com.tokyo.beach.photos;
 import com.tokyo.beach.TestDatabaseUtils;
 import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
-import com.tokyo.beach.restaurants.photos.PhotoRepository;
+import com.tokyo.beach.restaurants.photos.DatabasePhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import org.junit.After;
 import org.junit.Before;
@@ -20,15 +20,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class PhotoRepositoryTest {
+public class DatabasePhotoRepositoryTest {
 
-    private PhotoRepository photoRepository;
+    private DatabasePhotoRepository photoRepository;
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(TestDatabaseUtils.buildDataSource());
-        photoRepository = new PhotoRepository(jdbcTemplate);
+        photoRepository = new DatabasePhotoRepository(jdbcTemplate);
     }
 
     @After
