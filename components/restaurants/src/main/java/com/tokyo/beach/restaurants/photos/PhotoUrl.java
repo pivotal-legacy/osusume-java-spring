@@ -3,7 +3,6 @@ package com.tokyo.beach.restaurants.photos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PhotoUrl {
-    @JsonIgnore
     private long id;
 
     private String url;

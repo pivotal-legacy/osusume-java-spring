@@ -125,6 +125,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
                 .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
+                .andExpect(jsonPath("$[0].photo_urls[0].id", equalTo(999)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
                 .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
                 .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
