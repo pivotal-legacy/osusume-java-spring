@@ -8,9 +8,13 @@ refreshdb:
 	@createdb -e osusume-test
 	@psql -d osusume-test -f ./sql/initial_schema.ddl
 
-loadsampledata:
-	@psql -q -d osusume-dev -f ./sql/SampleData.sql
+loadsampledata: test-loadsampledata dev-loadsampledata
+
+test-loadsampledata:
 	@psql -q -d osusume-test -f ./sql/SampleData.sql
+
+dev-loadsampledata:
+	@psql -q -d osusume-dev -f ./sql/SampleData.sql
 
 alltests:
 	@./gradlew clean test build
