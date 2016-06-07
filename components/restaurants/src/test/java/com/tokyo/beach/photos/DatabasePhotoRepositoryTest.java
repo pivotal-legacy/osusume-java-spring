@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Arrays.asList;
@@ -18,6 +19,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class DatabasePhotoRepositoryTest {
@@ -90,5 +92,27 @@ public class DatabasePhotoRepositoryTest {
 
         assertThat(photos, hasSize(1));
         assertThat(photos.get(0).getRestaurantId(), is(1L));
+    }
+
+    @Test
+    public void test_getPhotoUrl_returnsPhotoUrl() throws Exception {
+        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
+                jdbcTemplate,
+                new PhotoUrl(0, "http://url.com", 10)
+        );
+
+
+        Optional<PhotoUrl> actualPhotoUrl = photoRepository.get(photoUrl.getId());
+
+
+        assertThat(actualPhotoUrl.get(), is(photoUrl));
+    }
+
+    @Test
+    public void test_getNonexistentPhotoUrl_returnsEmpty() throws Exception {
+        Optional<PhotoUrl> actualPhotoUrl = photoRepository.get(99);
+
+
+        assertFalse(actualPhotoUrl.isPresent());
     }
 }

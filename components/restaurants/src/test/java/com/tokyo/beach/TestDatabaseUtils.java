@@ -5,6 +5,7 @@ import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.like.Like;
+import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -147,6 +148,34 @@ public class TestDatabaseUtils {
         insert.execute(params);
 
         return like;
+    }
+
+    public static PhotoUrl insertPhotoUrlIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            PhotoUrl photoUrl
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("photo_url")
+                .usingColumns("url", "restaurant_id")
+                .usingGeneratedKeyColumns("id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("url", photoUrl.getUrl());
+        params.put("restaurant_id", photoUrl.getRestaurantId());
+
+        long id = insert.executeAndReturnKey(params).longValue();
+
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM photo_url WHERE id = ?",
+                (rs, rownum) -> {
+                    return new PhotoUrl(
+                            id,
+                            rs.getString("url"),
+                            rs.getLong("restaurant_id")
+                    );
+                },
+                id
+        );
     }
 
     public static Comment insertCommentIntoDatabase(

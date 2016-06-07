@@ -76,7 +76,21 @@ public class DatabasePhotoRepository implements PhotoRepository {
 
     @Override
     public Optional<PhotoUrl> get(long photoUrlId) {
-        return null;
+        List<PhotoUrl> photoUrls = jdbcTemplate
+                .query("SELECT * FROM photo_url WHERE id = ?",
+                        (rs, rowNum) -> {
+                            return new PhotoUrl(
+                                rs.getLong("id"),
+                                rs.getString("url"),
+                                rs.getLong("restaurant_id")
+                            );
+                        },
+                        photoUrlId
+                );
+        if  (photoUrls.size() > 0) {
+            return Optional.of(photoUrls.get(0));
+        }
+        return Optional.empty();
     }
 
     @Override
