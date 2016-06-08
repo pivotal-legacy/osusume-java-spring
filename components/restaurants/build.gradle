@@ -7,6 +7,8 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-annotations:2.6.5"
     compile 'com.squareup.okhttp3:okhttp:3.3.0'
 
+    compile group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.6'
+
     compile project(":components/rest-utils")
 
     testCompile "org.springframework:spring-test:$springVersion"

@@ -17,6 +17,7 @@ import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
+import com.tokyo.beach.restaurants.s3.StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
@@ -55,6 +56,7 @@ public class RestaurantsControllerTest {
     private CommentRepository mockCommentRepository;
     private LikeRepository mockLikeRepository;
     private PriceRangeRepository mockPriceRangeRepository;
+    private StorageRepository mockStorageRepository;
 
     @Before
     public void setUp() {
@@ -65,6 +67,7 @@ public class RestaurantsControllerTest {
         mockCommentRepository = mock(CommentRepository.class);
         mockLikeRepository = mock(LikeRepository.class);
         mockPriceRangeRepository = mock(PriceRangeRepository.class);
+        mockStorageRepository = mock(StorageRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 mockRestaurantRepository,
@@ -73,7 +76,8 @@ public class RestaurantsControllerTest {
                 mockUserRepository,
                 mockCommentRepository,
                 mockLikeRepository,
-                mockPriceRangeRepository
+                mockPriceRangeRepository,
+                mockStorageRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -186,7 +190,8 @@ public class RestaurantsControllerTest {
                 mockUserRepository,
                 mockCommentRepository,
                 mockLikeRepository,
-                mockPriceRangeRepository
+                mockPriceRangeRepository,
+                mockStorageRepository
         );
 
 
@@ -697,6 +702,7 @@ public class RestaurantsControllerTest {
         result.andExpect(status().isOk());
         verify(mockPhotoRepository, times(1)).get(10);
         verify(mockPhotoRepository, times(1)).delete(10);
+        verify(mockStorageRepository, times(1)).deleteFile("http://hoge/image.jpg");
     }
 
 
@@ -712,6 +718,7 @@ public class RestaurantsControllerTest {
         result.andExpect(status().isOk());
         verify(mockPhotoRepository, times(1)).get(10);
         verify(mockPhotoRepository, never()).delete(10);
+        verify(mockStorageRepository, never()).deleteFile(anyString());
     }
 
 }

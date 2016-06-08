@@ -10,6 +10,7 @@ import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.s3.StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import com.tokyo.beach.restutils.RestControllerException;
@@ -46,6 +47,7 @@ public class RestaurantsController {
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
     private final PriceRangeRepository priceRangeRepository;
+    private final StorageRepository storageRepository;
 
     @Autowired
     public RestaurantsController(
@@ -55,7 +57,9 @@ public class RestaurantsController {
             UserRepository userRepository,
             CommentRepository commentRepository,
             LikeRepository likeRepository,
-            PriceRangeRepository priceRangeRepository) {
+            PriceRangeRepository priceRangeRepository,
+            StorageRepository storageRepository
+    ) {
         this.restaurantRepository = restaurantRepo;
         this.photoRepository = photoRepository;
         this.cuisineRepository = cuisineRepository;
@@ -63,6 +67,7 @@ public class RestaurantsController {
         this.commentRepository = commentRepository;
         this.likeRepository = likeRepository;
         this.priceRangeRepository = priceRangeRepository;
+        this.storageRepository = storageRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -210,6 +215,7 @@ public class RestaurantsController {
 
         if (maybePhotoUrl.isPresent()) {
             photoRepository.delete(Long.parseLong(photoUrlId));
+            storageRepository.deleteFile(maybePhotoUrl.get().getUrl());
         }
 
     }
