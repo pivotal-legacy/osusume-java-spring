@@ -41,8 +41,10 @@ public class DatabasePhotoRepositoryTest {
 
     @Test
     public void test_findForRestaurants_returnsPhotoUrlList() throws Exception {
-        jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) " +
-                "VALUES ('http://some-url', 1)");
+        TestDatabaseUtils.insertPhotoUrlIntoDatabase(
+                jdbcTemplate,
+                new PhotoUrl(0, "http://some-url", 1)
+        );
 
         List<PhotoUrl> photos = photoRepository.findForRestaurants(singletonList(
                 new RestaurantFixture().withId(1L).build()
@@ -85,7 +87,10 @@ public class DatabasePhotoRepositoryTest {
 
     @Test
     public void test_findForRestaurant_returnsPhotoUrlList() throws Exception {
-        jdbcTemplate.update("INSERT INTO photo_url (url, restaurant_id) VALUES ('http://some-url', 1)");
+        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
+                jdbcTemplate,
+                new PhotoUrl(0, "http://some-url", 1)
+        );
 
 
         List<PhotoUrl> photos = photoRepository.findForRestaurant(new RestaurantFixture().withId(1L).build());
@@ -132,6 +137,7 @@ public class DatabasePhotoRepositoryTest {
                 new Object[]{photoUrl.getId()},
                 Integer.class
         );
+
         assertEquals(0, count);
     }
 }
