@@ -19,6 +19,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -114,5 +115,23 @@ public class DatabasePhotoRepositoryTest {
 
 
         assertFalse(actualPhotoUrl.isPresent());
+    }
+
+    @Test
+    public void test_delete_deletesPhotoUrl() throws  Exception {
+        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
+                jdbcTemplate,
+                new PhotoUrl(0, "http://url.com", 10)
+        );
+
+
+        photoRepository.delete(photoUrl.getId());
+
+
+        int count = jdbcTemplate.queryForObject("SELECT count(*) FROM photo_url WHERE id = ?",
+                new Object[]{photoUrl.getId()},
+                Integer.class
+        );
+        assertEquals(0, count);
     }
 }

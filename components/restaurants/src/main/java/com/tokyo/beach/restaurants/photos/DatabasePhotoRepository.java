@@ -95,6 +95,6 @@ public class DatabasePhotoRepository implements PhotoRepository {
 
     @Override
     public void delete(long photoUrlId) {
-
+        jdbcTemplate.update("DELETE FROM photo_url WHERE id = ?", photoUrlId);
     }
 }
