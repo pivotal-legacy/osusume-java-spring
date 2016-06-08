@@ -13,7 +13,9 @@ For accessing the Gurunavi API, an API is necessary:
 For accessing to AWS S3 bucket:
 
 `AWS_S3_ACCESS_KEY=<AWS Access Key>`
+
 `AWS_S3_SECRET_KEY=<AWS Secret Access Key>`
+
 `AWS_S3_BUCKET_NAME=<S3 Bucket Name>`
 
 ## Makefile
