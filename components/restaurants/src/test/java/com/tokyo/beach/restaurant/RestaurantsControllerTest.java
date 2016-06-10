@@ -444,7 +444,7 @@ public class RestaurantsControllerTest {
         when(mockUserRepository.get(anyLong())).thenReturn(
                 Optional.of(hanakoUser)
         );
-        when(mockCommentRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(mockCommentRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(
                         new SerializedComment(
                                 new Comment(

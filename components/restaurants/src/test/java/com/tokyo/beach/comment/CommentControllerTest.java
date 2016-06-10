@@ -1,9 +1,8 @@
 package com.tokyo.beach.comment;
 
-import com.tokyo.beach.restaurants.comment.Comment;
-import com.tokyo.beach.restaurants.comment.CommentController;
-import com.tokyo.beach.restaurants.comment.CommentRepository;
-import com.tokyo.beach.restaurants.comment.NewComment;
+import com.tokyo.beach.restaurant.RestaurantFixture;
+import com.tokyo.beach.restaurants.comment.*;
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserRepository;
 import com.tokyo.beach.user.UserFixture;
@@ -14,12 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -201,5 +202,28 @@ public class CommentControllerTest {
         result.andExpect(status().isOk());
         verify(mockCommentRepository, times(1)).get(1);
         verify(mockCommentRepository, never()).delete(1);
+    }
+
+
+
+    @Test
+    public void test_get_returnsCommentsForARestaurant() throws Exception {
+        when(mockCommentRepository.findForRestaurant(1L))
+                .thenReturn(Arrays.asList(
+                        new SerializedComment(
+                                new Comment(1L, "this is a comment", "2016-02-29 06:07:55.000000", 1L, 10L),
+                                new User(10L, "danny@mail", "Danny")
+                        )
+                ));
+        ResultActions result = mockMvc.perform(get("/restaurants/1/comments")
+                .requestAttr("userId", 99));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].content", is("this is a comment")))
+                .andExpect(jsonPath("$[0].created_at", is("2016-02-29T06:07:55.000Z")))
+                .andExpect(jsonPath("$[0].restaurant_id", is(1)))
+                .andExpect(jsonPath("$[0].user.name", is("Danny")));
+        verify(mockCommentRepository, times(1)).findForRestaurant(1L);
     }
 }

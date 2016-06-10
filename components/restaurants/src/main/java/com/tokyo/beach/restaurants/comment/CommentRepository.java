@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface CommentRepository {
     Comment create(NewComment newComment, long createdByUserId, String restaurantId);
-    List<SerializedComment> findForRestaurant(Restaurant restaurant);
+    List<SerializedComment> findForRestaurant(long restaurantId);
     Optional<Comment> get(long commentId);
     void delete(long commentId);
 }

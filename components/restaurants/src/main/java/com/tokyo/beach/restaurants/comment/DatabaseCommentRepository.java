@@ -39,7 +39,7 @@ public class DatabaseCommentRepository implements CommentRepository {
     }
 
     @Override
-    public List<SerializedComment> findForRestaurant(Restaurant restaurant) {
+    public List<SerializedComment> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT comment.id as comment_id, users.id as user_id, * FROM comment " +
                         "inner join users on comment.created_by_user_id = users.id " +
@@ -62,7 +62,7 @@ public class DatabaseCommentRepository implements CommentRepository {
 
                     );
                 },
-                restaurant.getId()
+                restaurantId
         );
     }
 

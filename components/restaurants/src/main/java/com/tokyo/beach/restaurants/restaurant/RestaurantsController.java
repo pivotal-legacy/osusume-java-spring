@@ -165,7 +165,7 @@ public class RestaurantsController {
         Cuisine cuisineForRestaurant = cuisineRepository.findForRestaurant(retrievedRestaurant);
         PriceRange priceRange = priceRangeRepository.findForRestaurant(retrievedRestaurant);
 
-        List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant);
+        List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant.getId());
 
         List<Like> likes = likeRepository.findForRestaurant(retrievedRestaurant.getId());
         boolean currentUserLikesRestaurant = likes

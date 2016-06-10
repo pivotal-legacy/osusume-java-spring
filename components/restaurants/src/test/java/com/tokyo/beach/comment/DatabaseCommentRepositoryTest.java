@@ -116,7 +116,7 @@ public class DatabaseCommentRepositoryTest {
         );
 
 
-        List<SerializedComment> actualComments = commentRepository.findForRestaurant(restaurant);
+        List<SerializedComment> actualComments = commentRepository.findForRestaurant(restaurant.getId());
         assertEquals(actualComments.size(), 1);
         assertThat(actualComments.get(0).getContent(), is("New Comment Content"));
         assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));

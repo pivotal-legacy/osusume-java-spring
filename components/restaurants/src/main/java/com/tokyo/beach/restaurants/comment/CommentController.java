@@ -9,11 +9,15 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@CrossOrigin
 @RestController
 public class CommentController {
     private CommentRepository commentRepository;
@@ -41,7 +45,7 @@ public class CommentController {
     }
 
     @RequestMapping(value = "comments/{commentId}", method = DELETE)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     public void delete(@PathVariable String commentId) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
@@ -53,6 +57,12 @@ public class CommentController {
                 userId.longValue() == maybeCommentToDelete.get().getCreatedByUserId()) {
             commentRepository.delete(maybeCommentToDelete.get().getId());
         }
+    }
+
+    @RequestMapping(value = "restaurants/{restaurantId}/comments", method = GET)
+    @ResponseStatus(OK)
+    public List<SerializedComment> get(@PathVariable String restaurantId) {
+        return commentRepository.findForRestaurant(Long.parseLong(restaurantId));
     }
 
 }
