@@ -112,6 +112,11 @@ public class SerializedRestaurant {
         return formatDateForSerialization(restaurant.getCreatedDate());
     }
 
+    @JsonProperty("updated_at")
+    public String getUpdatedDate() {
+        return formatDateForSerialization(restaurant.getUpdatedDate());
+    }
+
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
         return photoUrls;

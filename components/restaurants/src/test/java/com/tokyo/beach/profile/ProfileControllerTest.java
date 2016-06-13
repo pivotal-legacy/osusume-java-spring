@@ -78,7 +78,7 @@ public class ProfileControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        1,
+                        "updated-date", 1,
                         1L,
                         10L
                 )
@@ -147,7 +147,7 @@ public class ProfileControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
-                        99,
+                        "updated-date", 99,
                         1L,
                         10L
                 )

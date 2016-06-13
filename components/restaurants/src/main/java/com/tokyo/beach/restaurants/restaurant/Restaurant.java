@@ -14,6 +14,7 @@ public class Restaurant {
     private Boolean acceptsCreditCards;
     private String notes;
     private String createdDate;
+    private String updatedDate;
     private long createdByUserId;
     private long priceRangeId;
     private long cuisineId;
@@ -27,6 +28,7 @@ public class Restaurant {
             Boolean acceptsCreditCards,
             String notes,
             String createdDate,
+            String updatedDate,
             long createdByUserId,
             long priceRangeId,
             long cuisineId) {
@@ -41,6 +43,7 @@ public class Restaurant {
         this.createdByUserId = createdByUserId;
         this.priceRangeId = priceRangeId;
         this.cuisineId = cuisineId;
+        this.updatedDate = updatedDate;
     }
 
     @SuppressWarnings("unused")
@@ -54,6 +57,7 @@ public class Restaurant {
                 restaurant.getAcceptsCreditCards(),
                 restaurant.getNotes(),
                 restaurant.getCreatedDate(),
+                restaurant.getUpdatedDate(),
                 restaurant.getCreatedByUserId(),
                 restaurant.getPriceRangeId(),
                 restaurant.getCuisineId());
@@ -101,6 +105,9 @@ public class Restaurant {
         return createdDate;
     }
 
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
 
     public long getPriceRangeId() {
         return priceRangeId;
@@ -121,6 +128,7 @@ public class Restaurant {
                 ", acceptsCreditCards=" + acceptsCreditCards +
                 ", notes='" + notes + '\'' +
                 ", createdDate='" + createdDate + '\'' +
+                ", updatedDate='" + updatedDate + '\'' +
                 ", createdByUserId=" + createdByUserId +
                 ", priceRangeId=" + priceRangeId +
                 ", cuisineId=" + cuisineId +
@@ -145,7 +153,10 @@ public class Restaurant {
         if (walkInsOk != null ? !walkInsOk.equals(that.walkInsOk) : that.walkInsOk != null) return false;
         if (acceptsCreditCards != null ? !acceptsCreditCards.equals(that.acceptsCreditCards) : that.acceptsCreditCards != null)
             return false;
-        return notes != null ? notes.equals(that.notes) : that.notes == null;
+        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
+        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
+        return updatedDate != null ? updatedDate.equals(that.updatedDate) : that.updatedDate == null;
+
     }
 
     @Override
@@ -157,6 +168,8 @@ public class Restaurant {
         result = 31 * result + (walkInsOk != null ? walkInsOk.hashCode() : 0);
         result = 31 * result + (acceptsCreditCards != null ? acceptsCreditCards.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
+        result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
         result = 31 * result + (int) (createdByUserId ^ (createdByUserId >>> 32));
         result = 31 * result + (int) (priceRangeId ^ (priceRangeId >>> 32));
         result = 31 * result + (int) (cuisineId ^ (cuisineId >>> 32));

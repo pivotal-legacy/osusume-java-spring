@@ -1,5 +1,7 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.cuisine.CuisineFixture;
+import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
@@ -50,11 +52,13 @@ public class DatabaseRestaurantRepositoryTest {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("Afuri")
                 .withUser(user)
+                .withUpdatedAt("2016-01-01")
                 .persist(jdbcTemplate);
 
         Restaurant restaurant2 = new RestaurantFixture()
                 .withName("Butagumi")
                 .withUser(user)
+                .withUpdatedAt("2016-01-02")
                 .persist(jdbcTemplate);
 
 
@@ -71,6 +75,7 @@ public class DatabaseRestaurantRepositoryTest {
                         false,
                         "",
                         restaurant2.getCreatedDate(),
+                        restaurant2.getUpdatedDate(),
                         user.getId(),
                         0L,
                         0L
@@ -84,6 +89,7 @@ public class DatabaseRestaurantRepositoryTest {
                     false,
                     "",
                     restaurant1.getCreatedDate(),
+                    restaurant1.getUpdatedDate(),
                     user.getId(),
                     0L,
                     0L
@@ -143,6 +149,7 @@ public class DatabaseRestaurantRepositoryTest {
         assertEquals(userId.longValue(), map.get("created_by_user_id"));
         assertEquals(cuisineId, map.get("cuisine_id"));
         assertEquals(priceRangeId, map.get("price_range_id"));
+        assertEquals(createdRestaurant.getUpdatedDate(), map.get("updated_at").toString());
     }
 
     @Test
@@ -197,8 +204,8 @@ public class DatabaseRestaurantRepositoryTest {
         ).getId();
 
         long id = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, created_by_user_id) " +
-                        "VALUES ('Amazing Restaurant', ?) " +
+                "INSERT INTO restaurant (name, updated_at, created_by_user_id) " +
+                        "VALUES ('Amazing Restaurant', '2016-01-01', ?) " +
                         "RETURNING id",
                 (rs, rowNum) -> {
                     return rs.getLong("id");
@@ -211,6 +218,7 @@ public class DatabaseRestaurantRepositoryTest {
 
 
         assertThat(maybeRestaurant.get().getName(), is("Amazing Restaurant"));
+        assertThat(maybeRestaurant.get().getUpdatedDate(), is("2016-01-01 00:00:00"));
     }
 
     @Test
@@ -223,95 +231,59 @@ public class DatabaseRestaurantRepositoryTest {
 
     @Test
     public void test_getRestaurantsPostedByUser() throws Exception {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("user_email", "password", "username")
-        ).getId();
-        Long cuisineId = insertCuisineIntoDatabase(
-                jdbcTemplate,
-                new NewCuisine("cuisine_name")
-        ).getId();
-        Long restaurantId = insertRestaurantIntoDatabase(
-                jdbcTemplate,
-                new NewRestaurant(
-                        "restaurant_name",
-                        "address",
-                        true,
-                        true,
-                        true,
-                        "",
-                        cuisineId,
-                        0L,
-                        emptyList()
-                ),
-                userId.longValue()
-        ).getId();
+        User user = new UserFixture()
+                .withEmail("joe@pivotal.io")
+                .withName("Joe")
+                .persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withName("Afuri")
+                .withUser(user)
+                .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .persist(jdbcTemplate);
 
-        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(userId.longValue());
+
+        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(user.getId());
 
         assertEquals(restaurantList.size(), 1);
-        assertThat(restaurantList.get(0).getName(), is("restaurant_name"));
-        assertThat(restaurantList.get(0).getCreatedByUserId(), is(userId.longValue()));
+        assertThat(restaurantList.get(0).getName(), is("Afuri"));
+        assertThat(restaurantList.get(0).getCreatedByUserId(), is(user.getId()));
+        assertThat(restaurantList.get(0).getUpdatedDate(), is(restaurant.getUpdatedDate()));
     }
 
     @Test
     public void test_getRestaurantByIds_returnsListRestaurants() throws Exception {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("user_email", "password", "username")
-        ).getId();
-        Long cuisineId = insertCuisineIntoDatabase(
-                jdbcTemplate,
-                new NewCuisine("cuisine_name")
-        ).getId();
-        Long restaurantId = insertRestaurantIntoDatabase(
-                jdbcTemplate,
-                new NewRestaurant(
-                        "restaurant_name",
-                        "address",
-                        true,
-                        true,
-                        true,
-                        "",
-                        cuisineId,
-                        0L,
-                        emptyList()
-                ),
-                userId.longValue()
-        ).getId();
+        User user = new UserFixture()
+                .withEmail("joe@pivotal.io")
+                .withName("Joe")
+                .persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withName("Afuri")
+                .withUser(user)
+                .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .persist(jdbcTemplate);
 
-        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(singletonList(restaurantId));
+
+        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(singletonList(restaurant.getId()));
 
         assertEquals(restaurantList.size(), 1);
-        assertThat(restaurantList.get(0).getId(), is(restaurantId));
-        assertThat(restaurantList.get(0).getName(), is("restaurant_name"));
+        assertThat(restaurantList.get(0).getId(), is(restaurant.getId()));
+        assertThat(restaurantList.get(0).getName(), is("Afuri"));
+        assertThat(restaurantList.get(0).getUpdatedDate(), is(restaurant.getUpdatedDate()));
 
     }
 
     @Test
     public void test_updateRestaurant_updatesRestaurant() throws Exception {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("rob@pivotal.io", "password", "Rob")
-        ).getId();
+        User user = new UserFixture()
+                .withEmail("rob@pivotal.io")
+                .withName("Rob")
+                .persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withName("Afuri")
+                .withUser(user)
+                .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .persist(jdbcTemplate);
 
-        NewRestaurant newRestaurant = new NewRestaurant(
-                "KFC",
-                "Shibuya",
-                Boolean.TRUE,
-                Boolean.TRUE,
-                Boolean.TRUE,
-                "Healthy!",
-                0L,
-                0L,
-                emptyList()
-        );
-
-        Long restaurantId = insertRestaurantIntoDatabase(
-                jdbcTemplate,
-                newRestaurant,
-                userId.longValue()
-        ).getId();
 
         NewRestaurant updatedNewRestaurant = new NewRestaurant(
                 "Kentucky",
@@ -327,14 +299,14 @@ public class DatabaseRestaurantRepositoryTest {
 
 
         Restaurant updatedRestaurant = restaurantRepository.updateRestaurant(
-                restaurantId,
+                restaurant.getId(),
                 updatedNewRestaurant
         );
 
 
         Map<String, Object> map = jdbcTemplate.queryForMap(
                 "SELECT * FROM restaurant WHERE id = ?",
-                restaurantId
+                restaurant.getId()
         );
 
         assertEquals(map.get("id"), updatedRestaurant.getId());
@@ -344,7 +316,9 @@ public class DatabaseRestaurantRepositoryTest {
         assertEquals(map.get("walk_ins_ok"), updatedRestaurant.getWalkInsOk());
         assertEquals(map.get("accepts_credit_cards"), updatedRestaurant.getAcceptsCreditCards());
         assertEquals(map.get("notes"), updatedRestaurant.getNotes());
-        assertEquals(map.get("created_by_user_id"), userId.longValue());
+        assertEquals(map.get("created_by_user_id"), user.getId());
         assertEquals(map.get("cuisine_id"), 0L);
+        assertEquals(map.get("updated_at").toString(), updatedRestaurant.getUpdatedDate());
+        assertNotEquals(updatedRestaurant.getUpdatedDate(), restaurant.getUpdatedDate());
     }
 }

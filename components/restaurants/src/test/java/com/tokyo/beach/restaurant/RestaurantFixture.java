@@ -12,6 +12,7 @@ public class RestaurantFixture {
     private long id = 0;
     private String name = "Not Specified";
     private String createdAt = "created-date";
+    private String updatedAt = "updated-date";
     private Cuisine cuisine = new Cuisine("Not Specified");
     private PriceRange priceRange = new PriceRange("Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
@@ -46,6 +47,11 @@ public class RestaurantFixture {
         return this;
     }
 
+    public RestaurantFixture withUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+        return this;
+    }
+
     public Restaurant build() {
         return new Restaurant(
                 id,
@@ -56,6 +62,7 @@ public class RestaurantFixture {
                 false,
                 "",
                 createdAt,
+                updatedAt,
                 user.getId(),
                 priceRange.getId(),
                 cuisine.getId()

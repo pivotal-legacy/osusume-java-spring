@@ -96,7 +96,8 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "とても美味しい",
-                        "created-date",
+                        "2016-04-13 16:01:21.094",
+                        "2016-04-14 16:01:21.094",
                         1,
                         1L,
                         20L
@@ -133,6 +134,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
                 .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
                 .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
+                .andExpect(jsonPath("$[0].created_at", equalTo("2016-04-13T16:01:21.094Z")))
+                .andExpect(jsonPath("$[0].updated_at", equalTo("2016-04-14T16:01:21.094Z")))
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
     }
 
@@ -148,6 +151,7 @@ public class RestaurantsControllerTest {
                         false,
                         "とても美味しい",
                         "created-date",
+                        "updated-date",
                         1,
                         1L,
                         1L
@@ -220,7 +224,8 @@ public class RestaurantsControllerTest {
                         true,
                         false,
                         "soooo goood",
-                        "created-date",
+                        "2016-04-13 16:01:21.094",
+                        "2016-04-14 16:01:21.094",
                         99,
                         1L,
                         2L
@@ -284,6 +289,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
                 .andExpect(jsonPath("$.price_range", is("~900")))
+                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
+                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
 
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
@@ -301,7 +308,7 @@ public class RestaurantsControllerTest {
                         false,
                         "soooo goood",
                         "created-date",
-                        1,
+                        "updated-date", 1,
                         0L,
                         0L
                 )
@@ -364,7 +371,7 @@ public class RestaurantsControllerTest {
                         false,
                         "soooo goood",
                         "created-date",
-                        1,
+                        "updated-date", 1,
                         0L,
                         2L
                 )
@@ -425,7 +432,8 @@ public class RestaurantsControllerTest {
                 true,
                 false,
                 "",
-                "created-date",
+                "2016-04-13 16:01:21.094",
+                "2016-04-14 16:01:21.094",
                 1L,
                 0L,
                 1L
@@ -478,6 +486,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.comments[0].id", equalTo(99)))
                 .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")))
                 .andExpect(jsonPath("$.num_likes", equalTo(2)))
+                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
+                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
                 .andExpect(jsonPath("$.price_range", is("Not Specified")));
     }
 
@@ -492,7 +502,7 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1,
+                "updated-date", 1,
                 0L,
                 0L
         );
@@ -528,7 +538,7 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1,
+                "updated-date", 1,
                 0L,
                 0L
         );
@@ -566,7 +576,7 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "created-date",
-                1,
+                "updated-date", 1,
                 1L,
                 0L
         );
@@ -616,7 +626,7 @@ public class RestaurantsControllerTest {
                 false,
                 "",
                 "",
-                99,
+                "updated-date", 99,
                 0L,
                 2L
         );

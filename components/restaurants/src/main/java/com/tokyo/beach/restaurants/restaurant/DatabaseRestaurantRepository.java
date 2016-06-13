@@ -31,6 +31,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
+                            rs.getString("updated_at"),
                             rs.getLong("created_by_user_id"),
                             rs.getLong("price_range_id"),
                             rs.getLong("cuisine_id"));
@@ -51,6 +52,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                                     rs.getBoolean("accepts_credit_cards"),
                                     rs.getString("notes"),
                                     rs.getString("created_at"),
+                                    rs.getString("updated_at"),
                                     rs.getLong("created_by_user_id"),
                                     rs.getLong("price_range_id"),
                                     rs.getLong("cuisine_id"));
@@ -74,7 +76,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                         "RETURNING " +
                         "id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, " +
-                        "notes, cuisine_id, created_by_user_id, price_range_id, created_at",
+                        "notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -85,6 +87,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
+                            rs.getString("updated_at"),
                             rs.getLong("created_by_user_id"),
                             rs.getLong("price_range_id"),
                             rs.getLong("cuisine_id"));
@@ -114,6 +117,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
+                            rs.getString("updated_at"),
                             rs.getLong("created_by_user_id"),
                             rs.getLong("price_range_id"),
                             rs.getLong("cuisine_id"));
@@ -141,6 +145,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
+                            rs.getString("updated_at"),
                             rs.getLong("created_by_user_id"),
                             rs.getLong("price_range_id"),
                             rs.getLong("cuisine_id"));
@@ -152,10 +157,10 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
     public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
         return jdbcTemplate.queryForObject(
                 "UPDATE restaurant SET " +
-                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes) =" +
-                        "(?, ?, ?, ?, ?, ?) " +
+                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, updated_at) =" +
+                        "(?, ?, ?, ?, ?, ?, now()) " +
                         "WHERE id = ? " +
-                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id, created_by_user_id, price_range_id, created_at",
+                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
@@ -166,6 +171,7 @@ public class DatabaseRestaurantRepository implements RestaurantRepository {
                             rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
+                            rs.getString("updated_at"),
                             rs.getLong("created_by_user_id"),
                             rs.getLong("price_range_id"),
                             rs.getLong("cuisine_id"));
