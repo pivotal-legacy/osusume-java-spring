@@ -221,6 +221,7 @@ public class CommentControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].content", is("this is a comment")))
+                .andExpect(jsonPath("$[0].comment", is("this is a comment")))
                 .andExpect(jsonPath("$[0].created_at", is("2016-02-29T06:07:55.000Z")))
                 .andExpect(jsonPath("$[0].restaurant_id", is(1)))
                 .andExpect(jsonPath("$[0].user.name", is("Danny")));

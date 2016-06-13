@@ -24,6 +24,10 @@ public class SerializedComment {
         return comment.getContent();
     }
 
+    public String getComment() {
+        return comment.getContent();
+    }
+
     @JsonProperty("created_at")
     public String getCreatedDate() {
         return formatDateForSerialization(comment.getCreatedDate());
