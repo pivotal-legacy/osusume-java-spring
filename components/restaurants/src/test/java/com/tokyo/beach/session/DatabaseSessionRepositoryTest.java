@@ -38,7 +38,7 @@ public class DatabaseSessionRepositoryTest {
         this.databaseSessionRepository = new DatabaseSessionRepository(this.jdbcTemplate);
 
         NewUser newUser = new NewUser(
-                "jmiller@gmail.com", "password", "Joe Miller"
+                "jmiller@gmail.com", "password", "Jim Miller"
         );
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
@@ -62,7 +62,7 @@ public class DatabaseSessionRepositoryTest {
         );
 
 
-        UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com", userId);
+        UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com", "Jim Miller", userId);
         assertEquals(actualUserSession, expectedUserSession);
     }
 

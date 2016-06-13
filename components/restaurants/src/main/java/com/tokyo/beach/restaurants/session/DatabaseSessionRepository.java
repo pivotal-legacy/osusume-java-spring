@@ -22,7 +22,7 @@ public class DatabaseSessionRepository implements SessionRepository {
 
     @Override
     public UserSession create(TokenGenerator generator, User user) {
-        UserSession userSession = new UserSession(generator, user.getEmail(), user.getId());
+        UserSession userSession = new UserSession(generator, user.getEmail(), user.getName(), user.getId());
 
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("session")
