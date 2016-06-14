@@ -10,7 +10,7 @@ import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
-import com.tokyo.beach.restaurants.s3.StorageRepository;
+import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerException;
@@ -47,7 +47,7 @@ public class RestaurantsController {
     private final CommentDataMapper commentDataMapper;
     private final LikeDataMapper likeDataMapper;
     private final PriceRangeDataMapper priceRangeDataMapper;
-    private final StorageRepository storageRepository;
+    private final S3StorageRepository s3StorageRepository;
 
     @Autowired
     public RestaurantsController(
@@ -58,7 +58,7 @@ public class RestaurantsController {
             CommentDataMapper commentDataMapper,
             LikeDataMapper likeDataMapper,
             PriceRangeDataMapper priceRangeDataMapper,
-            StorageRepository storageRepository
+            S3StorageRepository storageRepository
     ) {
         this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
@@ -67,7 +67,7 @@ public class RestaurantsController {
         this.commentDataMapper = commentDataMapper;
         this.likeDataMapper = likeDataMapper;
         this.priceRangeDataMapper = priceRangeDataMapper;
-        this.storageRepository = storageRepository;
+        this.s3StorageRepository = storageRepository;
     }
 
     @RequestMapping(value = "", method = GET)
@@ -219,7 +219,7 @@ public class RestaurantsController {
 
         if (maybePhotoUrl.isPresent()) {
             photoDataMapper.delete(Long.parseLong(photoUrlId));
-            storageRepository.deleteFile(maybePhotoUrl.get().getUrl());
+            s3StorageRepository.deleteFile(maybePhotoUrl.get().getUrl());
         }
 
     }

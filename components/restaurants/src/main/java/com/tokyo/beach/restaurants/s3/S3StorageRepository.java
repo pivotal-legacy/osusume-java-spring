@@ -10,8 +10,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class S3StorageRepository implements StorageRepository {
-    @Override
+public class S3StorageRepository {
     public void deleteFile(String urlString) {
         String accessKey = System.getenv("AWS_S3_ACCESS_KEY");
         String secretKey = System.getenv("AWS_S3_SECRET_KEY");

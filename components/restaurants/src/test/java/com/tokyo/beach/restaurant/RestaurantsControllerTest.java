@@ -16,7 +16,7 @@ import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
 import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
-import com.tokyo.beach.restaurants.s3.StorageRepository;
+import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
@@ -55,7 +55,7 @@ public class RestaurantsControllerTest {
     private CommentDataMapper commentDataMapper;
     private LikeDataMapper likeDataMapper;
     private PriceRangeDataMapper priceRangeDataMapper;
-    private StorageRepository mockStorageRepository;
+    private S3StorageRepository s3StorageRepository;
 
     @Before
     public void setUp() {
@@ -66,7 +66,7 @@ public class RestaurantsControllerTest {
         commentDataMapper = mock(CommentDataMapper.class);
         likeDataMapper = mock(LikeDataMapper.class);
         priceRangeDataMapper = mock(PriceRangeDataMapper.class);
-        mockStorageRepository = mock(StorageRepository.class);
+        s3StorageRepository = mock(S3StorageRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantDataMapper,
@@ -76,7 +76,7 @@ public class RestaurantsControllerTest {
                 commentDataMapper,
                 likeDataMapper,
                 priceRangeDataMapper,
-                mockStorageRepository
+                s3StorageRepository
         );
 
         mockMvc = standaloneSetup(restaurantsController)
@@ -195,7 +195,7 @@ public class RestaurantsControllerTest {
                 commentDataMapper,
                 likeDataMapper,
                 priceRangeDataMapper,
-                mockStorageRepository
+                s3StorageRepository
         );
 
 
@@ -712,7 +712,7 @@ public class RestaurantsControllerTest {
         result.andExpect(status().isOk());
         verify(photoDataMapper, times(1)).get(10);
         verify(photoDataMapper, times(1)).delete(10);
-        verify(mockStorageRepository, times(1)).deleteFile("http://hoge/image.jpg");
+        verify(s3StorageRepository, times(1)).deleteFile("http://hoge/image.jpg");
     }
 
 
@@ -728,7 +728,7 @@ public class RestaurantsControllerTest {
         result.andExpect(status().isOk());
         verify(photoDataMapper, times(1)).get(10);
         verify(photoDataMapper, never()).delete(10);
-        verify(mockStorageRepository, never()).deleteFile(anyString());
+        verify(s3StorageRepository, never()).deleteFile(anyString());
     }
 
 }
