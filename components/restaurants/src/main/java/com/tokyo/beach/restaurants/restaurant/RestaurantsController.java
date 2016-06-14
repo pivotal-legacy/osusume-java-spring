@@ -21,17 +21,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -40,6 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RestController
 @RequestMapping("/restaurants")
 public class RestaurantsController {
+    private RestaurantRepository restaurantRepository;
     private final RestaurantDataMapper restaurantDataMapper;
     private final PhotoDataMapper photoDataMapper;
     private final CuisineDataMapper cuisineDataMapper;
@@ -51,6 +47,7 @@ public class RestaurantsController {
 
     @Autowired
     public RestaurantsController(
+            RestaurantRepository restaurantRepository,
             RestaurantDataMapper restaurantDataMapper,
             PhotoDataMapper photoDataMapper,
             CuisineDataMapper cuisineDataMapper,
@@ -60,6 +57,7 @@ public class RestaurantsController {
             PriceRangeDataMapper priceRangeDataMapper,
             S3StorageRepository storageRepository
     ) {
+        this.restaurantRepository = restaurantRepository;
         this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
         this.cuisineDataMapper = cuisineDataMapper;
@@ -75,54 +73,7 @@ public class RestaurantsController {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
-
-        List<Restaurant> restaurantList = restaurantDataMapper.getAll();
-
-        if (restaurantList.size() == 0) {
-            return emptyList();
-        }
-
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(restaurantList);
-        Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
-                .collect(groupingBy(PhotoUrl::getRestaurantId));
-
-        List<User> userList = userDataMapper.findForUserIds(
-                restaurantList.stream()
-                        .map(Restaurant::getCreatedByUserId)
-                        .collect(toList())
-        );
-        Map<Long, User> createdByUsers = userList.stream()
-                .collect(
-                        Collectors.toMap(
-                                User::getId, UnaryOperator.identity()
-                        )
-                );
-        List<PriceRange> priceRangeList = priceRangeDataMapper.getAll();
-        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
-        priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
-
-        List<Cuisine> cuisineList = cuisineDataMapper.getAll();
-        Map<Long, Cuisine> cuisineMap = new HashMap<>();
-        cuisineList.forEach(cuisine -> cuisineMap.put(cuisine.getId(), cuisine));
-
-        List<Like> likes = likeDataMapper.findForRestaurants(restaurantList);
-        Map<Long, List<Like>> restaurantLikes = likes
-                .stream()
-                .collect(groupingBy(Like::getRestaurantId));
-
-        return restaurantList
-                .stream()
-                .map((restaurant) -> new SerializedRestaurant(
-                        restaurant,
-                        restaurantPhotos.get(restaurant.getId()),
-                        cuisineMap.get(restaurant.getCuisineId()),
-                        Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
-                        Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
-                        emptyList(),
-                        restaurantLikes.get(restaurant.getId()) == null ? false : restaurantLikes.get(restaurant.getId()).contains(new Like(userId.longValue(), restaurant.getId())),
-                        restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
-                ))
-                .collect(toList());
+        return restaurantRepository.getAll(userId.longValue());
     }
 
     @RequestMapping(value = "", method = POST)

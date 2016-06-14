@@ -12,10 +12,7 @@ import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeDataMapper;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
-import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
-import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
-import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
+import com.tokyo.beach.restaurants.restaurant.*;
 import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
@@ -47,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantsControllerTest {
+    private RestaurantRepository restaurantRepository;
     private RestaurantDataMapper restaurantDataMapper;
     private MockMvc mockMvc;
     private PhotoDataMapper photoDataMapper;
@@ -59,6 +57,7 @@ public class RestaurantsControllerTest {
 
     @Before
     public void setUp() {
+        restaurantRepository = mock(RestaurantRepository.class);
         restaurantDataMapper = mock(RestaurantDataMapper.class);
         photoDataMapper = mock(PhotoDataMapper.class);
         cuisineDataMapper = mock(CuisineDataMapper.class);
@@ -69,6 +68,7 @@ public class RestaurantsControllerTest {
         s3StorageRepository = mock(S3StorageRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
+                restaurantRepository,
                 restaurantDataMapper,
                 photoDataMapper,
                 cuisineDataMapper,
@@ -86,38 +86,32 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_getAll_returnsAListOfRestaurants() throws Exception {
-        List<Restaurant> restaurants = singletonList(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
+        List<SerializedRestaurant> restaurants = singletonList(
+                new SerializedRestaurant(
+                        new Restaurant(
+                                1,
+                                "Afuri",
+                                "Roppongi",
+                                false,
+                                true,
+                                false,
+                                "とても美味しい",
+                                "2016-04-13 16:01:21.094",
+                                "2016-04-14 16:01:21.094",
+                                1,
+                                1L,
+                                20L
+                        ),
+                        singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
+                        new Cuisine(20L, "Swedish"),
+                        Optional.of(new PriceRange(1L, "100yen")),
+                        Optional.of(new User(1L, "taro@email.com", "taro")),
+                        emptyList(),
                         true,
-                        false,
-                        "とても美味しい",
-                        "2016-04-13 16:01:21.094",
-                        "2016-04-14 16:01:21.094",
-                        1,
-                        1L,
-                        20L
+                        2
                 )
         );
-        when(restaurantDataMapper.getAll()).thenReturn(restaurants);
-        when(photoDataMapper.findForRestaurants(anyObject()))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
-        when(userDataMapper.findForUserIds(anyList()))
-                .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
-        when(priceRangeDataMapper.getAll()).thenReturn(
-                asList(new PriceRange(1L, "100yen"))
-        );
-        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
-                asList(new Like(1L, 1L), new Like(2L, 1L))
-        );
-        when(cuisineDataMapper.getAll()).thenReturn(
-                asList(new Cuisine(20L, "Swedish"))
-        );
-
-
+        when(restaurantRepository.getAll(1L)).thenReturn(restaurants);
         mockMvc.perform(get("/restaurants").requestAttr("userId", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
@@ -137,74 +131,6 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].created_at", equalTo("2016-04-13T16:01:21.094Z")))
                 .andExpect(jsonPath("$[0].updated_at", equalTo("2016-04-14T16:01:21.094Z")))
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
-    }
-
-    @Test
-    public void test_getAll_returnsRestaurantsWithoutLikes() throws Exception {
-        List<Restaurant> restaurants = singletonList(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "とても美味しい",
-                        "created-date",
-                        "updated-date",
-                        1,
-                        1L,
-                        1L
-                )
-        );
-        when(restaurantDataMapper.getAll()).thenReturn(restaurants);
-        when(photoDataMapper.findForRestaurants(anyObject()))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
-        when(userDataMapper.findForUserIds(anyList()))
-                .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
-        when(priceRangeDataMapper.getAll()).thenReturn(
-                asList(new PriceRange(1L, "100yen"))
-        );
-        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
-                emptyList()
-        );
-
-
-        mockMvc.perform(get("/restaurants"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", equalTo(1)))
-                .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
-                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
-                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
-                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
-                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
-                .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
-                .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
-                .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
-                .andExpect(jsonPath("$[0].num_likes", equalTo(0)))
-                .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
-    }
-
-    @Test
-    public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
-        RestaurantsController controller = new RestaurantsController(
-                restaurantDataMapper,
-                new PhotoDataMapper(new JdbcTemplate(buildDataSource())),
-                cuisineDataMapper,
-                userDataMapper,
-                commentDataMapper,
-                likeDataMapper,
-                priceRangeDataMapper,
-                s3StorageRepository
-        );
-
-
-        mockMvc = standaloneSetup(controller).build();
-        when(restaurantDataMapper.getAll()).thenReturn(emptyList());
-
-        mockMvc.perform(get("/restaurants"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("[]"));
     }
 
     @Test
