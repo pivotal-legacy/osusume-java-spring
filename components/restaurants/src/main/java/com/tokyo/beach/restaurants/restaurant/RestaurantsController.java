@@ -148,7 +148,10 @@ public class RestaurantsController {
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
                 maybePriceRange,
-                createdByUser);
+                createdByUser,
+                emptyList(),
+                false,
+                0L);
     }
 
     @RequestMapping(value = "{id}", method = GET)
@@ -208,7 +211,10 @@ public class RestaurantsController {
                 photosForRestaurant,
                 maybeCuisine.orElse(null),
                 Optional.empty(),
-                createdByUser
+                createdByUser,
+                emptyList(),
+                false,
+                0L
         );
     }
 

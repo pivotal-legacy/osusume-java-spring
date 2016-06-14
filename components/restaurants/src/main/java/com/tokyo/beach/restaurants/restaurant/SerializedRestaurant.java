@@ -42,23 +42,6 @@ public class SerializedRestaurant {
         this.numberOfLikes = numberOfLikes;
     }
 
-    public SerializedRestaurant(
-            Restaurant restaurant,
-            List<PhotoUrl> photoUrls,
-            Cuisine cuisine,
-            Optional<PriceRange> priceRange,
-            Optional<User> createdByUser) {
-
-        this.restaurant = restaurant;
-        this.photoUrls = photoUrls;
-        this.cuisine = cuisine;
-        this.priceRange = priceRange;
-        this.createdByUser = createdByUser;
-        this.comments = emptyList();
-        this.currentUserLikesRestaurant = false;
-        this.numberOfLikes = 0L;
-    }
-
     public long getId() {
         return restaurant.getId();
     }
