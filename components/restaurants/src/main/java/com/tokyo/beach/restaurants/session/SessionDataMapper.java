@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class SessionRepository {
+public class SessionDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public SessionRepository(JdbcTemplate jdbcTemplate) {
+    public SessionDataMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

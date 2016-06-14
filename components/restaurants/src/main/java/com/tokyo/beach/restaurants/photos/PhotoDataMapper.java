@@ -13,11 +13,11 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class PhotoRepository {
+public class PhotoDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public PhotoRepository(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
+    public PhotoDataMapper(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

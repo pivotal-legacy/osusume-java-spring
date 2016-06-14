@@ -1,7 +1,7 @@
 package com.tokyo.beach.restaurants.comment;
 
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +20,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @CrossOrigin
 @RestController
 public class CommentController {
-    private CommentRepository commentRepository;
-    private UserRepository userRepository;
+    private CommentDataMapper commentDataMapper;
+    private UserDataMapper userDataMapper;
 
     @Autowired
-    public CommentController(CommentRepository commentRepository, UserRepository userRepository) {
-        this.commentRepository = commentRepository;
-        this.userRepository = userRepository;
+    public CommentController(CommentDataMapper commentDataMapper, UserDataMapper userDataMapper) {
+        this.commentDataMapper = commentDataMapper;
+        this.userDataMapper = userDataMapper;
     }
 
     @RequestMapping(value = "restaurants/{restaurantId}/comments", method = POST)
@@ -35,12 +35,12 @@ public class CommentController {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
-        Comment persistedComment = commentRepository.create(
+        Comment persistedComment = commentDataMapper.create(
                 newCommentWrapper.getNewComment(),
                 userId.longValue(),
                 restaurantId
         );
-        User currentUser = userRepository.get(userId.longValue()).get();
+        User currentUser = userDataMapper.get(userId.longValue()).get();
         return new SerializedComment(persistedComment, currentUser);
     }
 
@@ -51,18 +51,18 @@ public class CommentController {
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
 
-        Optional<Comment> maybeCommentToDelete = commentRepository.get(Long.parseLong(commentId));
+        Optional<Comment> maybeCommentToDelete = commentDataMapper.get(Long.parseLong(commentId));
 
         if (maybeCommentToDelete.isPresent() &&
                 userId.longValue() == maybeCommentToDelete.get().getCreatedByUserId()) {
-            commentRepository.delete(maybeCommentToDelete.get().getId());
+            commentDataMapper.delete(maybeCommentToDelete.get().getId());
         }
     }
 
     @RequestMapping(value = "restaurants/{restaurantId}/comments", method = GET)
     @ResponseStatus(OK)
     public List<SerializedComment> get(@PathVariable String restaurantId) {
-        return commentRepository.findForRestaurant(Long.parseLong(restaurantId));
+        return commentDataMapper.findForRestaurant(Long.parseLong(restaurantId));
     }
 
 }

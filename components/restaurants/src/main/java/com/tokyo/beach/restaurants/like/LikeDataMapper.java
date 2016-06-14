@@ -16,11 +16,11 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class LikeRepository {
+public class LikeDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public LikeRepository(JdbcTemplate jdbcTemplate) {
+    public LikeDataMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -3,11 +3,11 @@ package com.tokyo.beach.session;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.session.SessionController;
-import com.tokyo.beach.restaurants.session.SessionRepository;
+import com.tokyo.beach.restaurants.session.SessionDataMapper;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
 import com.tokyo.beach.restaurants.session.LogonCredentials;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class SessionControllerTest {
     private MockMvc mvc;
-    private SessionRepository sessionRepository;
-    private UserRepository userRepository;
+    private SessionDataMapper sessionDataMapper;
+    private UserDataMapper userDataMapper;
     private TokenGenerator tokenGenerator;
 
     private LogonCredentials credentials;
@@ -33,12 +33,12 @@ public class SessionControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        sessionRepository = mock(SessionRepository.class);
-        userRepository = mock(UserRepository.class);
+        sessionDataMapper = mock(SessionDataMapper.class);
+        userDataMapper = mock(UserDataMapper.class);
         tokenGenerator = mock(TokenGenerator.class);
         mvc = MockMvcBuilders.standaloneSetup(new SessionController(
-                sessionRepository,
-                userRepository,
+                sessionDataMapper,
+                userDataMapper,
                 tokenGenerator)
         )
                 .setControllerAdvice(createControllerAdvice(new RestControllerExceptionHandler()))
@@ -46,14 +46,14 @@ public class SessionControllerTest {
 
         credentials = new LogonCredentials("jmiller@gmail.com", "mypassword");
         maybeUser = Optional.of(new User(999, "jmiller@gmail.com", "Joe Miller"));
-        when(userRepository.get(credentials))
+        when(userDataMapper.get(credentials))
                 .thenReturn(maybeUser);
     }
 
     @Test
     public void test_postToSession_returnsAcceptedHttpStatus() throws Exception {
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com", "Jim Miller", maybeUser.get().getId());
-        when(sessionRepository.create(tokenGenerator, maybeUser.get()))
+        when(sessionDataMapper.create(tokenGenerator, maybeUser.get()))
                 .thenReturn(userSession);
 
 
@@ -73,7 +73,7 @@ public class SessionControllerTest {
                 .accept(APPLICATION_JSON_UTF8_VALUE)
         );
 
-        verify(sessionRepository, times(1)).create(tokenGenerator, maybeUser.get());
+        verify(sessionDataMapper, times(1)).create(tokenGenerator, maybeUser.get());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class SessionControllerTest {
         when(tokenGenerator.nextToken())
                 .thenReturn("abcde12345");
         UserSession userSession = new UserSession(tokenGenerator, "jmiller@gmail.com", "Jim Miller", 1L);
-        when(sessionRepository.create(tokenGenerator, maybeUser.get()))
+        when(sessionDataMapper.create(tokenGenerator, maybeUser.get()))
                 .thenReturn(userSession);
 
 
@@ -99,7 +99,7 @@ public class SessionControllerTest {
 
     @Test
     public void test_postToSessionWithInvalidUserCredentials_throwsException() throws Exception {
-        when(userRepository.get(anyObject()))
+        when(userDataMapper.get(anyObject()))
                 .thenReturn(Optional.empty());
 
 
@@ -135,7 +135,7 @@ public class SessionControllerTest {
         );
 
 
-        verify(sessionRepository, times(1)).delete("ABCDE12345");
+        verify(sessionDataMapper, times(1)).delete("ABCDE12345");
     }
 
     @Test

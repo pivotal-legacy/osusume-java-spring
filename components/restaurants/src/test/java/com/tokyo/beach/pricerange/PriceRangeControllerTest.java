@@ -2,7 +2,7 @@ package com.tokyo.beach.pricerange;
 
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeController;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,19 +21,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PriceRangeControllerTest {
     MockMvc mockMvc;
     PriceRangeController priceRangeController;
-    PriceRangeRepository mockPriceRangeRepository;
+    PriceRangeDataMapper priceRangeDataMapper;
 
     @Before
     public void setUp() throws Exception {
-        mockPriceRangeRepository = mock(PriceRangeRepository.class);
-        when(mockPriceRangeRepository.getAll()).thenReturn(
+        priceRangeDataMapper = mock(PriceRangeDataMapper.class);
+        when(priceRangeDataMapper.getAll()).thenReturn(
                 Arrays.asList(
                         new PriceRange(1, "¥0-999"),
                         new PriceRange(2, "¥1000-1999")
                 )
         );
 
-        priceRangeController = new PriceRangeController(mockPriceRangeRepository);
+        priceRangeController = new PriceRangeController(priceRangeDataMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(priceRangeController)
                 .build();
     }

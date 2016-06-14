@@ -3,7 +3,7 @@ package com.tokyo.beach.user;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import com.tokyo.beach.restaurants.user.UserController;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,12 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest {
     private MockMvc mvc;
-    private UserRepository userRepository;
+    private UserDataMapper userDataMapper;
 
     @Before
     public void setUp() throws Exception {
-        userRepository = mock(UserRepository.class);
-        mvc = MockMvcBuilders.standaloneSetup(new UserController(userRepository))
+        userDataMapper = mock(UserDataMapper.class);
+        mvc = MockMvcBuilders.standaloneSetup(new UserController(userDataMapper))
                 .setControllerAdvice(createControllerAdvice(new RestControllerExceptionHandler()))
                 .build();
     }
@@ -49,12 +49,12 @@ public class UserControllerTest {
                 .accept(APPLICATION_JSON_UTF8_VALUE)
         );
 
-        verify(userRepository, times(1)).create("jmiller@gmail.com", "mypassword", "Joe Miller");
+        verify(userDataMapper, times(1)).create("jmiller@gmail.com", "mypassword", "Joe Miller");
     }
 
     @Test
     public void test_postToUser_returnsUserObject() throws Exception {
-        when(userRepository.create("jmiller@gmail.com", "mypassword", "Joe Miller"))
+        when(userDataMapper.create("jmiller@gmail.com", "mypassword", "Joe Miller"))
                 .thenReturn(new User(6, "jmiller@gmail.com", "Joe Miller"));
 
         mvc.perform(post("/users")
@@ -68,7 +68,7 @@ public class UserControllerTest {
 
     @Test
     public void test_getUser_returnsUserObject() throws Exception {
-        when(userRepository.get(12))
+        when(userDataMapper.get(12))
                 .thenReturn(Optional.of(
                         new User(12, "jmiller@gmail.com", "Joe Miller")
                 ));
@@ -82,7 +82,7 @@ public class UserControllerTest {
 
     @Test
     public void test_getInvalidUser_throwsException() throws Exception {
-        when(userRepository.get(12))
+        when(userDataMapper.get(12))
                 .thenReturn(Optional.empty());
 
         mvc.perform(get("/profile")

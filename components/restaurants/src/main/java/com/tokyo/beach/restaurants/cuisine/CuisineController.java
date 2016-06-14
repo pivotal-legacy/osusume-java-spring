@@ -12,26 +12,26 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/cuisines")
 @CrossOrigin
 public class CuisineController {
-    private CuisineRepository cuisineRepository;
+    private CuisineDataMapper cuisineDataMapper;
 
     @Autowired
-    public CuisineController(CuisineRepository cuisineRepository) {
-        this.cuisineRepository = cuisineRepository;
+    public CuisineController(CuisineDataMapper cuisineDataMapper) {
+        this.cuisineDataMapper = cuisineDataMapper;
     }
 
     @RequestMapping(value="", method = GET)
     public List<Cuisine> getAll() {
-        return cuisineRepository.getAll();
+        return cuisineDataMapper.getAll();
     }
 
     @RequestMapping(value="{id}", method=GET)
     public Cuisine getCuisine(@PathVariable String id) {
-        return cuisineRepository.getCuisine(id).get();
+        return cuisineDataMapper.getCuisine(id).get();
     }
 
     @RequestMapping(value="", method= RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public Cuisine create(@RequestBody NewCuisine newCuisine) {
-        return cuisineRepository.createCuisine(newCuisine);
+        return cuisineDataMapper.createCuisine(newCuisine);
     }
 }

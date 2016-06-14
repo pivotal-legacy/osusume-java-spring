@@ -2,7 +2,7 @@ package com.tokyo.beach.comment;
 
 import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.comment.Comment;
-import com.tokyo.beach.restaurants.comment.CommentRepository;
+import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -22,14 +22,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class CommentRepositoryTest {
+public class CommentDataMapperTest {
     JdbcTemplate jdbcTemplate;
-    CommentRepository commentRepository;
+    CommentDataMapper commentDataMapper;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
-        commentRepository = new CommentRepository(jdbcTemplate);
+        commentDataMapper = new CommentDataMapper(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
     }
@@ -55,7 +55,7 @@ public class CommentRepositoryTest {
                 userId
         );
 
-        Comment createdComment = commentRepository.create(
+        Comment createdComment = commentDataMapper.create(
                 new NewComment("New Comment Content"),
                 userId.longValue(),
                 String.valueOf(restaurantId)
@@ -110,14 +110,14 @@ public class CommentRepositoryTest {
                 userId
         );
 
-        Comment createdComment = commentRepository.create(
+        Comment createdComment = commentDataMapper.create(
                 new NewComment("New Comment Content"),
                 userId.longValue(),
                 String.valueOf(restaurant.getId())
         );
 
 
-        List<SerializedComment> actualComments = commentRepository.findForRestaurant(restaurant.getId());
+        List<SerializedComment> actualComments = commentDataMapper.findForRestaurant(restaurant.getId());
         assertEquals(actualComments.size(), 1);
         assertThat(actualComments.get(0).getContent(), is("New Comment Content"));
         assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));
@@ -136,7 +136,7 @@ public class CommentRepositoryTest {
                 .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
-        commentRepository.delete(comment.getId());
+        commentDataMapper.delete(comment.getId());
 
         int count = jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM comment WHERE id = ?",
@@ -160,7 +160,7 @@ public class CommentRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        Comment retrievedComment = commentRepository.get(persistedComment.getId()).get();
+        Comment retrievedComment = commentDataMapper.get(persistedComment.getId()).get();
 
 
         assertEquals(persistedComment, retrievedComment);
@@ -168,7 +168,7 @@ public class CommentRepositoryTest {
 
     @Test
     public void test_get_returnsEmptyOptionalWhenCommentDoesntExistWithId() throws Exception {
-        Optional<Comment> retrievedComment = commentRepository.get(991);
+        Optional<Comment> retrievedComment = commentDataMapper.get(991);
 
 
         assertEquals(retrievedComment, Optional.empty());

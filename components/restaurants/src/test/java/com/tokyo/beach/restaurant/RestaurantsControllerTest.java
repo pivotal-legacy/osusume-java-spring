@@ -1,24 +1,24 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.restaurants.photos.PhotoRepository;
+import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.comment.Comment;
-import com.tokyo.beach.restaurants.comment.CommentRepository;
+import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
-import com.tokyo.beach.restaurants.like.LikeRepository;
+import com.tokyo.beach.restaurants.like.LikeDataMapper;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
+import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
 import com.tokyo.beach.restaurants.restaurant.RestaurantsController;
 import com.tokyo.beach.restaurants.s3.StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,35 +47,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantsControllerTest {
-    private RestaurantRepository mockRestaurantRepository;
+    private RestaurantDataMapper restaurantDataMapper;
     private MockMvc mockMvc;
-    private PhotoRepository mockPhotoRepository;
-    private CuisineRepository mockCuisineRepository;
-    private UserRepository mockUserRepository;
-    private CommentRepository mockCommentRepository;
-    private LikeRepository mockLikeRepository;
-    private PriceRangeRepository mockPriceRangeRepository;
+    private PhotoDataMapper photoDataMapper;
+    private CuisineDataMapper cuisineDataMapper;
+    private UserDataMapper userDataMapper;
+    private CommentDataMapper commentDataMapper;
+    private LikeDataMapper likeDataMapper;
+    private PriceRangeDataMapper priceRangeDataMapper;
     private StorageRepository mockStorageRepository;
 
     @Before
     public void setUp() {
-        mockRestaurantRepository = mock(RestaurantRepository.class);
-        mockPhotoRepository = mock(PhotoRepository.class);
-        mockCuisineRepository = mock(CuisineRepository.class);
-        mockUserRepository = mock(UserRepository.class);
-        mockCommentRepository = mock(CommentRepository.class);
-        mockLikeRepository = mock(LikeRepository.class);
-        mockPriceRangeRepository = mock(PriceRangeRepository.class);
+        restaurantDataMapper = mock(RestaurantDataMapper.class);
+        photoDataMapper = mock(PhotoDataMapper.class);
+        cuisineDataMapper = mock(CuisineDataMapper.class);
+        userDataMapper = mock(UserDataMapper.class);
+        commentDataMapper = mock(CommentDataMapper.class);
+        likeDataMapper = mock(LikeDataMapper.class);
+        priceRangeDataMapper = mock(PriceRangeDataMapper.class);
         mockStorageRepository = mock(StorageRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
-                mockRestaurantRepository,
-                mockPhotoRepository,
-                mockCuisineRepository,
-                mockUserRepository,
-                mockCommentRepository,
-                mockLikeRepository,
-                mockPriceRangeRepository,
+                restaurantDataMapper,
+                photoDataMapper,
+                cuisineDataMapper,
+                userDataMapper,
+                commentDataMapper,
+                likeDataMapper,
+                priceRangeDataMapper,
                 mockStorageRepository
         );
 
@@ -102,18 +102,18 @@ public class RestaurantsControllerTest {
                         20L
                 )
         );
-        when(mockRestaurantRepository.getAll()).thenReturn(restaurants);
-        when(mockPhotoRepository.findForRestaurants(anyObject()))
+        when(restaurantDataMapper.getAll()).thenReturn(restaurants);
+        when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
-        when(mockUserRepository.findForUserIds(anyList()))
+        when(userDataMapper.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
-        when(mockPriceRangeRepository.getAll()).thenReturn(
+        when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "100yen"))
         );
-        when(mockLikeRepository.findForRestaurants(restaurants)).thenReturn(
+        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
                 asList(new Like(1L, 1L), new Like(2L, 1L))
         );
-        when(mockCuisineRepository.getAll()).thenReturn(
+        when(cuisineDataMapper.getAll()).thenReturn(
                 asList(new Cuisine(20L, "Swedish"))
         );
 
@@ -157,15 +157,15 @@ public class RestaurantsControllerTest {
                         1L
                 )
         );
-        when(mockRestaurantRepository.getAll()).thenReturn(restaurants);
-        when(mockPhotoRepository.findForRestaurants(anyObject()))
+        when(restaurantDataMapper.getAll()).thenReturn(restaurants);
+        when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)));
-        when(mockUserRepository.findForUserIds(anyList()))
+        when(userDataMapper.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(new User(1L, "taro@email.com", "taro")));
-        when(mockPriceRangeRepository.getAll()).thenReturn(
+        when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "100yen"))
         );
-        when(mockLikeRepository.findForRestaurants(restaurants)).thenReturn(
+        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
                 emptyList()
         );
 
@@ -188,19 +188,19 @@ public class RestaurantsControllerTest {
     @Test
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
-                mockRestaurantRepository,
-                new PhotoRepository(new JdbcTemplate(buildDataSource())),
-                mockCuisineRepository,
-                mockUserRepository,
-                mockCommentRepository,
-                mockLikeRepository,
-                mockPriceRangeRepository,
+                restaurantDataMapper,
+                new PhotoDataMapper(new JdbcTemplate(buildDataSource())),
+                cuisineDataMapper,
+                userDataMapper,
+                commentDataMapper,
+                likeDataMapper,
+                priceRangeDataMapper,
                 mockStorageRepository
         );
 
 
         mockMvc = standaloneSetup(controller).build();
-        when(mockRestaurantRepository.getAll()).thenReturn(emptyList());
+        when(restaurantDataMapper.getAll()).thenReturn(emptyList());
 
         mockMvc.perform(get("/restaurants"))
                 .andExpect(status().isOk())
@@ -212,7 +212,7 @@ public class RestaurantsControllerTest {
         ArgumentCaptor<NewRestaurant> attributeNewRestaurant = ArgumentCaptor.forClass(NewRestaurant.class);
         ArgumentCaptor<Long> attributeCreatedByUserId = ArgumentCaptor.forClass(Long.class);
 
-        when(mockRestaurantRepository.createRestaurant(
+        when(restaurantDataMapper.createRestaurant(
                 attributeNewRestaurant.capture(),
                 attributeCreatedByUserId.capture()
         )).thenReturn(
@@ -232,9 +232,9 @@ public class RestaurantsControllerTest {
                 )
         );
 
-        when(mockPhotoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(mockCuisineRepository.getCuisine("2")).thenReturn(
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(
                 Optional.of(
                         new Cuisine(
                                 2,
@@ -242,12 +242,12 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(
                         new User(99L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
+        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
                 Optional.of(
                         new PriceRange(
                                 1,
@@ -298,7 +298,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_persistsARestaurantWithoutACuisineId() throws Exception {
-        when(mockRestaurantRepository.createRestaurant(anyObject(), anyLong())).thenReturn(
+        when(restaurantDataMapper.createRestaurant(anyObject(), anyLong())).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -315,16 +315,16 @@ public class RestaurantsControllerTest {
         );
 
         Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
-        when(mockCuisineRepository.getCuisine("0")).thenReturn(
+        when(cuisineDataMapper.getCuisine("0")).thenReturn(
                 Optional.of(expectedCuisine));
-        when(mockPhotoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(
                         new User(1L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
+        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
                 Optional.of(
                         new PriceRange(0L, "Not Specified")
                 )
@@ -361,7 +361,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_withInvalidCuisineId() throws Exception {
-        when(mockRestaurantRepository.createRestaurant(anyObject(), anyLong())).thenReturn(
+        when(restaurantDataMapper.createRestaurant(anyObject(), anyLong())).thenReturn(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -377,17 +377,17 @@ public class RestaurantsControllerTest {
                 )
         );
 
-        when(mockPhotoRepository.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
+        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(mockCuisineRepository.getCuisine("2")).thenReturn(
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(
                 Optional.empty()
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(
                         new User(1L, "jiro@mail.com", "jiro")
                 )
         );
-        when(mockPriceRangeRepository.getPriceRange(anyLong())).thenReturn(
+        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
                 Optional.of(
                         new PriceRange(0L, "Not Specified")
                 )
@@ -439,20 +439,20 @@ public class RestaurantsControllerTest {
                 1L
         );
         Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
-        when(mockRestaurantRepository.get(1)).thenReturn(
+        when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
         );
-        when(mockPhotoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 emptyList()
         );
-        when(mockCuisineRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(cuisineDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 expectedCuisine
         );
         User hanakoUser = new User(1L, "hanako@email", "hanako");
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(hanakoUser)
         );
-        when(mockCommentRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+        when(commentDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(
                         new SerializedComment(
                                 new Comment(
@@ -466,13 +466,13 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
-        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 asList(
                         new Like(11L, 1L),
                         new Like(12L, 1L)
                 )
         );
-        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
                 new PriceRange(0L, "Not Specified")
         );
 
@@ -506,16 +506,16 @@ public class RestaurantsControllerTest {
                 0L,
                 0L
         );
-        when(mockRestaurantRepository.get(1)).thenReturn(
+        when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
         );
-        when(mockPhotoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(new User(1L, "hanako@email", "hanako"))
         );
-        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
                 new PriceRange(0, "Not Specified")
         );
 
@@ -542,19 +542,19 @@ public class RestaurantsControllerTest {
                 0L,
                 0L
         );
-        when(mockRestaurantRepository.get(1)).thenReturn(
+        when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
         );
-        when(mockPhotoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 emptyList()
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(new User(1L, "hanako@email", "hanako"))
         );
-        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(new Like(11L, 1L))
         );
-        when(mockPriceRangeRepository.findForRestaurant(anyObject())).thenReturn(
+        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
                 new PriceRange(0L, "Not Specified")
         );
 
@@ -580,19 +580,19 @@ public class RestaurantsControllerTest {
                 1L,
                 0L
         );
-        when(mockRestaurantRepository.get(1)).thenReturn(
+        when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(afuriRestaurant)
         );
-        when(mockPhotoRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 emptyList()
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(new User(1L, "hanako@email", "hanako"))
         );
-        when(mockLikeRepository.findForRestaurant(afuriRestaurant.getId())).thenReturn(
+        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
                 singletonList(new Like(11L, 1L))
         );
-        when(mockPriceRangeRepository.findForRestaurant(afuriRestaurant)).thenReturn(
+        when(priceRangeDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
                 new PriceRange(1, "~900")
         );
 
@@ -605,7 +605,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_getInvalidRestaurantId_throwsException() throws Exception {
-        when(mockRestaurantRepository.get(1)).thenReturn(
+        when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.empty()
         );
 
@@ -631,12 +631,12 @@ public class RestaurantsControllerTest {
                 2L
         );
 
-        when(mockRestaurantRepository.updateRestaurant(anyLong(), anyObject())).thenReturn(
+        when(restaurantDataMapper.updateRestaurant(anyLong(), anyObject())).thenReturn(
                 updatedRestaurant
         );
-        when(mockPhotoRepository.findForRestaurant(updatedRestaurant))
+        when(photoDataMapper.findForRestaurant(updatedRestaurant))
                 .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(mockCuisineRepository.getCuisine("2")).thenReturn(
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(
                 Optional.of(
                         new Cuisine(
                                 2,
@@ -644,7 +644,7 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
-        when(mockUserRepository.get(anyLong())).thenReturn(
+        when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(
                         new User(99L, "jiro@mail.com", "jiro")
                 )
@@ -682,7 +682,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_delete_returnsOkHTTPStatus() throws Exception {
-        when(mockPhotoRepository.get(
+        when(photoDataMapper.get(
                 anyLong()
         )).thenReturn(Optional.empty());
 
@@ -697,7 +697,7 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_delete_deletesPhotoUrlMadeByCurrentUser() throws Exception {
-        when(mockPhotoRepository.get(10))
+        when(photoDataMapper.get(10))
                 .thenReturn(Optional.of(
                         new PhotoUrl(
                                 10,
@@ -710,15 +710,15 @@ public class RestaurantsControllerTest {
                 .requestAttr("userId", 99));
 
         result.andExpect(status().isOk());
-        verify(mockPhotoRepository, times(1)).get(10);
-        verify(mockPhotoRepository, times(1)).delete(10);
+        verify(photoDataMapper, times(1)).get(10);
+        verify(photoDataMapper, times(1)).delete(10);
         verify(mockStorageRepository, times(1)).deleteFile("http://hoge/image.jpg");
     }
 
 
     @Test
     public void test_delete_doesntDeleteNonExistentPhotoUrl() throws Exception {
-        when(mockPhotoRepository.get(10))
+        when(photoDataMapper.get(10))
                 .thenReturn(Optional.empty()
                 );
 
@@ -726,8 +726,8 @@ public class RestaurantsControllerTest {
                 .requestAttr("userId", 99));
 
         result.andExpect(status().isOk());
-        verify(mockPhotoRepository, times(1)).get(10);
-        verify(mockPhotoRepository, never()).delete(10);
+        verify(photoDataMapper, times(1)).get(10);
+        verify(photoDataMapper, never()).delete(10);
         verify(mockStorageRepository, never()).deleteFile(anyString());
     }
 

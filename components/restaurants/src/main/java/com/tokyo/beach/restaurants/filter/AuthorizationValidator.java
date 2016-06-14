@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurants.filter;
 
-import com.tokyo.beach.restaurants.session.SessionRepository;
+import com.tokyo.beach.restaurants.session.SessionDataMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class AuthorizationValidator {
-    private SessionRepository sessionRepository;
+    private SessionDataMapper sessionDataMapper;
 
-    public AuthorizationValidator(SessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
+    public AuthorizationValidator(SessionDataMapper sessionDataMapper) {
+        this.sessionDataMapper = sessionDataMapper;
     }
 
     public boolean authorizeRequest(ServletRequest request) throws IOException, ServletException {
@@ -33,7 +33,7 @@ public class AuthorizationValidator {
             token = originalToken.replace("Bearer", "").trim();
         }
 
-        Optional<Long> maybeUserId = this.sessionRepository.validateToken(token);
+        Optional<Long> maybeUserId = this.sessionDataMapper.validateToken(token);
 
         if (maybeUserId.isPresent()) {
             Long userId = maybeUserId.get();

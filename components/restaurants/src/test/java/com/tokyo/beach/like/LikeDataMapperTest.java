@@ -1,7 +1,7 @@
 package com.tokyo.beach.like;
 
 import com.tokyo.beach.restaurant.RestaurantFixture;
-import com.tokyo.beach.restaurants.like.LikeRepository;
+import com.tokyo.beach.restaurants.like.LikeDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class LikeRepositoryTest {
+public class LikeDataMapperTest {
     private JdbcTemplate jdbcTemplate;
 
     @Before
@@ -55,8 +55,8 @@ public class LikeRepositoryTest {
                         .getId();
 
 
-        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
-        Like createdLike = likeRepository.create(likeByUserId, restaurantId);
+        LikeDataMapper likeDataMapper = new LikeDataMapper(jdbcTemplate);
+        Like createdLike = likeDataMapper.create(likeByUserId, restaurantId);
 
 
         String sql = "SELECT * FROM likes WHERE restaurant_id = ? AND user_id = ?";
@@ -95,8 +95,8 @@ public class LikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
-        Like createdLike = likeRepository.create(likeByUserId, restaurantId);
+        LikeDataMapper likeDataMapper = new LikeDataMapper(jdbcTemplate);
+        Like createdLike = likeDataMapper.create(likeByUserId, restaurantId);
 
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -141,8 +141,8 @@ public class LikeRepositoryTest {
                 .getUserId();
 
 
-        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
-        likeRepository.delete(likeByUserId, restaurantId);
+        LikeDataMapper likeDataMapper = new LikeDataMapper(jdbcTemplate);
+        likeDataMapper.delete(likeByUserId, restaurantId);
 
 
         String sql = "SELECT count(*) FROM likes WHERE user_id = ? and restaurant_id = ?";
@@ -179,7 +179,7 @@ public class LikeRepositoryTest {
         ).getId();
 
 
-        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
+        LikeDataMapper likeDataMapper = new LikeDataMapper(jdbcTemplate);
         String sql = "INSERT INTO likes (user_id, restaurant_id) VALUES (?, ?) RETURNING *";
         Like persistedLike = jdbcTemplate.queryForObject(
                 sql,
@@ -194,7 +194,7 @@ public class LikeRepositoryTest {
         );
 
 
-        List<Like> likes = likeRepository.findForRestaurant(restaurantId);
+        List<Like> likes = likeDataMapper.findForRestaurant(restaurantId);
 
         assertEquals(likes.get(0), persistedLike);
     }
@@ -219,7 +219,7 @@ public class LikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Like> likes = new LikeRepository(jdbcTemplate)
+        List<Like> likes = new LikeDataMapper(jdbcTemplate)
                 .findForRestaurants(asList(restaurant1, restaurant2));
 
 
@@ -235,7 +235,7 @@ public class LikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Like> likes = new LikeRepository(jdbcTemplate)
+        List<Like> likes = new LikeDataMapper(jdbcTemplate)
                 .findForRestaurants(asList(restaurant1));
 
 

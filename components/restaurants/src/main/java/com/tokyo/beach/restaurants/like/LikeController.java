@@ -15,11 +15,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @CrossOrigin
 @RestController
 public class LikeController {
-    private LikeRepository likeRepository;
+    private LikeDataMapper likeDataMapper;
 
     @Autowired
-    public LikeController(LikeRepository likeRepository) {
-        this.likeRepository = likeRepository;
+    public LikeController(LikeDataMapper likeDataMapper) {
+        this.likeDataMapper = likeDataMapper;
     }
 
     @RequestMapping(value = "/restaurants/{restaurantId}/likes", method = POST)
@@ -29,7 +29,7 @@ public class LikeController {
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
 
-        return likeRepository.create(userId.longValue(), restaurantId);
+        return likeDataMapper.create(userId.longValue(), restaurantId);
     }
 
     @RequestMapping(value = "restaurants/{restaurantId}/likes", method = DELETE)
@@ -39,7 +39,7 @@ public class LikeController {
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
 
-        likeRepository.delete(userId.longValue(), restaurantId);
+        likeDataMapper.delete(userId.longValue(), restaurantId);
     }
 
 }

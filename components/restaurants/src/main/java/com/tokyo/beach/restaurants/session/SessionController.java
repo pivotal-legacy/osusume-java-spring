@@ -2,7 +2,7 @@ package com.tokyo.beach.restaurants.session;
 
 import com.tokyo.beach.restutils.RestControllerException;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +12,18 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 public class SessionController {
-    private SessionRepository sessionRepository;
-    private UserRepository userRepository;
+    private SessionDataMapper sessionDataMapper;
+    private UserDataMapper userDataMapper;
     private TokenGenerator tokenGenerator;
 
     @Autowired
     public SessionController(
-            SessionRepository sessionRepository,
-            UserRepository userRepository,
+            SessionDataMapper sessionDataMapper,
+            UserDataMapper userDataMapper,
             TokenGenerator tokenGenerator
     ) {
-        this.sessionRepository = sessionRepository;
-        this.userRepository = userRepository;
+        this.sessionDataMapper = sessionDataMapper;
+        this.userDataMapper = userDataMapper;
         this.tokenGenerator = tokenGenerator;
     }
 
@@ -31,18 +31,18 @@ public class SessionController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public UserSession create(@RequestBody LogonCredentials credentials) {
-        Optional<User> maybeUser = userRepository.get(credentials);
+        Optional<User> maybeUser = userDataMapper.get(credentials);
 
         maybeUser.orElseThrow(() -> new RestControllerException("Invalid email or password."));
 
-        return sessionRepository.create(tokenGenerator, maybeUser.get());
+        return sessionDataMapper.create(tokenGenerator, maybeUser.get());
     }
 
     @RequestMapping(value = "/session", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     public void delete(@RequestBody WrappedToken wrappedToken) {
-        sessionRepository.delete(wrappedToken.getToken());
+        sessionDataMapper.delete(wrappedToken.getToken());
     }
 
     @RequestMapping(value = "/unauthenticated")

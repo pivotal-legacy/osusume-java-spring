@@ -1,7 +1,7 @@
 package com.tokyo.beach.cuisine;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
@@ -19,13 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CuisineRepositoryTest {
+public class CuisineDataMapperTest {
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
-    private CuisineRepository cuisineRepository;
+    private CuisineDataMapper cuisineDataMapper;
 
     @Before
     public void setUp() throws Exception {
-        cuisineRepository = new CuisineRepository(jdbcTemplate);
+        cuisineDataMapper = new CuisineDataMapper(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
     }
@@ -52,7 +52,7 @@ public class CuisineRepositoryTest {
                 (rs, rowNum) -> rs.getLong("id")
         );
 
-        List<Cuisine> cuisines = cuisineRepository.getAll();
+        List<Cuisine> cuisines = cuisineDataMapper.getAll();
         Cuisine exceptCuisine = new Cuisine(0L, "Not Specified");
         Cuisine expectedCuisine1 = new Cuisine(cuisine1Id, "Test Cuisine1");
         Cuisine expectedCuisine2 = new Cuisine(cuisine2Id, "Test Cuisine2");
@@ -72,7 +72,7 @@ public class CuisineRepositoryTest {
                 (rs, rowNum) -> rs.getLong("id")
         );
 
-        Cuisine cuisine = cuisineRepository.getCuisine(String.valueOf(cuisineId)).orElse(null);
+        Cuisine cuisine = cuisineDataMapper.getCuisine(String.valueOf(cuisineId)).orElse(null);
         Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
 
         assertThat(cuisine, is(expectedCuisine));
@@ -80,7 +80,7 @@ public class CuisineRepositoryTest {
 
     @Test
     public void testGetCuisine_withInvalidId() {
-        Optional<Cuisine> maybeCuisine = cuisineRepository.getCuisine("1");
+        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine("1");
 
         assertFalse(maybeCuisine.isPresent());
     }
@@ -89,7 +89,7 @@ public class CuisineRepositoryTest {
     public void testCreateCuisine() {
         NewCuisine newCuisine = new NewCuisine("Test Cuisine");
 
-        cuisineRepository.createCuisine(newCuisine);
+        cuisineDataMapper.createCuisine(newCuisine);
 
         Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * FROM cuisine WHERE name=?",
                 new Object[]{"Test Cuisine"},
@@ -136,7 +136,7 @@ public class CuisineRepositoryTest {
                 userId
         );
 
-        Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
 
         assertThat(cuisine.getId(), is(cuisineId));
         assertThat(cuisine.getName(), is("Cuisine Test1"));
@@ -171,7 +171,7 @@ public class CuisineRepositoryTest {
                 userId
         );
 
-        Cuisine cuisine = cuisineRepository.findForRestaurant(restaurant);
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
 
         assertThat(cuisine.getId(), is(0L));
         assertThat(cuisine.getName(), is("Not Specified"));

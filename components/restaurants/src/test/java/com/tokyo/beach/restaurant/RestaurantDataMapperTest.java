@@ -4,7 +4,7 @@ import com.tokyo.beach.cuisine.CuisineFixture;
 import com.tokyo.beach.pricerange.PriceRangeFixture;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
+import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.User;
@@ -26,15 +26,15 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class RestaurantRepositoryTest {
-    private RestaurantRepository restaurantRepository;
+public class RestaurantDataMapperTest {
+    private RestaurantDataMapper restaurantDataMapper;
     private JdbcTemplate jdbcTemplate;
     private User user;
 
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
-        restaurantRepository = new RestaurantRepository(jdbcTemplate);
+        restaurantDataMapper = new RestaurantDataMapper(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
         user = new UserFixture()
@@ -63,7 +63,7 @@ public class RestaurantRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Restaurant> restaurants = restaurantRepository.getAll();
+        List<Restaurant> restaurants = restaurantDataMapper.getAll();
 
 
         List<Restaurant> expectedRestaurants = asList(
@@ -123,7 +123,7 @@ public class RestaurantRepositoryTest {
         );
 
 
-        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant, user.getId());
+        Restaurant createdRestaurant = restaurantDataMapper.createRestaurant(kfcNewRestaurant, user.getId());
 
 
         Map<String, Object> map = jdbcTemplate.queryForMap(
@@ -159,7 +159,7 @@ public class RestaurantRepositoryTest {
         );
 
 
-        Restaurant createdRestaurant = restaurantRepository.createRestaurant(kfcNewRestaurant, user.getId());
+        Restaurant createdRestaurant = restaurantDataMapper.createRestaurant(kfcNewRestaurant, user.getId());
 
 
         NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
@@ -196,7 +196,7 @@ public class RestaurantRepositoryTest {
         );
 
 
-        Optional<Restaurant> maybeRestaurant = restaurantRepository.get(id);
+        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(id);
 
 
         assertThat(maybeRestaurant.get().getName(), is("Amazing Restaurant"));
@@ -205,7 +205,7 @@ public class RestaurantRepositoryTest {
 
     @Test
     public void test_get_returnsEmptyOptionalForInvalidRestaurantId() throws Exception {
-        Optional<Restaurant> maybeRestaurant = restaurantRepository.get(999);
+        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(999);
 
 
         assertFalse(maybeRestaurant.isPresent());
@@ -220,7 +220,7 @@ public class RestaurantRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsPostedByUser(user.getId());
+        List<Restaurant> restaurantList = restaurantDataMapper.getRestaurantsPostedByUser(user.getId());
 
         assertEquals(restaurantList.size(), 1);
         assertThat(restaurantList.get(0).getName(), is("Afuri"));
@@ -237,7 +237,7 @@ public class RestaurantRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Restaurant> restaurantList = restaurantRepository.getRestaurantsByIds(singletonList(restaurant.getId()));
+        List<Restaurant> restaurantList = restaurantDataMapper.getRestaurantsByIds(singletonList(restaurant.getId()));
 
         assertEquals(restaurantList.size(), 1);
         assertThat(restaurantList.get(0).getId(), is(restaurant.getId()));
@@ -268,7 +268,7 @@ public class RestaurantRepositoryTest {
         );
 
 
-        Restaurant updatedRestaurant = restaurantRepository.updateRestaurant(
+        Restaurant updatedRestaurant = restaurantDataMapper.updateRestaurant(
                 restaurant.getId(),
                 updatedNewRestaurant
         );

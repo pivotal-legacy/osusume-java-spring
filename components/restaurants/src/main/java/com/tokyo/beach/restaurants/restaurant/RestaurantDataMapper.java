@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class RestaurantRepository {
+public class RestaurantDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public RestaurantRepository(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
+    public RestaurantDataMapper(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

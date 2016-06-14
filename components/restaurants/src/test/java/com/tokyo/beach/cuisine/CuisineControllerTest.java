@@ -2,7 +2,7 @@ package com.tokyo.beach.cuisine;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineController;
-import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +24,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CuisineControllerTest {
-    CuisineRepository mockCuisineRepository;
+    CuisineDataMapper cuisineDataMapper;
     CuisineController cuisineController;
     MockMvc mockMvc;
 
     @Before
     public void setup() {
-        mockCuisineRepository = mock(CuisineRepository.class);
-        cuisineController = new CuisineController(mockCuisineRepository);
+        cuisineDataMapper = mock(CuisineDataMapper.class);
+        cuisineController = new CuisineController(cuisineDataMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(cuisineController).build();
     }
 
@@ -39,7 +39,7 @@ public class CuisineControllerTest {
     public void testGetAllCuisines() throws Exception {
 
 
-        when(mockCuisineRepository.getAll()).thenReturn(
+        when(cuisineDataMapper.getAll()).thenReturn(
                 Arrays.asList(
                         new Cuisine(1, "Japanese"),
                         new Cuisine(2, "Spanish")
@@ -57,7 +57,7 @@ public class CuisineControllerTest {
 
     @Test
     public void testGetCuisine() throws Exception {
-        when(mockCuisineRepository.getCuisine("1")).thenReturn(
+        when(cuisineDataMapper.getCuisine("1")).thenReturn(
                 Optional.of(
                         new Cuisine(
                                 1,
@@ -76,7 +76,7 @@ public class CuisineControllerTest {
     @Test
     public void testCreateACuisine() throws Exception {
         NewCuisine newCuisine = new NewCuisine("Japanese");
-        when(mockCuisineRepository.createCuisine(newCuisine)).thenReturn(
+        when(cuisineDataMapper.createCuisine(newCuisine)).thenReturn(
                 new Cuisine(
                         1,
                         "Japanese"

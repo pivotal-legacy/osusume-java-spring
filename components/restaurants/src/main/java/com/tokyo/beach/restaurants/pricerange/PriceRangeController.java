@@ -14,16 +14,16 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 @CrossOrigin
 public class PriceRangeController {
-    private PriceRangeRepository priceRangeRepository;
+    private PriceRangeDataMapper priceRangeDataMapper;
 
     @Autowired
-    public PriceRangeController(PriceRangeRepository priceRangeRepository) {
-        this.priceRangeRepository = priceRangeRepository;
+    public PriceRangeController(PriceRangeDataMapper priceRangeDataMapper) {
+        this.priceRangeDataMapper = priceRangeDataMapper;
     }
 
     @RequestMapping(value = "/priceranges", method = GET)
     @ResponseStatus(HttpStatus.OK)
     public List<PriceRange> getAll() {
-        return priceRangeRepository.getAll();
+        return priceRangeDataMapper.getAll();
     }
 }

@@ -2,7 +2,7 @@ package com.tokyo.beach.pricerange;
 
 import com.tokyo.beach.cuisine.CuisineFixture;
 import com.tokyo.beach.restaurant.RestaurantFixture;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.user.UserFixture;
@@ -20,13 +20,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
-public class PriceRangeRepositoryTest {
-    private PriceRangeRepository priceRangeRepository;
+public class PriceRangeDataMapperTest {
+    private PriceRangeDataMapper priceRangeDataMapper;
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
 
     @Before
     public void setUp() throws Exception {
-        priceRangeRepository = new PriceRangeRepository(jdbcTemplate);
+        priceRangeDataMapper = new PriceRangeDataMapper(jdbcTemplate);
     }
 
     @After
@@ -45,7 +45,7 @@ public class PriceRangeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<PriceRange> actualPriceRanges = priceRangeRepository.getAll();
+        List<PriceRange> actualPriceRanges = priceRangeDataMapper.getAll();
 
 
         List<PriceRange> expectedPriceRanges = asList(
@@ -62,7 +62,7 @@ public class PriceRangeRepositoryTest {
                 .withRange("Price Range #1")
                 .persist(jdbcTemplate);
 
-        PriceRange actualPriceRange = priceRangeRepository.getPriceRange(persistedPriceRange.getId()).get();
+        PriceRange actualPriceRange = priceRangeDataMapper.getPriceRange(persistedPriceRange.getId()).get();
 
         assertEquals(persistedPriceRange, actualPriceRange);
     }
@@ -76,7 +76,7 @@ public class PriceRangeRepositoryTest {
                 .withUser(new UserFixture().withEmail("email1").persist(jdbcTemplate))
                 .persist(jdbcTemplate);
 
-        PriceRange actualPriceRange = priceRangeRepository.findForRestaurant(
+        PriceRange actualPriceRange = priceRangeDataMapper.findForRestaurant(
                 persistedRestaurant
         );
 

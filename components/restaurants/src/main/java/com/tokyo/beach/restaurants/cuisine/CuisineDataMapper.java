@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CuisineRepository {
+public class CuisineDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public CuisineRepository(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
+    public CuisineDataMapper(@SuppressWarnings("SpringJavaAutowiringInspection") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

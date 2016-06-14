@@ -13,11 +13,11 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-public class PriceRangeRepository {
+public class PriceRangeDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public PriceRangeRepository(JdbcTemplate jdbcTemplate) {
+    public PriceRangeDataMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

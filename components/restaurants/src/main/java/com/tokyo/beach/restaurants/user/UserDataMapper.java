@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class UserRepository {
+public class UserDataMapper {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public UserRepository(JdbcTemplate jdbcTemplate) {
+    public UserDataMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

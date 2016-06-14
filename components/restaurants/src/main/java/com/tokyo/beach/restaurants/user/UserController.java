@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-    private UserRepository userRepository;
+    private UserDataMapper userDataMapper;
 
     @Autowired
     public UserController(
-            UserRepository userRepository
+            UserDataMapper userDataMapper
     ) {
-        this.userRepository = userRepository;
+        this.userDataMapper = userDataMapper;
     }
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
@@ -28,7 +28,7 @@ public class UserController {
         HttpServletRequest request = sra.getRequest();
         Long userId = (Long) request.getAttribute("userId");
 
-        Optional<User> maybeUser = userRepository.get(userId);
+        Optional<User> maybeUser = userDataMapper.get(userId);
 
         maybeUser.orElseThrow(() -> new RestControllerException("Invalid user id."));
         return maybeUser.get();
@@ -38,7 +38,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public User registerUser(@RequestBody NewUser newUser) {
-        return userRepository.create(
+        return userDataMapper.create(
                 newUser.getEmail(),
                 newUser.getPassword(),
                 newUser.getName()

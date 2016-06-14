@@ -3,7 +3,7 @@ package com.tokyo.beach.photos;
 import com.tokyo.beach.TestDatabaseUtils;
 import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
-import com.tokyo.beach.restaurants.photos.PhotoRepository;
+import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import org.junit.After;
 import org.junit.Before;
@@ -23,15 +23,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
-public class PhotoRepositoryTest {
+public class PhotoDataMapperTest {
 
-    private PhotoRepository photoRepository;
+    private PhotoDataMapper photoDataMapper;
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(TestDatabaseUtils.buildDataSource());
-        photoRepository = new PhotoRepository(jdbcTemplate);
+        photoDataMapper = new PhotoDataMapper(jdbcTemplate);
     }
 
     @After
@@ -46,7 +46,7 @@ public class PhotoRepositoryTest {
                 new PhotoUrl(0, "http://some-url", 1)
         );
 
-        List<PhotoUrl> photos = photoRepository.findForRestaurants(singletonList(
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(
                 new RestaurantFixture().withId(1L).build()
         ));
 
@@ -59,7 +59,7 @@ public class PhotoRepositoryTest {
 
     @Test
     public void test_createPhotosForRestaurant() throws Exception {
-        photoRepository.createPhotosForRestaurant(
+        photoDataMapper.createPhotosForRestaurant(
                 789,
                 asList(
                         new NewPhotoUrl("http://some-url"),
@@ -93,7 +93,7 @@ public class PhotoRepositoryTest {
         );
 
 
-        List<PhotoUrl> photos = photoRepository.findForRestaurant(new RestaurantFixture().withId(1L).build());
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurant(new RestaurantFixture().withId(1L).build());
 
 
         assertThat(photos, hasSize(1));
@@ -108,7 +108,7 @@ public class PhotoRepositoryTest {
         );
 
 
-        Optional<PhotoUrl> actualPhotoUrl = photoRepository.get(photoUrl.getId());
+        Optional<PhotoUrl> actualPhotoUrl = photoDataMapper.get(photoUrl.getId());
 
 
         assertThat(actualPhotoUrl.get(), is(photoUrl));
@@ -116,7 +116,7 @@ public class PhotoRepositoryTest {
 
     @Test
     public void test_getNonexistentPhotoUrl_returnsEmpty() throws Exception {
-        Optional<PhotoUrl> actualPhotoUrl = photoRepository.get(99);
+        Optional<PhotoUrl> actualPhotoUrl = photoDataMapper.get(99);
 
 
         assertFalse(actualPhotoUrl.isPresent());
@@ -130,7 +130,7 @@ public class PhotoRepositoryTest {
         );
 
 
-        photoRepository.delete(photoUrl.getId());
+        photoDataMapper.delete(photoUrl.getId());
 
 
         int count = jdbcTemplate.queryForObject("SELECT count(*) FROM photo_url WHERE id = ?",

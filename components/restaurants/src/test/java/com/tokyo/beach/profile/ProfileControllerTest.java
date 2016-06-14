@@ -1,18 +1,18 @@
 package com.tokyo.beach.profile;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
+import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
-import com.tokyo.beach.restaurants.like.LikeRepository;
-import com.tokyo.beach.restaurants.photos.PhotoRepository;
+import com.tokyo.beach.restaurants.like.LikeDataMapper;
+import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.profile.ProfileController;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
+import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -35,30 +35,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class ProfileControllerTest {
-    private RestaurantRepository restaurantRepository;
+    private RestaurantDataMapper restaurantDataMapper;
     private MockMvc mockMvc;
-    private PhotoRepository photoRepository;
-    private CuisineRepository cuisineRepository;
-    private UserRepository userRepository;
-    private LikeRepository mockLikeRepository;
-    private PriceRangeRepository mockPriceRangeRepository;
+    private PhotoDataMapper photoDataMapper;
+    private CuisineDataMapper cuisineDataMapper;
+    private UserDataMapper userDataMapper;
+    private LikeDataMapper likeDataMapper;
+    private PriceRangeDataMapper priceRangeDataMapper;
 
     @Before
     public void setUp() {
-        restaurantRepository = mock(RestaurantRepository.class);
-        photoRepository = mock(PhotoRepository.class);
-        cuisineRepository = mock(CuisineRepository.class);
-        userRepository = mock(UserRepository.class);
-        mockLikeRepository = mock(LikeRepository.class);
-        mockPriceRangeRepository = mock(PriceRangeRepository.class);
+        restaurantDataMapper = mock(RestaurantDataMapper.class);
+        photoDataMapper = mock(PhotoDataMapper.class);
+        cuisineDataMapper = mock(CuisineDataMapper.class);
+        userDataMapper = mock(UserDataMapper.class);
+        likeDataMapper = mock(LikeDataMapper.class);
+        priceRangeDataMapper = mock(PriceRangeDataMapper.class);
 
         ProfileController profileController = new ProfileController(
-                restaurantRepository,
-                photoRepository,
-                cuisineRepository,
-                userRepository,
-                mockLikeRepository,
-                mockPriceRangeRepository
+                restaurantDataMapper,
+                photoDataMapper,
+                cuisineDataMapper,
+                userDataMapper,
+                likeDataMapper,
+                priceRangeDataMapper
         );
 
         mockMvc = standaloneSetup(profileController)
@@ -84,21 +84,21 @@ public class ProfileControllerTest {
                 )
         );
 
-        when(userRepository.get(anyLong()))
+        when(userDataMapper.get(anyLong()))
                 .thenReturn(Optional.of(new User(1L, "user-email", "username")));
 
-        when(restaurantRepository.getRestaurantsPostedByUser(1L)).thenReturn(posts);
+        when(restaurantDataMapper.getRestaurantsPostedByUser(1L)).thenReturn(posts);
 
-        when(photoRepository.findForRestaurants(anyObject()))
+        when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
 
-        when(cuisineRepository.findForRestaurant(anyObject()))
+        when(cuisineDataMapper.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
 
-        when(mockPriceRangeRepository.getAll()).thenReturn(
+        when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );
-        when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
+        when(likeDataMapper.findForRestaurants(posts)).thenReturn(
                 asList(new Like(1L, 1L), new Like(2L, 1L))
         );
 
@@ -123,10 +123,10 @@ public class ProfileControllerTest {
 
     @Test
     public void test_getUserPostsWhenUserHasntPosted_returnsEmptyList() throws Exception {
-        when(userRepository.get(anyLong()))
+        when(userDataMapper.get(anyLong()))
                 .thenReturn(Optional.of(new User(1L, "user-email", "username")));
 
-        when(restaurantRepository.getRestaurantsPostedByUser(1L)).thenReturn(emptyList());
+        when(restaurantDataMapper.getRestaurantsPostedByUser(1L)).thenReturn(emptyList());
 
         mockMvc.perform(get("/profile/posts")
                 .requestAttr("userId", 1L)
@@ -154,20 +154,20 @@ public class ProfileControllerTest {
         );
         List<Long> likesList = singletonList(1L);
 
-        when(userRepository.findForUserIds(singletonList(99L)))
+        when(userDataMapper.findForUserIds(singletonList(99L)))
                 .thenReturn(singletonList(new User(99L, "user-email", "username")));
-        when(mockLikeRepository.getLikesByUser(99L))
+        when(likeDataMapper.getLikesByUser(99L))
                 .thenReturn(likesList);
-        when(restaurantRepository.getRestaurantsByIds(likesList))
+        when(restaurantDataMapper.getRestaurantsByIds(likesList))
                 .thenReturn(posts);
-        when(photoRepository.findForRestaurants(anyObject()))
+        when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
-        when(cuisineRepository.findForRestaurant(anyObject()))
+        when(cuisineDataMapper.findForRestaurant(anyObject()))
                 .thenReturn(new Cuisine(10L, "Japanese"));
-        when(mockPriceRangeRepository.getAll()).thenReturn(
+        when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );
-        when(mockLikeRepository.findForRestaurants(posts)).thenReturn(
+        when(likeDataMapper.findForRestaurants(posts)).thenReturn(
                 asList(new Like(99L, 1L), new Like(98L, 1L))
         );
 
@@ -192,7 +192,7 @@ public class ProfileControllerTest {
 
     @Test
     public void test_getUserLikes_returnsEmptyListWhenNoLikes() throws Exception {
-        when(mockLikeRepository.getLikesByUser(99L))
+        when(likeDataMapper.getLikesByUser(99L))
                 .thenReturn(emptyList());
 
         mockMvc.perform(get("/profile/likes").
@@ -201,6 +201,6 @@ public class ProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
 
-        verify(restaurantRepository, times(0)).getRestaurantsByIds(anyList());
+        verify(restaurantDataMapper, times(0)).getRestaurantsByIds(anyList());
     }
 }

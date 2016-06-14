@@ -1,6 +1,6 @@
 package com.tokyo.beach.session;
 
-import com.tokyo.beach.restaurants.session.SessionRepository;
+import com.tokyo.beach.restaurants.session.SessionDataMapper;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
 import com.tokyo.beach.restaurants.user.User;
@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SessionRepositoryTest {
-    private SessionRepository databaseSessionRepository;
+public class SessionDataMapperTest {
+    private SessionDataMapper sessionDataMapper;
     private JdbcTemplate jdbcTemplate;
 
     private TokenGenerator mockTokenGenerator;
@@ -35,7 +35,7 @@ public class SessionRepositoryTest {
     @Before
     public void setUp() throws Exception {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
-        this.databaseSessionRepository = new SessionRepository(this.jdbcTemplate);
+        this.sessionDataMapper = new SessionDataMapper(this.jdbcTemplate);
 
         NewUser newUser = new NewUser(
                 "jmiller@gmail.com", "password", "Jim Miller"
@@ -56,7 +56,7 @@ public class SessionRepositoryTest {
 
     @Test
     public void test_create_returnsNewUserSession() throws Exception {
-        UserSession actualUserSession = databaseSessionRepository.create(
+        UserSession actualUserSession = sessionDataMapper.create(
                 mockTokenGenerator,
                 user
         );
@@ -68,7 +68,7 @@ public class SessionRepositoryTest {
 
     @Test
     public void test_create_persistsToken_forValidCredentials() throws Exception {
-        databaseSessionRepository.create(
+        sessionDataMapper.create(
                 mockTokenGenerator,
                 user
         );
@@ -88,7 +88,7 @@ public class SessionRepositoryTest {
         insertSessionIntoDatabase("token-value", userId);
 
 
-        Optional<Long> maybeUserId = databaseSessionRepository.validateToken("token-value");
+        Optional<Long> maybeUserId = sessionDataMapper.validateToken("token-value");
 
 
         assertEquals(userId, maybeUserId.get());
@@ -96,7 +96,7 @@ public class SessionRepositoryTest {
 
     @Test
     public void test_validateToken_returnsEmptyForInvalidCredentials() throws Exception {
-        Optional<Long> maybeUserId = databaseSessionRepository.validateToken("invalid-token");
+        Optional<Long> maybeUserId = sessionDataMapper.validateToken("invalid-token");
 
 
         assertFalse(maybeUserId.isPresent());
@@ -107,7 +107,7 @@ public class SessionRepositoryTest {
         insertSessionIntoDatabase("token-value", userId.intValue());
 
 
-        databaseSessionRepository.delete("token-value");
+        sessionDataMapper.delete("token-value");
 
 
         String sql = "SELECT count(*) FROM session WHERE token = ?";

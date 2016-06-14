@@ -2,7 +2,7 @@ package com.tokyo.beach.user;
 
 import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserRepository;
+import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restaurants.session.LogonCredentials;
 import org.junit.After;
 import org.junit.Before;
@@ -19,15 +19,15 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class UserRepositoryTest {
+public class UserDataMapperTest {
 
-    private UserRepository databaseUserRepository;
+    private UserDataMapper userDataMapper;
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
-        this.databaseUserRepository = new UserRepository(this.jdbcTemplate);
+        this.userDataMapper = new UserDataMapper(this.jdbcTemplate);
     }
 
     @After
@@ -48,7 +48,7 @@ public class UserRepositoryTest {
         assertThat(count, is(0));
 
 
-        User user = this.databaseUserRepository.create(
+        User user = this.userDataMapper.create(
                 newUser.getEmail(),
                 newUser.getPassword(),
                 newUser.getName()
@@ -72,7 +72,7 @@ public class UserRepositoryTest {
         insertUserIntoDatabase(jdbcTemplate, newUser);
 
 
-        Optional<User> maybeUser = databaseUserRepository.get(
+        Optional<User> maybeUser = userDataMapper.get(
                 new LogonCredentials(newUser.getEmail(), newUser.getPassword())
         );
 
@@ -90,7 +90,7 @@ public class UserRepositoryTest {
 
 
         LogonCredentials queryCredentials = new LogonCredentials("User@gMail.com", "password");
-        Optional<User> maybeUser = databaseUserRepository.get(queryCredentials);
+        Optional<User> maybeUser = userDataMapper.get(queryCredentials);
 
 
         assertTrue(maybeUser.isPresent());
@@ -101,7 +101,7 @@ public class UserRepositoryTest {
         LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
 
 
-        Optional<User> maybeUser = databaseUserRepository.get(credentials);
+        Optional<User> maybeUser = userDataMapper.get(credentials);
 
 
         assertFalse(maybeUser.isPresent());
@@ -115,7 +115,7 @@ public class UserRepositoryTest {
         Number userId = insertUserIntoDatabase(jdbcTemplate, newUser).getId();
 
 
-        Optional<User> maybeUser = databaseUserRepository.get(userId.longValue());
+        Optional<User> maybeUser = userDataMapper.get(userId.longValue());
 
 
         assertTrue(maybeUser.get().getId() == userId.longValue());
@@ -124,7 +124,7 @@ public class UserRepositoryTest {
 
     @Test
     public void test_getNonExistentUserWithUserId_returnsEmptyOptional() throws Exception {
-        Optional<User> maybeUser = databaseUserRepository.get(999);
+        Optional<User> maybeUser = userDataMapper.get(999);
 
 
         assertFalse(maybeUser.isPresent());
@@ -135,7 +135,7 @@ public class UserRepositoryTest {
         jdbcTemplate.update("INSERT INTO users (id, email, name) " +
                 "VALUES (1, 'jiro@user.com', 'jiro')");
 
-        List<User> users = databaseUserRepository.findForUserIds(
+        List<User> users = userDataMapper.findForUserIds(
                 singletonList(1L)
         );
 
