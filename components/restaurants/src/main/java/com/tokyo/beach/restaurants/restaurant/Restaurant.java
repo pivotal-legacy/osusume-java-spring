@@ -46,23 +46,6 @@ public class Restaurant {
         this.updatedDate = updatedDate;
     }
 
-    @SuppressWarnings("unused")
-    static Restaurant withPhotoUrls(Restaurant restaurant, List<PhotoUrl> urls) {
-        return new Restaurant(
-                restaurant.getId(),
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getOffersEnglishMenu(),
-                restaurant.getWalkInsOk(),
-                restaurant.getAcceptsCreditCards(),
-                restaurant.getNotes(),
-                restaurant.getCreatedDate(),
-                restaurant.getUpdatedDate(),
-                restaurant.getCreatedByUserId(),
-                restaurant.getPriceRangeId(),
-                restaurant.getCuisineId());
-    }
-
     public long getId() {
         return id;
     }
