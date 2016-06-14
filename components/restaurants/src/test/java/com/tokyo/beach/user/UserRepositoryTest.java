@@ -2,7 +2,7 @@ package com.tokyo.beach.user;
 
 import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.DatabaseUserRepository;
+import com.tokyo.beach.restaurants.user.UserRepository;
 import com.tokyo.beach.restaurants.session.LogonCredentials;
 import org.junit.After;
 import org.junit.Before;
@@ -19,15 +19,15 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class DatabaseUserRepositoryTest {
+public class UserRepositoryTest {
 
-    private DatabaseUserRepository databaseUserRepository;
+    private UserRepository databaseUserRepository;
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
-        this.databaseUserRepository = new DatabaseUserRepository(this.jdbcTemplate);
+        this.databaseUserRepository = new UserRepository(this.jdbcTemplate);
     }
 
     @After

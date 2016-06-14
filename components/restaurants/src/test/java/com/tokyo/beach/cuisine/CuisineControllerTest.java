@@ -2,7 +2,7 @@ package com.tokyo.beach.cuisine;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineController;
-import com.tokyo.beach.restaurants.cuisine.DatabaseCuisineRepository;
+import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CuisineControllerTest {
-    DatabaseCuisineRepository mockCuisineRepository;
+    CuisineRepository mockCuisineRepository;
     CuisineController cuisineController;
     MockMvc mockMvc;
 
     @Before
     public void setup() {
-        mockCuisineRepository = mock(DatabaseCuisineRepository.class);
+        mockCuisineRepository = mock(CuisineRepository.class);
         cuisineController = new CuisineController(mockCuisineRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(cuisineController).build();
     }

@@ -3,12 +3,10 @@ package com.tokyo.beach.restaurant;
 import com.tokyo.beach.cuisine.CuisineFixture;
 import com.tokyo.beach.pricerange.PriceRangeFixture;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.restaurant.DatabaseRestaurantRepository;
+import com.tokyo.beach.restaurants.restaurant.RestaurantRepository;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
@@ -28,15 +26,15 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
-public class DatabaseRestaurantRepositoryTest {
-    private DatabaseRestaurantRepository restaurantRepository;
+public class RestaurantRepositoryTest {
+    private RestaurantRepository restaurantRepository;
     private JdbcTemplate jdbcTemplate;
     private User user;
 
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
-        restaurantRepository = new DatabaseRestaurantRepository(jdbcTemplate);
+        restaurantRepository = new RestaurantRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
         user = new UserFixture()

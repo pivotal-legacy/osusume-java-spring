@@ -2,7 +2,6 @@ package com.tokyo.beach.cuisine;
 
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
-import com.tokyo.beach.restaurants.cuisine.DatabaseCuisineRepository;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
@@ -20,13 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class DatabaseCuisineRepositoryTest {
+public class CuisineRepositoryTest {
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
     private CuisineRepository cuisineRepository;
 
     @Before
     public void setUp() throws Exception {
-        cuisineRepository = new DatabaseCuisineRepository(jdbcTemplate);
+        cuisineRepository = new CuisineRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
     }

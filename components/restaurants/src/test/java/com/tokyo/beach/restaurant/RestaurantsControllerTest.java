@@ -11,7 +11,6 @@ import com.tokyo.beach.restaurants.cuisine.CuisineRepository;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
-import com.tokyo.beach.restaurants.photos.DatabasePhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -190,7 +189,7 @@ public class RestaurantsControllerTest {
     public void test_getAll_returnsEmptyListWhenNoRestaurants() throws Exception {
         RestaurantsController controller = new RestaurantsController(
                 mockRestaurantRepository,
-                new DatabasePhotoRepository(new JdbcTemplate(buildDataSource())),
+                new PhotoRepository(new JdbcTemplate(buildDataSource())),
                 mockCuisineRepository,
                 mockUserRepository,
                 mockCommentRepository,

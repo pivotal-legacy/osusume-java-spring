@@ -1,7 +1,7 @@
 package com.tokyo.beach.like;
 
 import com.tokyo.beach.restaurant.RestaurantFixture;
-import com.tokyo.beach.restaurants.like.DatabaseLikeRepository;
+import com.tokyo.beach.restaurants.like.LikeRepository;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DatabaseLikeRepositoryTest {
+public class LikeRepositoryTest {
     private JdbcTemplate jdbcTemplate;
 
     @Before
@@ -55,7 +55,7 @@ public class DatabaseLikeRepositoryTest {
                         .getId();
 
 
-        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
         Like createdLike = likeRepository.create(likeByUserId, restaurantId);
 
 
@@ -95,7 +95,7 @@ public class DatabaseLikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
         Like createdLike = likeRepository.create(likeByUserId, restaurantId);
 
 
@@ -141,7 +141,7 @@ public class DatabaseLikeRepositoryTest {
                 .getUserId();
 
 
-        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
         likeRepository.delete(likeByUserId, restaurantId);
 
 
@@ -179,7 +179,7 @@ public class DatabaseLikeRepositoryTest {
         ).getId();
 
 
-        DatabaseLikeRepository likeRepository = new DatabaseLikeRepository(jdbcTemplate);
+        LikeRepository likeRepository = new LikeRepository(jdbcTemplate);
         String sql = "INSERT INTO likes (user_id, restaurant_id) VALUES (?, ?) RETURNING *";
         Like persistedLike = jdbcTemplate.queryForObject(
                 sql,
@@ -219,7 +219,7 @@ public class DatabaseLikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Like> likes = new DatabaseLikeRepository(jdbcTemplate)
+        List<Like> likes = new LikeRepository(jdbcTemplate)
                 .findForRestaurants(asList(restaurant1, restaurant2));
 
 
@@ -235,7 +235,7 @@ public class DatabaseLikeRepositoryTest {
                 .persist(jdbcTemplate);
 
 
-        List<Like> likes = new DatabaseLikeRepository(jdbcTemplate)
+        List<Like> likes = new LikeRepository(jdbcTemplate)
                 .findForRestaurants(asList(restaurant1));
 
 

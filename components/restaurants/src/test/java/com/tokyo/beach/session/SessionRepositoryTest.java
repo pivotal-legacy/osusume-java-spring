@@ -1,6 +1,6 @@
 package com.tokyo.beach.session;
 
-import com.tokyo.beach.restaurants.session.DatabaseSessionRepository;
+import com.tokyo.beach.restaurants.session.SessionRepository;
 import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
 import com.tokyo.beach.restaurants.user.User;
@@ -24,8 +24,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DatabaseSessionRepositoryTest {
-    private DatabaseSessionRepository databaseSessionRepository;
+public class SessionRepositoryTest {
+    private SessionRepository databaseSessionRepository;
     private JdbcTemplate jdbcTemplate;
 
     private TokenGenerator mockTokenGenerator;
@@ -35,7 +35,7 @@ public class DatabaseSessionRepositoryTest {
     @Before
     public void setUp() throws Exception {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
-        this.databaseSessionRepository = new DatabaseSessionRepository(this.jdbcTemplate);
+        this.databaseSessionRepository = new SessionRepository(this.jdbcTemplate);
 
         NewUser newUser = new NewUser(
                 "jmiller@gmail.com", "password", "Jim Miller"

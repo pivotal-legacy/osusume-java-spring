@@ -2,9 +2,8 @@ package com.tokyo.beach.pricerange;
 
 import com.tokyo.beach.cuisine.CuisineFixture;
 import com.tokyo.beach.restaurant.RestaurantFixture;
-import com.tokyo.beach.restaurants.pricerange.DatabasePriceRangeRepository;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeRepository;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
@@ -21,13 +20,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
-public class DatabasePriceRangeRepositoryTest {
+public class PriceRangeRepositoryTest {
     private PriceRangeRepository priceRangeRepository;
     private JdbcTemplate jdbcTemplate = new JdbcTemplate(buildDataSource());
 
     @Before
     public void setUp() throws Exception {
-        priceRangeRepository = new DatabasePriceRangeRepository(jdbcTemplate);
+        priceRangeRepository = new PriceRangeRepository(jdbcTemplate);
     }
 
     @After

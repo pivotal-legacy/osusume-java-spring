@@ -2,7 +2,7 @@ package com.tokyo.beach.comment;
 
 import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.comment.Comment;
-import com.tokyo.beach.restaurants.comment.DatabaseCommentRepository;
+import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -22,14 +22,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class DatabaseCommentRepositoryTest {
+public class CommentRepositoryTest {
     JdbcTemplate jdbcTemplate;
-    DatabaseCommentRepository commentRepository;
+    CommentRepository commentRepository;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
-        commentRepository = new DatabaseCommentRepository(jdbcTemplate);
+        commentRepository = new CommentRepository(jdbcTemplate);
         createDefaultCuisine(jdbcTemplate);
         createDefaultPriceRange(jdbcTemplate);
     }

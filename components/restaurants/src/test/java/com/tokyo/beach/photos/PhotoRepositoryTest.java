@@ -3,7 +3,7 @@ package com.tokyo.beach.photos;
 import com.tokyo.beach.TestDatabaseUtils;
 import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
-import com.tokyo.beach.restaurants.photos.DatabasePhotoRepository;
+import com.tokyo.beach.restaurants.photos.PhotoRepository;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import org.junit.After;
 import org.junit.Before;
@@ -23,15 +23,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
-public class DatabasePhotoRepositoryTest {
+public class PhotoRepositoryTest {
 
-    private DatabasePhotoRepository photoRepository;
+    private PhotoRepository photoRepository;
     private JdbcTemplate jdbcTemplate;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(TestDatabaseUtils.buildDataSource());
-        photoRepository = new DatabasePhotoRepository(jdbcTemplate);
+        photoRepository = new PhotoRepository(jdbcTemplate);
     }
 
     @After
