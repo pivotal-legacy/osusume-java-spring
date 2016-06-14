@@ -72,6 +72,10 @@ public class RestaurantsController {
 
     @RequestMapping(value = "", method = GET)
     public List<SerializedRestaurant> getAll() {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest();
+        Number userId = (Number) request.getAttribute("userId");
+
         List<Restaurant> restaurantList = restaurantRepository.getAll();
 
         if (restaurantList.size() == 0) {
@@ -115,7 +119,7 @@ public class RestaurantsController {
                         Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
-                        false,
+                        restaurantLikes.get(restaurant.getId()) == null ? false : restaurantLikes.get(restaurant.getId()).contains(new Like(userId.longValue(), restaurant.getId())),
                         restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
                 ))
                 .collect(toList());

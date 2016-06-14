@@ -119,7 +119,7 @@ public class RestaurantsControllerTest {
         );
 
 
-        mockMvc.perform(get("/restaurants"))
+        mockMvc.perform(get("/restaurants").requestAttr("userId", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
@@ -134,6 +134,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
                 .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
                 .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
+                .andExpect(jsonPath("$[0].liked", equalTo(true)))
                 .andExpect(jsonPath("$[0].created_at", equalTo("2016-04-13T16:01:21.094Z")))
                 .andExpect(jsonPath("$[0].updated_at", equalTo("2016-04-14T16:01:21.094Z")))
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
