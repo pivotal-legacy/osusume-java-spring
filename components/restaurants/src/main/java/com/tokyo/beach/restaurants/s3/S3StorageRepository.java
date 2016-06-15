@@ -12,12 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class S3StorageRepository {
     public void deleteFile(String urlString) {
-        String accessKey = System.getenv("AWS_S3_ACCESS_KEY");
-        String secretKey = System.getenv("AWS_S3_SECRET_KEY");
         String bucketName = System.getenv("AWS_S3_BUCKET_NAME");
 
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        AmazonS3 s3Client = new AmazonS3Client(credentials);
+        AmazonS3 s3Client = new AmazonS3Client();
 
         try {
             String[] urlSplit = urlString.split("/");
