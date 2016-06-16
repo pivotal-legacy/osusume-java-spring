@@ -31,7 +31,7 @@ public class CommentDataMapper {
                             rs.getLong("created_by_user_id")
                     );
                 },
-                newComment.getContent(),
+                newComment.getComment(),
                 Long.parseLong(restaurantId),
                 createdByUserId
         );

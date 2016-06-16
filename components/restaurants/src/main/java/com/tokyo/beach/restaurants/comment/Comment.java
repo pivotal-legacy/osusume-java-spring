@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Comment {
     private long id;
-    private String content;
+    private String comment;
     private String createdDate;
     private long restaurantId;
     private long createdByUserId;
 
     public Comment(long id,
-                   String content,
+                   String comment,
                    String createdDate,
                    long restaurantId,
                    long createdByUserId) {
         this.id = id;
-        this.content = content;
+        this.comment = comment;
         this.createdDate = createdDate;
         this.restaurantId = restaurantId;
         this.createdByUserId = createdByUserId;
@@ -26,8 +26,8 @@ public class Comment {
     }
 
     @SuppressWarnings("unused")
-    public String getContent() {
-        return content;
+    public String getComment() {
+        return comment;
     }
 
     @JsonProperty("created_at")
@@ -55,7 +55,7 @@ public class Comment {
         if (id != comment.id) return false;
         if (restaurantId != comment.restaurantId) return false;
         if (createdByUserId != comment.createdByUserId) return false;
-        if (content != null ? !content.equals(comment.content) : comment.content != null) return false;
+        if (this.comment != null ? !this.comment.equals(comment.comment) : comment.comment != null) return false;
         return createdDate != null ? createdDate.equals(comment.createdDate) : comment.createdDate == null;
 
     }
@@ -63,7 +63,7 @@ public class Comment {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (int) (restaurantId ^ (restaurantId >>> 32));
         result = 31 * result + (int) (createdByUserId ^ (createdByUserId >>> 32));
@@ -74,7 +74,7 @@ public class Comment {
     public String toString() {
         return "Comment{" +
                 "id=" + id +
-                ", content='" + content + '\'' +
+                ", comment='" + comment + '\'' +
                 ", createdDate='" + createdDate + '\'' +
                 ", restaurantId=" + restaurantId +
                 ", createdByUserId=" + createdByUserId +

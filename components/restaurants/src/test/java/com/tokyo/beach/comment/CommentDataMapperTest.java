@@ -76,7 +76,7 @@ public class CommentDataMapperTest {
                 createdComment.getId()
         );
 
-        assertThat(actualComment.getContent(), is("New Comment Content"));
+        assertThat(actualComment.getComment(), is("New Comment Content"));
         assertThat(actualComment.getCreatedByUserId(), is(userId.longValue()));
         assertThat(actualComment.getRestaurantId(), is(restaurantId));
     }
@@ -119,7 +119,7 @@ public class CommentDataMapperTest {
 
         List<SerializedComment> actualComments = commentDataMapper.findForRestaurant(restaurant.getId());
         assertEquals(actualComments.size(), 1);
-        assertThat(actualComments.get(0).getContent(), is("New Comment Content"));
+        assertThat(actualComments.get(0).getComment(), is("New Comment Content"));
         assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));
         assertThat(actualComments.get(0).getRestaurantId(), is(restaurant.getId()));
     }

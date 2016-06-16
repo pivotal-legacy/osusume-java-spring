@@ -191,7 +191,7 @@ public class TestDatabaseUtils {
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
-        params.put("content", newComment.getContent());
+        params.put("content", newComment.getComment());
         params.put("restaurant_id", restaurantId);
         params.put("created_by_user_id", createdByUserId);
 

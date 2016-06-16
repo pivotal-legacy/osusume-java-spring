@@ -19,13 +19,8 @@ public class SerializedComment {
         return comment.getId();
     }
 
-    @SuppressWarnings("unused")
-    public String getContent() {
-        return comment.getContent();
-    }
-
     public String getComment() {
-        return comment.getContent();
+        return comment.getComment();
     }
 
     @JsonProperty("created_at")

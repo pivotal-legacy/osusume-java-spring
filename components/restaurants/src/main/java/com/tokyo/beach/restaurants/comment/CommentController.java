@@ -31,12 +31,12 @@ public class CommentController {
 
     @RequestMapping(value = "restaurants/{restaurantId}/comments", method = POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public SerializedComment create(@RequestBody NewCommentWrapper newCommentWrapper, @PathVariable String restaurantId) {
+    public SerializedComment create(@RequestBody NewComment newComment, @PathVariable String restaurantId) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = sra.getRequest();
         Number userId = (Number) request.getAttribute("userId");
         Comment persistedComment = commentDataMapper.create(
-                newCommentWrapper.getNewComment(),
+                newComment,
                 userId.longValue(),
                 restaurantId
         );

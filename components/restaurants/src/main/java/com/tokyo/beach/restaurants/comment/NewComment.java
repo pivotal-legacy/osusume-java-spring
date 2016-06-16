@@ -1,19 +1,19 @@
 package com.tokyo.beach.restaurants.comment;
 
 public class NewComment {
-    private String content;
+    private String comment;
 
     @SuppressWarnings("unused")
     public NewComment() {};
 
     @SuppressWarnings("unused")
-    public NewComment(String content) {
-        this.content = content;
+    public NewComment(String comment) {
+        this.comment = comment;
     }
 
     @SuppressWarnings("unused")
-    public String getContent() {
-        return content;
+    public String getComment() {
+        return comment;
     }
 
     @Override
@@ -23,19 +23,19 @@ public class NewComment {
 
         NewComment that = (NewComment) o;
 
-        return content != null ? content.equals(that.content) : that.content == null;
+        return comment != null ? comment.equals(that.comment) : that.comment == null;
 
     }
 
     @Override
     public int hashCode() {
-        return content != null ? content.hashCode() : 0;
+        return comment != null ? comment.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "NewComment{" +
-                "content='" + content + '\'' +
+                "comment='" + comment + '\'' +
                 '}';
     }
 }
