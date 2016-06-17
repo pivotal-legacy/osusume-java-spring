@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +59,7 @@ public class CuisineDataMapper {
         );
     }
 
-    public Cuisine findForRestaurant(Restaurant restaurant) {
+    public Optional<Cuisine> findForRestaurant(Restaurant restaurant) {
         List<Cuisine> cuisines = jdbcTemplate.query(
                 "SELECT * FROM cuisine WHERE id = " +
                         "(SELECT cuisine_id FROM restaurant WHERE id = ?)",
@@ -73,9 +72,9 @@ public class CuisineDataMapper {
                 restaurant.getId()
         );
         if (cuisines.size() < 1) {
-            return getCuisine("0").orElse(null);
+            return getCuisine("0");
         }
-        return cuisines.get(0);
+        return Optional.of(cuisines.get(0));
     }
 
 }

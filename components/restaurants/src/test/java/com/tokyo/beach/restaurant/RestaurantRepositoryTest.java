@@ -108,7 +108,7 @@ public class RestaurantRepositoryTest {
         );
 
         List<SerializedRestaurant> serializedRestaurants = singletonList(
-                new SerializedRestaurant(restaurant, photoUrls, cuisine, Optional.of(priceRange), Optional.of(user), emptyList(), true, 2)
+                new SerializedRestaurant(restaurant, photoUrls, Optional.of(cuisine), Optional.of(priceRange), Optional.of(user), emptyList(), true, 2)
         );
 
         assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
@@ -154,7 +154,7 @@ public class RestaurantRepositoryTest {
         );
 
         List<SerializedRestaurant> serializedRestaurants = singletonList(
-                new SerializedRestaurant(restaurant, photoUrls, cuisine, Optional.of(priceRange), Optional.of(user), emptyList(), false, 0)
+                new SerializedRestaurant(restaurant, photoUrls, Optional.of(cuisine), Optional.of(priceRange), Optional.of(user), emptyList(), false, 0)
         );
 
         assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
@@ -201,7 +201,7 @@ public class RestaurantRepositoryTest {
                 Optional.of(restaurant)
         );
         when(cuisineDataMapper.findForRestaurant(restaurant)).thenReturn(
-                expectedCuisine
+                Optional.of(expectedCuisine)
         );
         when(commentDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 comments
@@ -220,7 +220,7 @@ public class RestaurantRepositoryTest {
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant,
                 photoUrls,
-                expectedCuisine,
+                Optional.of(expectedCuisine),
                 Optional.of(priceRange),
                 Optional.of(hanakoUser),
                 comments,
@@ -261,7 +261,7 @@ public class RestaurantRepositoryTest {
         );
         Long userId = 99L;
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
-        Cuisine expectedCuisine = new Cuisine(2,"Ramen");
+        Optional<Cuisine> expectedCuisine = Optional.of(new Cuisine(2,"Ramen"));
         Optional<User> hanakoUser = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
         Optional<PriceRange> priceRange = Optional.of(new PriceRange(1, "~900"));
 
@@ -279,55 +279,11 @@ public class RestaurantRepositoryTest {
                 .thenReturn(restaurant);
         when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(photoUrls);
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(Optional.of(expectedCuisine));
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(expectedCuisine);
         when(userDataMapper.get(anyLong())).thenReturn(hanakoUser);
         when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(priceRange);
 
         assertThat(repository.create(newRestaurant, userId),
                 equalTo(serializedRestaurant));
-    }
-
-    @Test
-    public void test_create_persistsARestaurant_withoutACuisine() throws Exception {
-        NewRestaurant newRestaurant = new NewRestaurant(
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "soooo goood",
-                2L,
-                1L,
-                singletonList(new NewPhotoUrl("http://some-url"))
-        );
-        Restaurant restaurant = new Restaurant(
-                1L,
-                newRestaurant.getName(),
-                newRestaurant.getAddress(),
-                newRestaurant.getOffersEnglishMenu(),
-                newRestaurant.getWalkInsOk(),
-                newRestaurant.getAcceptsCreditCards(),
-                newRestaurant.getNotes(),
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1L,
-                0L,
-                1L
-        );
-        Long userId = 99L;
-        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
-        Optional<User> hanakoUser = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
-        Optional<PriceRange> priceRange = Optional.of(new PriceRange(1, "~900"));
-
-        when(restaurantDataMapper.createRestaurant(newRestaurant, userId))
-                .thenReturn(restaurant);
-        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
-                .thenReturn(photoUrls);
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(Optional.empty());
-        when(userDataMapper.get(anyLong())).thenReturn(hanakoUser);
-        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(priceRange);
-
-        assertThat(repository.create(newRestaurant, userId).getCuisine(),
-                equalTo(null));
     }
 }

@@ -104,7 +104,7 @@ public class RestaurantsControllerTest {
                                 20L
                         ),
                         singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
-                        new Cuisine(20L, "Swedish"),
+                        Optional.of(new Cuisine(20L, "Swedish")),
                         Optional.of(new PriceRange(1L, "100yen")),
                         Optional.of(new User(1L, "taro@email.com", "taro")),
                         emptyList(),
@@ -152,7 +152,7 @@ public class RestaurantsControllerTest {
                     20L
             ),
             singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
-            new Cuisine(20L, "Swedish"),
+            Optional.of(new Cuisine(20L, "Swedish")),
             Optional.of(new PriceRange(1L, "100yen")),
             Optional.of(new User(1L, "taro@email.com", "taro")),
             emptyList(),
@@ -223,7 +223,7 @@ public class RestaurantsControllerTest {
                         newRestaurant.getCuisineId()
                 ),
                 singletonList(new PhotoUrl(1, "http://some-url", 1)),
-                new Cuisine(2, "Ramen"),
+                Optional.of(new Cuisine(2, "Ramen")),
                 Optional.of(new PriceRange(1, "~900")),
                 Optional.of(new User(99, "email", "jiro")),
                 emptyList(),

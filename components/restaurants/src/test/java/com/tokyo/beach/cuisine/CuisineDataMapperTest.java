@@ -136,7 +136,7 @@ public class CuisineDataMapperTest {
                 userId
         );
 
-        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant).get();
 
         assertThat(cuisine.getId(), is(cuisineId));
         assertThat(cuisine.getName(), is("Cuisine Test1"));
@@ -171,7 +171,7 @@ public class CuisineDataMapperTest {
                 userId
         );
 
-        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant).get();
 
         assertThat(cuisine.getId(), is(0L));
         assertThat(cuisine.getName(), is("Not Specified"));

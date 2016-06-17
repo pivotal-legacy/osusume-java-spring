@@ -16,7 +16,7 @@ import static java.util.Collections.emptyList;
 public class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
-    private Cuisine cuisine;
+    private Optional<Cuisine> cuisine;
     private Optional<PriceRange> priceRange;
     private Optional<User> createdByUser;
     private List<SerializedComment> comments;
@@ -26,7 +26,7 @@ public class SerializedRestaurant {
     public SerializedRestaurant(
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
-            Cuisine cuisine,
+            Optional<Cuisine> cuisine,
             Optional<PriceRange> priceRange,
             Optional<User> createdByUser,
             List<SerializedComment> comments,
@@ -112,7 +112,7 @@ public class SerializedRestaurant {
 
     @JsonProperty("cuisine")
     public Cuisine getCuisine() {
-        return cuisine;
+        return cuisine.orElse(null);
     }
 
     @JsonProperty("price_range")

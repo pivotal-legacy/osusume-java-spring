@@ -105,7 +105,7 @@ public class RestaurantsController {
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
-                maybeCuisine.orElse(null),
+                maybeCuisine,
                 Optional.empty(),
                 createdByUser,
                 emptyList(),

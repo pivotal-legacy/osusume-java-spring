@@ -93,7 +93,7 @@ public class ProfileControllerTest {
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
 
         when(cuisineDataMapper.findForRestaurant(anyObject()))
-                .thenReturn(new Cuisine(10L, "Japanese"));
+                .thenReturn(Optional.of(new Cuisine(10L, "Japanese")));
 
         when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
@@ -163,7 +163,7 @@ public class ProfileControllerTest {
         when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
         when(cuisineDataMapper.findForRestaurant(anyObject()))
-                .thenReturn(new Cuisine(10L, "Japanese"));
+                .thenReturn(Optional.of(new Cuisine(10L, "Japanese")));
         when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );

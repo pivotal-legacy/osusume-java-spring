@@ -92,7 +92,7 @@ public class RestaurantRepository {
                 .map((restaurant) -> new SerializedRestaurant(
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
-                        cuisineMap.get(restaurant.getCuisineId()),
+                        Optional.of(cuisineMap.get(restaurant.getCuisineId())),
                         Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
                         Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
                         emptyList(),
@@ -112,7 +112,7 @@ public class RestaurantRepository {
                     retrievedRestaurant.getCreatedByUserId()
             );
             List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(retrievedRestaurant);
-            Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
+            Optional<Cuisine> cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
             PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant);
 
             List<SerializedComment> comments = commentDataMapper.findForRestaurant(retrievedRestaurant.getId());
@@ -153,7 +153,7 @@ public class RestaurantRepository {
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
-                maybeCuisine.orElse(null),
+                maybeCuisine,
                 maybePriceRange,
                 createdByUser,
                 emptyList(),
