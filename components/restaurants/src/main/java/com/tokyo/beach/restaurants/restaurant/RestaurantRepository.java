@@ -137,4 +137,27 @@ public class RestaurantRepository {
             return Optional.empty();
         }
     }
+
+    public SerializedRestaurant create(NewRestaurant newRestaurant, Long userId) {
+        Restaurant restaurant = restaurantDataMapper.createRestaurant(
+                newRestaurant, userId.longValue()
+        );
+        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
+        List<PhotoUrl> photosForRestaurant = photoDataMapper.createPhotosForRestaurant(
+                restaurant.getId(),
+                newRestaurant.getPhotoUrls()
+        );
+        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(newRestaurant.getCuisineId().toString());
+        Optional<PriceRange> maybePriceRange = priceRangeDataMapper.getPriceRange(newRestaurant.getPriceRangeId());
+
+        return new SerializedRestaurant(
+                restaurant,
+                photosForRestaurant,
+                maybeCuisine.orElse(null),
+                maybePriceRange,
+                createdByUser,
+                emptyList(),
+                false,
+                0L);
+    }
 }

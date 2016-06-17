@@ -85,26 +85,7 @@ public class RestaurantsController {
     public SerializedRestaurant create(@RequestBody NewRestaurantWrapper restaurantWrapper) {
         Number userId = getCurrentUserId(RequestContextHolder.getRequestAttributes());
 
-        Restaurant restaurant = restaurantDataMapper.createRestaurant(
-                restaurantWrapper.getRestaurant(), userId.longValue()
-        );
-        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
-        List<PhotoUrl> photosForRestaurant = photoDataMapper.createPhotosForRestaurant(
-                restaurant.getId(),
-                restaurantWrapper.getPhotoUrls()
-        );
-        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(restaurantWrapper.getCuisineId().toString());
-        Optional<PriceRange> maybePriceRange = priceRangeDataMapper.getPriceRange(restaurantWrapper.getPriceRangeId());
-
-        return new SerializedRestaurant(
-                restaurant,
-                photosForRestaurant,
-                maybeCuisine.orElse(null),
-                maybePriceRange,
-                createdByUser,
-                emptyList(),
-                false,
-                0L);
+        return restaurantRepository.create(restaurantWrapper.getRestaurant(), userId.longValue());
     }
 
     @RequestMapping(value = "{id}", method = PATCH)

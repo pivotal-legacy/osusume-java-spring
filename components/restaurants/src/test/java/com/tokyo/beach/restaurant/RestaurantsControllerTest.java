@@ -17,6 +17,7 @@ import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -193,218 +194,80 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void test_create_persistsARestaurant() throws Exception {
-        ArgumentCaptor<NewRestaurant> attributeNewRestaurant = ArgumentCaptor.forClass(NewRestaurant.class);
-        ArgumentCaptor<Long> attributeCreatedByUserId = ArgumentCaptor.forClass(Long.class);
-
-        when(restaurantDataMapper.createRestaurant(
-                attributeNewRestaurant.capture(),
-                attributeCreatedByUserId.capture()
-        )).thenReturn(
+    public void test_create_createsARestaurantAndReturnsIt() throws Exception {
+        NewRestaurant newRestaurant = new NewRestaurant(
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "soooo goood",
+                2L,
+                1L,
+                singletonList(new NewPhotoUrl("http://some-url"))
+                );
+        Long userId = 99L;
+        SerializedRestaurant restaurant = new SerializedRestaurant(
                 new Restaurant(
                         1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "soooo goood",
+                        newRestaurant.getName(),
+                        newRestaurant.getAddress(),
+                        newRestaurant.getOffersEnglishMenu(),
+                        newRestaurant.getWalkInsOk(),
+                        newRestaurant.getAcceptsCreditCards(),
+                        newRestaurant.getNotes(),
                         "2016-04-13 16:01:21.094",
                         "2016-04-14 16:01:21.094",
-                        99,
-                        1L,
-                        2L
-                )
+                        userId,
+                        newRestaurant.getPriceRangeId(),
+                        newRestaurant.getCuisineId()
+                ),
+                singletonList(new PhotoUrl(1, "http://some-url", 1)),
+                new Cuisine(2, "Ramen"),
+                Optional.of(new PriceRange(1, "~900")),
+                Optional.of(new User(99, "email", "jiro")),
+                emptyList(),
+                false,
+                0
         );
-
-        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(
-                Optional.of(
-                        new Cuisine(
-                                2,
-                                "Ramen"
-                        )
-                )
-        );
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(
-                        new User(99L, "jiro@mail.com", "jiro")
-                )
-        );
-        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
-                Optional.of(
-                        new PriceRange(
-                                1,
-                                "~900"
-                        )
-                )
-        );
-
+        when(restaurantRepository.create(newRestaurant, userId)).
+                thenReturn(restaurant);
         String payload =
-                "{" +
-                        "\"restaurant\": " +
-                        "{" +
-                            "\"name\":\"Afuri\", " +
-                            "\"address\": \"Roppongi\", " +
-                            "\"offers_english_menu\": false, " +
-                            "\"walk_ins_ok\": true, " +
-                            "\"accepts_credit_cards\": false, " +
-                            "\"notes\": \"soooo goood\", " +
-                            "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
-                            "\"cuisine_id\": \"2\", " +
-                            "\"price_range_id\": \"1\"" +
-                        "}" +
-                "}";
+            "{" +
+            "\"restaurant\": " +
+            "{" +
+            "\"name\":\"Afuri\", " +
+            "\"address\": \"Roppongi\", " +
+            "\"offers_english_menu\": false, " +
+            "\"walk_ins_ok\": true, " +
+            "\"accepts_credit_cards\": false, " +
+            "\"notes\": \"soooo goood\", " +
+            "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
+            "\"cuisine_id\": \"2\", " +
+            "\"price_range_id\": \"1\"" +
+            "}" +
+            "}";
 
 
         mockMvc.perform(
-                post("/restaurants")
-                        .requestAttr("userId", 99L)
-                        .contentType(APPLICATION_JSON_UTF8_VALUE)
-                        .content(payload)
+            post("/restaurants")
+            .requestAttr("userId", userId)
+            .contentType(APPLICATION_JSON_UTF8_VALUE)
+            .content(payload)
         )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is("Afuri")))
-                .andExpect(jsonPath("$.address", is("Roppongi")))
-                .andExpect(jsonPath("$.offers_english_menu", is(false)))
-                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
-                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
-                .andExpect(jsonPath("$.notes", is("soooo goood")))
-                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
-                .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
-                .andExpect(jsonPath("$.price_range", is("~900")))
-                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
-                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
-                .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
-
-        assertEquals(99, attributeCreatedByUserId.getValue().longValue());
-    }
-
-    @Test
-    public void test_create_persistsARestaurantWithoutACuisineId() throws Exception {
-        when(restaurantDataMapper.createRestaurant(anyObject(), anyLong())).thenReturn(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "soooo goood",
-                        "created-date",
-                        "updated-date", 1,
-                        0L,
-                        0L
-                )
-        );
-
-        Cuisine expectedCuisine = new Cuisine(0, "Not Specified");
-        when(cuisineDataMapper.getCuisine("0")).thenReturn(
-                Optional.of(expectedCuisine));
-        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(
-                        new User(1L, "jiro@mail.com", "jiro")
-                )
-        );
-        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
-                Optional.of(
-                        new PriceRange(0L, "Not Specified")
-                )
-        );
-
-        String payload = "{\"restaurant\": " +
-                "{\"name\":\"Afuri\", " +
-                "\"address\": \"Roppongi\", " +
-                "\"offers_english_menu\": false, " +
-                "\"walk_ins_ok\": true, " +
-                "\"accepts_credit_cards\": false, " +
-                "\"notes\": \"soooo goood\"," +
-                "\"photo_urls\": [{\"url\": \"http://some-url\"}]}" +
-                "}";
-
-        mockMvc.perform(
-                post("/restaurants")
-                        .requestAttr("userId", 1L)
-                        .contentType(APPLICATION_JSON_UTF8_VALUE)
-                        .content(payload)
-        )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is("Afuri")))
-                .andExpect(jsonPath("$.address", is("Roppongi")))
-                .andExpect(jsonPath("$.offers_english_menu", is(false)))
-                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
-                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
-                .andExpect(jsonPath("$.notes", is("soooo goood")))
-                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
-                .andExpect(jsonPath("$.cuisine.name", is("Not Specified")))
-                .andExpect(jsonPath("$.cuisine.id", is(0)))
-                .andExpect(jsonPath("$.price_range", is("Not Specified")));
-    }
-
-    @Test
-    public void test_create_withInvalidCuisineId() throws Exception {
-        when(restaurantDataMapper.createRestaurant(anyObject(), anyLong())).thenReturn(
-                new Restaurant(
-                        1,
-                        "Afuri",
-                        "Roppongi",
-                        false,
-                        true,
-                        false,
-                        "soooo goood",
-                        "created-date",
-                        "updated-date", 1,
-                        0L,
-                        2L
-                )
-        );
-
-        when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(
-                Optional.empty()
-        );
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(
-                        new User(1L, "jiro@mail.com", "jiro")
-                )
-        );
-        when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(
-                Optional.of(
-                        new PriceRange(0L, "Not Specified")
-                )
-        );
-
-        String payload = "{\"restaurant\": " +
-                "{\"name\":\"Afuri\", " +
-                "\"address\": \"Roppongi\", " +
-                "\"offers_english_menu\": false, " +
-                "\"walk_ins_ok\": true, " +
-                "\"accepts_credit_cards\": false, " +
-                "\"notes\": \"soooo goood\"," +
-                "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
-                "\"cuisine_id\": \"2\"}" +
-                "}";
-
-        mockMvc.perform(
-                post("/restaurants")
-                        .requestAttr("userId", 1L)
-                        .contentType(APPLICATION_JSON_UTF8_VALUE)
-                        .content(payload)
-        )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is("Afuri")))
-                .andExpect(jsonPath("$.address", is("Roppongi")))
-                .andExpect(jsonPath("$.offers_english_menu", is(false)))
-                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
-                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
-                .andExpect(jsonPath("$.notes", is("soooo goood")))
-                .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
-                .andExpect(jsonPath("$.price_range", is("Not Specified")))
-                .andExpect(jsonPath("$.cuisine", isEmptyOrNullString()));
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.name", is("Afuri")))
+        .andExpect(jsonPath("$.address", is("Roppongi")))
+        .andExpect(jsonPath("$.offers_english_menu", is(false)))
+        .andExpect(jsonPath("$.walk_ins_ok", is(true)))
+        .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
+        .andExpect(jsonPath("$.notes", is("soooo goood")))
+        .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
+        .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
+        .andExpect(jsonPath("$.price_range", is("~900")))
+        .andExpect(jsonPath("$.created_at", Matchers.equalTo("2016-04-13T16:01:21.094Z")))
+        .andExpect(jsonPath("$.updated_at", Matchers.equalTo("2016-04-14T16:01:21.094Z")))
+        .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
     }
 
     @Test
