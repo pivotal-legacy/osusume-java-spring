@@ -299,6 +299,8 @@ public class RestaurantsControllerTest {
                         )
                 )
         );
+        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant))
+                .thenReturn(new PriceRange(1, "900"));
         when(userDataMapper.get(anyLong())).thenReturn(
                 Optional.of(
                         new User(99L, "jiro@mail.com", "jiro")
@@ -330,7 +332,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.notes", is("")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
-                .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
+                .andExpect(jsonPath("$.created_by_user_name", is("jiro")))
+                .andExpect(jsonPath("$.price_range", is("900")));
     }
 
 

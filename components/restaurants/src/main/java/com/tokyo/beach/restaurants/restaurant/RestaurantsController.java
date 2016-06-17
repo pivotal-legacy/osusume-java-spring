@@ -101,12 +101,13 @@ public class RestaurantsController {
         Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
         List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
         Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(restaurantWrapper.getCuisineId().toString());
+        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
 
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
                 maybeCuisine,
-                Optional.empty(),
+                Optional.of(priceRange),
                 createdByUser,
                 emptyList(),
                 false,
