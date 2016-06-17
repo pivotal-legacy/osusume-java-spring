@@ -15,36 +15,21 @@ import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.restaurant.*;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantRepositoryTest {
     private RestaurantDataMapper restaurantDataMapper;
@@ -284,6 +269,64 @@ public class RestaurantRepositoryTest {
         when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(priceRange);
 
         assertThat(repository.create(newRestaurant, userId),
+                equalTo(serializedRestaurant));
+    }
+
+    @Test
+    public void update_persistsTheRestaurant_andReturnsIt() {
+        NewRestaurant newRestaurant = new NewRestaurant(
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "soooo goood",
+                2L,
+                1L,
+                singletonList(new NewPhotoUrl("http://some-url"))
+        );
+        Restaurant updatedRestaurant = new Restaurant(
+                1,
+                "Updated Name",
+                "Updated Address",
+                false,
+                true,
+                false,
+                "",
+                "",
+                "updated-date", 99,
+                1L,
+                2L
+        );
+        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
+        Optional<Cuisine> cuisine = Optional.of(new Cuisine(2, "Ramen"));
+        PriceRange priceRange = new PriceRange(1, "900");
+        Optional<User> hanakoUser = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                updatedRestaurant,
+                photoUrls,
+                cuisine,
+                Optional.of(priceRange),
+                hanakoUser,
+                emptyList(),
+                false,
+                0L
+        );
+
+        when(restaurantDataMapper.updateRestaurant(1L, newRestaurant)).thenReturn(
+                updatedRestaurant
+        );
+        when(photoDataMapper.findForRestaurant(updatedRestaurant))
+                .thenReturn(photoUrls);
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(
+                cuisine
+        );
+        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant))
+                .thenReturn(priceRange);
+        when(userDataMapper.get(anyLong())).thenReturn(
+                hanakoUser
+        );
+        assertThat(repository.update(1L, newRestaurant),
                 equalTo(serializedRestaurant));
     }
 }

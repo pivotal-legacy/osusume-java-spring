@@ -1,82 +1,51 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
-import com.tokyo.beach.restaurants.comment.Comment;
-import com.tokyo.beach.restaurants.comment.CommentDataMapper;
-import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
-import com.tokyo.beach.restaurants.like.Like;
-import com.tokyo.beach.restaurants.like.LikeDataMapper;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
+import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.*;
 import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class RestaurantsControllerTest {
     private RestaurantRepository restaurantRepository;
-    private RestaurantDataMapper restaurantDataMapper;
     private MockMvc mockMvc;
     private PhotoDataMapper photoDataMapper;
-    private CuisineDataMapper cuisineDataMapper;
-    private UserDataMapper userDataMapper;
-    private CommentDataMapper commentDataMapper;
-    private LikeDataMapper likeDataMapper;
-    private PriceRangeDataMapper priceRangeDataMapper;
     private S3StorageRepository s3StorageRepository;
 
     @Before
     public void setUp() {
         restaurantRepository = mock(RestaurantRepository.class);
-        restaurantDataMapper = mock(RestaurantDataMapper.class);
         photoDataMapper = mock(PhotoDataMapper.class);
-        cuisineDataMapper = mock(CuisineDataMapper.class);
-        userDataMapper = mock(UserDataMapper.class);
-        commentDataMapper = mock(CommentDataMapper.class);
-        likeDataMapper = mock(LikeDataMapper.class);
-        priceRangeDataMapper = mock(PriceRangeDataMapper.class);
         s3StorageRepository = mock(S3StorageRepository.class);
 
         RestaurantsController restaurantsController = new RestaurantsController(
                 restaurantRepository,
-                restaurantDataMapper,
                 photoDataMapper,
-                cuisineDataMapper,
-                userDataMapper,
-                commentDataMapper,
-                likeDataMapper,
-                priceRangeDataMapper,
                 s3StorageRepository
         );
 
@@ -272,40 +241,44 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_update_updatesRestaurantInformation() throws Exception {
-        Restaurant updatedRestaurant = new Restaurant(
-                1,
+        NewRestaurant newRestaurant = new NewRestaurant(
                 "Updated Name",
                 "Updated Address",
                 false,
                 true,
                 false,
                 "",
-                "",
-                "updated-date", 99,
-                0L,
-                2L
+                2L,
+                null,
+                singletonList(new NewPhotoUrl("http://some-url"))
+        );
+        Long userId = 99L;
+        SerializedRestaurant restaurant = new SerializedRestaurant(
+                new Restaurant(
+                        1,
+                        newRestaurant.getName(),
+                        newRestaurant.getAddress(),
+                        newRestaurant.getOffersEnglishMenu(),
+                        newRestaurant.getWalkInsOk(),
+                        newRestaurant.getAcceptsCreditCards(),
+                        newRestaurant.getNotes(),
+                        "2016-04-13 16:01:21.094",
+                        "2016-04-14 16:01:21.094",
+                        userId,
+                        0,
+                        newRestaurant.getCuisineId()
+                ),
+                singletonList(new PhotoUrl(1, "http://some-url", 1)),
+                Optional.of(new Cuisine(2, "Ramen")),
+                Optional.of(new PriceRange(1, "~900")),
+                Optional.of(new User(99, "email", "jiro")),
+                emptyList(),
+                false,
+                0
         );
 
-        when(restaurantDataMapper.updateRestaurant(anyLong(), anyObject())).thenReturn(
-                updatedRestaurant
-        );
-        when(photoDataMapper.findForRestaurant(updatedRestaurant))
-                .thenReturn(singletonList(new PhotoUrl(999, "http://some-url", 1)));
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(
-                Optional.of(
-                        new Cuisine(
-                                2,
-                                "Ramen"
-                        )
-                )
-        );
-        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant))
-                .thenReturn(new PriceRange(1, "900"));
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(
-                        new User(99L, "jiro@mail.com", "jiro")
-                )
-        );
+        when(restaurantRepository.update(1L, newRestaurant)).
+                thenReturn(restaurant);
         String updatedRestaurantPayload = "{\"restaurant\": " +
                 "{\"name\":\"Updated Name\", " +
                 "\"address\": \"Updated Address\", " +
@@ -333,7 +306,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")))
-                .andExpect(jsonPath("$.price_range", is("900")));
+                .andExpect(jsonPath("$.price_range", is("~900")));
     }
 
 
@@ -388,5 +361,4 @@ public class RestaurantsControllerTest {
         verify(photoDataMapper, never()).delete(10);
         verify(s3StorageRepository, never()).deleteFile(anyString());
     }
-
 }

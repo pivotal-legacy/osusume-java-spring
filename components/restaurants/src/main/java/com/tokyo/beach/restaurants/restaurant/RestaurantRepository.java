@@ -12,7 +12,6 @@ import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
-import com.tokyo.beach.restutils.RestControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -159,5 +158,27 @@ public class RestaurantRepository {
                 emptyList(),
                 false,
                 0L);
+    }
+
+    public SerializedRestaurant update(Long restaurantId, NewRestaurant newRestaurant) {
+        Restaurant restaurant = restaurantDataMapper.updateRestaurant(
+                restaurantId,
+                newRestaurant
+        );
+        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
+        List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
+        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(newRestaurant.getCuisineId().toString());
+        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
+
+        return new SerializedRestaurant(
+                restaurant,
+                photosForRestaurant,
+                maybeCuisine,
+                Optional.of(priceRange),
+                createdByUser,
+                emptyList(),
+                false,
+                0L
+        );
     }
 }

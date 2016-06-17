@@ -1,16 +1,8 @@
 package com.tokyo.beach.restaurants.restaurant;
 
-import com.tokyo.beach.restaurants.comment.CommentDataMapper;
-import com.tokyo.beach.restaurants.cuisine.Cuisine;
-import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
-import com.tokyo.beach.restaurants.like.LikeDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
-import com.tokyo.beach.restaurants.pricerange.PriceRange;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.s3.S3StorageRepository;
-import com.tokyo.beach.restaurants.user.User;
-import com.tokyo.beach.restaurants.user.UserDataMapper;
 import com.tokyo.beach.restutils.RestControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -33,35 +24,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping("/restaurants")
 public class RestaurantsController {
     private RestaurantRepository restaurantRepository;
-    private final RestaurantDataMapper restaurantDataMapper;
     private final PhotoDataMapper photoDataMapper;
-    private final CuisineDataMapper cuisineDataMapper;
-    private final UserDataMapper userDataMapper;
-    private final CommentDataMapper commentDataMapper;
-    private final LikeDataMapper likeDataMapper;
-    private final PriceRangeDataMapper priceRangeDataMapper;
     private final S3StorageRepository s3StorageRepository;
 
     @Autowired
     public RestaurantsController(
             RestaurantRepository restaurantRepository,
-            RestaurantDataMapper restaurantDataMapper,
             PhotoDataMapper photoDataMapper,
-            CuisineDataMapper cuisineDataMapper,
-            UserDataMapper userDataMapper,
-            CommentDataMapper commentDataMapper,
-            LikeDataMapper likeDataMapper,
-            PriceRangeDataMapper priceRangeDataMapper,
             S3StorageRepository storageRepository
     ) {
         this.restaurantRepository = restaurantRepository;
-        this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
-        this.cuisineDataMapper = cuisineDataMapper;
-        this.userDataMapper = userDataMapper;
-        this.commentDataMapper = commentDataMapper;
-        this.likeDataMapper = likeDataMapper;
-        this.priceRangeDataMapper = priceRangeDataMapper;
         this.s3StorageRepository = storageRepository;
     }
 
@@ -94,25 +67,7 @@ public class RestaurantsController {
             @PathVariable String id,
             @RequestBody NewRestaurantWrapper restaurantWrapper
     ) {
-        Restaurant restaurant = restaurantDataMapper.updateRestaurant(
-                new Long(id),
-                restaurantWrapper.getRestaurant()
-        );
-        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
-        List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
-        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(restaurantWrapper.getCuisineId().toString());
-        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
-
-        return new SerializedRestaurant(
-                restaurant,
-                photosForRestaurant,
-                maybeCuisine,
-                Optional.of(priceRange),
-                createdByUser,
-                emptyList(),
-                false,
-                0L
-        );
+        return restaurantRepository.update(new Long(id), restaurantWrapper.getRestaurant());
     }
 
     @RequestMapping(value = "{restaurantId}/photoUrls/{photoUrlId}", method = DELETE)
