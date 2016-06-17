@@ -1,9 +1,6 @@
 package com.tokyo.beach.restaurants.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tokyo.beach.restaurants.photos.PhotoUrl;
-
-import java.util.List;
 
 public class Restaurant {
     private final long id;

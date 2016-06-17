@@ -1,6 +1,6 @@
 package com.tokyo.beach.restaurant;
 
-import com.tokyo.beach.restaurants.comment.Comment;
+import com.tokyo.beach.comment.CommentFixture;
 import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
@@ -56,38 +56,32 @@ public class RestaurantRepositoryTest {
     @Test
     public void test_getAll_returnsAllRestaurants() {
         Long userId = 1L;
-        Restaurant restaurant = new Restaurant(
-                1,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "とても美味しい",
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1,
-                1L,
-                20L
-        );
+        Cuisine cuisine = new Cuisine(20L, "Swedish");
+        PriceRange priceRange = new PriceRange(1L, "100yen");
+        User user = new User(userId, "taro@email.com", "taro");
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withCuisine(cuisine)
+                .withPriceRange(priceRange)
+                .withUser(user)
+                .build();
         List<Restaurant> restaurants = singletonList(
               restaurant
         );
         when(restaurantDataMapper.getAll()).thenReturn(restaurants);
-        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1));
+        List<PhotoUrl> photoUrls = singletonList(
+                new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", restaurant.getId())
+        );
         when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(photoUrls);
-        User user = new User(1L, "taro@email.com", "taro");
         when(userDataMapper.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(user));
-        PriceRange priceRange = new PriceRange(1L, "100yen");
         when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(priceRange)
         );
         when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
                 asList(new Like(1L, 1L), new Like(2L, 1L))
         );
-        Cuisine cuisine = new Cuisine(20L, "Swedish");
         when(cuisineDataMapper.getAll()).thenReturn(
                 asList(cuisine)
         );
@@ -102,20 +96,15 @@ public class RestaurantRepositoryTest {
     @Test
     public void test_getAll_returnsRestaurantsWithoutLikes() throws Exception {
         Long userId = 1L;
-        Restaurant restaurant = new Restaurant(
-                1,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "とても美味しい",
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1,
-                1L,
-                20L
-        );
+        User user = new User(userId, "taro@email.com", "taro");
+        PriceRange priceRange = new PriceRange(1L, "100yen");
+        Cuisine cuisine = new Cuisine(20L, "Swedish");
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withCuisine(cuisine)
+                .withPriceRange(priceRange)
+                .withUser(user)
+                .build();
         List<Restaurant> restaurants = singletonList(
                 restaurant
         );
@@ -123,17 +112,14 @@ public class RestaurantRepositoryTest {
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1));
         when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(photoUrls);
-        User user = new User(1L, "taro@email.com", "taro");
         when(userDataMapper.findForUserIds(anyList()))
                 .thenReturn(Arrays.asList(user));
-        PriceRange priceRange = new PriceRange(1L, "100yen");
         when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(priceRange)
         );
         when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
                 emptyList()
         );
-        Cuisine cuisine = new Cuisine(20L, "Swedish");
         when(cuisineDataMapper.getAll()).thenReturn(
                 asList(cuisine)
         );
@@ -148,45 +134,31 @@ public class RestaurantRepositoryTest {
     @Test
     public void test_getRestaurant_returnsRestaurant() throws Exception {
         Long userId = 1L;
-        Restaurant restaurant = new Restaurant(
-                1L,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1L,
-                0L,
-                1L
-        );
-        Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
-        User hanakoUser = new User(1L, "hanako@email", "hanako");
+        Cuisine cuisine = new Cuisine(1L, "Ramen");
+        User user = new User(userId, "hanako@email", "hanako");
         List<SerializedComment> comments = singletonList(
                 new SerializedComment(
-                        new Comment(
-                                99L,
-                                "comment-content",
-                                "2016-04-01 10:10:10.000000",
-                                1L,
-                                1L
-                        ),
-                        hanakoUser
+                        new CommentFixture().build(),
+                        user
                 )
         );
         PriceRange priceRange = new PriceRange(0L, "Not Specified");
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withCuisine(cuisine)
+                .withPriceRange(priceRange)
+                .withUser(user)
+                .build();
         List<PhotoUrl> photoUrls = asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1));
 
         when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(hanakoUser)
+                Optional.of(user)
         );
         when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(restaurant)
         );
         when(cuisineDataMapper.findForRestaurant(restaurant)).thenReturn(
-                Optional.of(expectedCuisine)
+                Optional.of(cuisine)
         );
         when(commentDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 comments
@@ -205,9 +177,9 @@ public class RestaurantRepositoryTest {
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant,
                 photoUrls,
-                Optional.of(expectedCuisine),
+                Optional.of(cuisine),
                 Optional.of(priceRange),
-                Optional.of(hanakoUser),
+                Optional.of(user),
                 comments,
                 true,
                 2L
@@ -219,43 +191,29 @@ public class RestaurantRepositoryTest {
 
     @Test
     public void test_create_persistsARestaurant() throws Exception {
-        NewRestaurant newRestaurant = new NewRestaurant(
-            "Afuri",
-            "Roppongi",
-            false,
-            true,
-            false,
-            "soooo goood",
-            2L,
-            1L,
-            singletonList(new NewPhotoUrl("http://some-url"))
-        );
-        Restaurant restaurant = new Restaurant(
-                1L,
-                newRestaurant.getName(),
-                newRestaurant.getAddress(),
-                newRestaurant.getOffersEnglishMenu(),
-                newRestaurant.getWalkInsOk(),
-                newRestaurant.getAcceptsCreditCards(),
-                newRestaurant.getNotes(),
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1L,
-                0L,
-                1L
-        );
         Long userId = 99L;
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
-        Optional<Cuisine> expectedCuisine = Optional.of(new Cuisine(2,"Ramen"));
-        Optional<User> hanakoUser = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
+        Optional<Cuisine> cuisine = Optional.of(new Cuisine(2,"Ramen"));
+        Optional<User> user = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
         Optional<PriceRange> priceRange = Optional.of(new PriceRange(1, "~900"));
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withCuisine(cuisine.get())
+                .withPriceRange(priceRange.get())
+                .withUser(user.get())
+                .build();
+        NewRestaurant newRestaurant = new NewRestaurantFixture()
+                .withRestaurant(restaurant)
+                .withCuisineId(cuisine.get().getId())
+                .withPriceRangeId(priceRange.get().getId())
+                .build();
 
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant,
                 photoUrls,
-                expectedCuisine,
+                cuisine,
                 priceRange,
-                hanakoUser,
+                user,
                 emptyList(),
                 false,
                 0L
@@ -264,8 +222,8 @@ public class RestaurantRepositoryTest {
                 .thenReturn(restaurant);
         when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(photoUrls);
-        when(cuisineDataMapper.getCuisine("2")).thenReturn(expectedCuisine);
-        when(userDataMapper.get(anyLong())).thenReturn(hanakoUser);
+        when(cuisineDataMapper.getCuisine("2")).thenReturn(cuisine);
+        when(userDataMapper.get(anyLong())).thenReturn(user);
         when(priceRangeDataMapper.getPriceRange(anyLong())).thenReturn(priceRange);
 
         assertThat(repository.create(newRestaurant, userId),
@@ -274,40 +232,27 @@ public class RestaurantRepositoryTest {
 
     @Test
     public void update_persistsTheRestaurant_andReturnsIt() {
-        NewRestaurant newRestaurant = new NewRestaurant(
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "soooo goood",
-                2L,
-                1L,
-                singletonList(new NewPhotoUrl("http://some-url"))
-        );
-        Restaurant updatedRestaurant = new Restaurant(
-                1,
-                "Updated Name",
-                "Updated Address",
-                false,
-                true,
-                false,
-                "",
-                "",
-                "updated-date", 99,
-                1L,
-                2L
-        );
-        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
         Optional<Cuisine> cuisine = Optional.of(new Cuisine(2, "Ramen"));
         PriceRange priceRange = new PriceRange(1, "900");
-        Optional<User> hanakoUser = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
+        Optional<User> user = Optional.of(new User(99L, "jiro@mail.com", "jiro"));
+        Restaurant updatedRestaurant = new RestaurantFixture()
+                .withId(1)
+                .withCuisine(cuisine.get())
+                .withPriceRange(priceRange)
+                .withUser(user.get())
+                .build();
+        NewRestaurant newRestaurant = new NewRestaurantFixture()
+                .withRestaurant(updatedRestaurant)
+                .withCuisineId(cuisine.get().getId())
+                .withPriceRangeId(priceRange.getId())
+                .build();
+        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 updatedRestaurant,
                 photoUrls,
                 cuisine,
                 Optional.of(priceRange),
-                hanakoUser,
+                user,
                 emptyList(),
                 false,
                 0L
@@ -324,7 +269,7 @@ public class RestaurantRepositoryTest {
         when(priceRangeDataMapper.findForRestaurant(updatedRestaurant))
                 .thenReturn(priceRange);
         when(userDataMapper.get(anyLong())).thenReturn(
-                hanakoUser
+                user
         );
         assertThat(repository.update(1L, newRestaurant),
                 equalTo(serializedRestaurant));
