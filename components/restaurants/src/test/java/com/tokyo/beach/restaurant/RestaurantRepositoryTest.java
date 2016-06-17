@@ -1,6 +1,8 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.CommentDataMapper;
+import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
@@ -26,8 +28,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,6 +48,8 @@ public class RestaurantRepositoryTest {
     private UserDataMapper userDataMapper;
     private LikeDataMapper likeDataMapper;
     private PriceRangeDataMapper priceRangeDataMapper;
+    private CommentDataMapper commentDataMapper;
+    private RestaurantRepository repository;
 
     @Before
     public void setUp() {
@@ -53,6 +59,8 @@ public class RestaurantRepositoryTest {
         userDataMapper = mock(UserDataMapper.class);
         likeDataMapper = mock(LikeDataMapper.class);
         priceRangeDataMapper = mock(PriceRangeDataMapper.class);
+        commentDataMapper = mock(CommentDataMapper.class);
+        repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper, commentDataMapper);
     }
 
     @Test
@@ -98,7 +106,6 @@ public class RestaurantRepositoryTest {
                 new SerializedRestaurant(restaurant, photoUrls, cuisine, Optional.of(priceRange), Optional.of(user), emptyList(), true, 2)
         );
 
-        RestaurantRepository repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper);
         assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
     }
 
@@ -145,7 +152,78 @@ public class RestaurantRepositoryTest {
                 new SerializedRestaurant(restaurant, photoUrls, cuisine, Optional.of(priceRange), Optional.of(user), emptyList(), false, 0)
         );
 
-        RestaurantRepository repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper);
         assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
+    }
+
+    @Test
+    public void test_getRestaurant_returnsRestaurant() throws Exception {
+        Long userId = 1L;
+        Restaurant restaurant = new Restaurant(
+                1L,
+                "Afuri",
+                "Roppongi",
+                false,
+                true,
+                false,
+                "",
+                "2016-04-13 16:01:21.094",
+                "2016-04-14 16:01:21.094",
+                1L,
+                0L,
+                1L
+        );
+        Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
+        User hanakoUser = new User(1L, "hanako@email", "hanako");
+        List<SerializedComment> comments = singletonList(
+                new SerializedComment(
+                        new Comment(
+                                99L,
+                                "comment-content",
+                                "2016-04-01 10:10:10.000000",
+                                1L,
+                                1L
+                        ),
+                        hanakoUser
+                )
+        );
+        PriceRange priceRange = new PriceRange(0L, "Not Specified");
+        List<PhotoUrl> photoUrls = asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1));
+
+        when(userDataMapper.get(anyLong())).thenReturn(
+                Optional.of(hanakoUser)
+        );
+        when(restaurantDataMapper.get(1)).thenReturn(
+                Optional.of(restaurant)
+        );
+        when(cuisineDataMapper.findForRestaurant(restaurant)).thenReturn(
+                expectedCuisine
+        );
+        when(commentDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
+                comments
+        );
+        when(likeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
+                asList(
+                        new Like(1L, 1L),
+                        new Like(12L, 1L)
+                )
+        );
+        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
+                priceRange
+        );
+        when(photoDataMapper.findForRestaurant(restaurant)).thenReturn(photoUrls);
+
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                restaurant,
+                photoUrls,
+                expectedCuisine,
+                Optional.of(priceRange),
+                Optional.of(hanakoUser),
+                comments,
+                true,
+                2L
+        );
+
+        assertThat(repository.get(restaurant.getId(), userId).get(),
+                equalTo(serializedRestaurant));
     }
 }

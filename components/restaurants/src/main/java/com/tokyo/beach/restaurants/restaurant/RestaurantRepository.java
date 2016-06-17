@@ -1,5 +1,7 @@
 package com.tokyo.beach.restaurants.restaurant;
 
+import com.tokyo.beach.restaurants.comment.CommentDataMapper;
+import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
@@ -10,6 +12,7 @@ import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
+import com.tokyo.beach.restutils.RestControllerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -32,15 +36,24 @@ public class RestaurantRepository {
     private final PriceRangeDataMapper priceRangeDataMapper;
     private final LikeDataMapper likeDataMapper;
     private final CuisineDataMapper cuisineDataMapper;
+    private CommentDataMapper commentDataMapper;
 
     @Autowired
-    public RestaurantRepository(RestaurantDataMapper restaurantDataMapper, PhotoDataMapper photoDataMapper, UserDataMapper userDataMapper, PriceRangeDataMapper priceRangeDataMapper, LikeDataMapper likeDataMapper, CuisineDataMapper cuisineDataMapper) {
+    public RestaurantRepository(RestaurantDataMapper restaurantDataMapper,
+                                PhotoDataMapper photoDataMapper,
+                                UserDataMapper userDataMapper,
+                                PriceRangeDataMapper priceRangeDataMapper,
+                                LikeDataMapper likeDataMapper,
+                                CuisineDataMapper cuisineDataMapper,
+                                CommentDataMapper commentDataMapper
+                                 ) {
         this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
         this.userDataMapper = userDataMapper;
         this.priceRangeDataMapper = priceRangeDataMapper;
         this.likeDataMapper = likeDataMapper;
         this.cuisineDataMapper = cuisineDataMapper;
+        this.commentDataMapper = commentDataMapper;
     }
 
     public List<SerializedRestaurant> getAll(Long userId) {
@@ -87,5 +100,41 @@ public class RestaurantRepository {
                         restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
                 ))
                 .collect(toList());
+    }
+
+    public Optional<SerializedRestaurant> get(Long restaurantId, Long userId) {
+        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(restaurantId);
+
+        if (maybeRestaurant.isPresent()) {
+
+            Restaurant retrievedRestaurant = maybeRestaurant.get();
+            Optional<User> createdByUser = userDataMapper.get(
+                    retrievedRestaurant.getCreatedByUserId()
+            );
+            List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(retrievedRestaurant);
+            Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
+            PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant);
+
+            List<SerializedComment> comments = commentDataMapper.findForRestaurant(retrievedRestaurant.getId());
+
+            List<Like> likes = likeDataMapper.findForRestaurant(retrievedRestaurant.getId());
+            boolean currentUserLikesRestaurant = likes
+                    .stream()
+                    .map(Like::getUserId)
+                    .anyMatch(Predicate.isEqual(userId));
+
+            return Optional.of(new SerializedRestaurant(
+                    retrievedRestaurant,
+                    photosForRestaurant,
+                    cuisineForRestaurant,
+                    Optional.of(priceRange),
+                    createdByUser,
+                    comments,
+                    currentUserLikesRestaurant,
+                    likes.size()
+            ));
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -134,6 +134,65 @@ public class RestaurantsControllerTest {
     }
 
     @Test
+    public void test_get_returnsARestaurant() throws Exception {
+        SerializedRestaurant restaurant = new SerializedRestaurant(
+            new Restaurant(
+                    1,
+                    "Afuri",
+                    "Roppongi",
+                    false,
+                    true,
+                    false,
+                    "とても美味しい",
+                    "2016-04-13 16:01:21.094",
+                    "2016-04-14 16:01:21.094",
+                    1,
+                    1L,
+                    20L
+            ),
+            singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
+            new Cuisine(20L, "Swedish"),
+            Optional.of(new PriceRange(1L, "100yen")),
+            Optional.of(new User(1L, "taro@email.com", "taro")),
+            emptyList(),
+            true,
+            2
+        );
+        when(restaurantRepository.get(1L, 1L)).thenReturn(Optional.of(restaurant));
+        mockMvc.perform(get("/restaurants/1").requestAttr("userId", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", equalTo(1)))
+                .andExpect(jsonPath("$.name", equalTo("Afuri")))
+                .andExpect(jsonPath("$.address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$.cuisine.id", equalTo(20)))
+                .andExpect(jsonPath("$.cuisine.name", equalTo("Swedish")))
+                .andExpect(jsonPath("$.offers_english_menu", equalTo(false)))
+                .andExpect(jsonPath("$.walk_ins_ok", equalTo(true)))
+                .andExpect(jsonPath("$.accepts_credit_cards", equalTo(false)))
+                .andExpect(jsonPath("$.notes", equalTo("とても美味しい")))
+                .andExpect(jsonPath("$.photo_urls[0].id", equalTo(999)))
+                .andExpect(jsonPath("$.photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
+                .andExpect(jsonPath("$.price_range", equalTo("100yen")))
+                .andExpect(jsonPath("$.num_likes", equalTo(2)))
+                .andExpect(jsonPath("$.liked", equalTo(true)))
+                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
+                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
+                .andExpect(jsonPath("$.created_by_user_name", equalTo("taro")));
+    }
+
+    @Test
+    public void test_getInvalidRestaurantId_throwsException() throws Exception {
+        when(restaurantRepository.get(1L, 1L)).thenReturn(
+                Optional.empty()
+        );
+
+
+        mockMvc.perform(get("/restaurants/1").requestAttr("userId", 1L))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("{\"error\":\"Invalid restaurant id.\"}"));
+    }
+
+    @Test
     public void test_create_persistsARestaurant() throws Exception {
         ArgumentCaptor<NewRestaurant> attributeNewRestaurant = ArgumentCaptor.forClass(NewRestaurant.class);
         ArgumentCaptor<Long> attributeCreatedByUserId = ArgumentCaptor.forClass(Long.class);
@@ -346,199 +405,6 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.price_range", is("Not Specified")))
                 .andExpect(jsonPath("$.cuisine", isEmptyOrNullString()));
-    }
-
-    @Test
-    public void test_getRestaurant_returnsRestaurant() throws Exception {
-        Restaurant afuriRestaurant = new Restaurant(
-                1L,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "2016-04-13 16:01:21.094",
-                "2016-04-14 16:01:21.094",
-                1L,
-                0L,
-                1L
-        );
-        Cuisine expectedCuisine = new Cuisine(1L, "Ramen");
-        when(restaurantDataMapper.get(1)).thenReturn(
-                Optional.of(afuriRestaurant)
-        );
-        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                emptyList()
-        );
-        when(cuisineDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                expectedCuisine
-        );
-        User hanakoUser = new User(1L, "hanako@email", "hanako");
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(hanakoUser)
-        );
-        when(commentDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
-                singletonList(
-                        new SerializedComment(
-                                new Comment(
-                                        99L,
-                                        "comment-content",
-                                        "2016-04-01 10:10:10.000000",
-                                        1L,
-                                        1L
-                                ),
-                                hanakoUser
-                        )
-                )
-        );
-        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
-                asList(
-                        new Like(11L, 1L),
-                        new Like(12L, 1L)
-                )
-        );
-        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
-                new PriceRange(0L, "Not Specified")
-        );
-
-        mockMvc.perform(get("/restaurants/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo("Afuri")))
-                .andExpect(jsonPath("$.cuisine.name", equalTo("Ramen")))
-                .andExpect(jsonPath("$.photo_urls", equalTo(emptyList())))
-                .andExpect(jsonPath("$.created_by_user_name", equalTo("hanako")))
-                .andExpect(jsonPath("$.comments[0].id", equalTo(99)))
-                .andExpect(jsonPath("$.comments[0].user.name", equalTo("hanako")))
-                .andExpect(jsonPath("$.num_likes", equalTo(2)))
-                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
-                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
-                .andExpect(jsonPath("$.price_range", is("Not Specified")));
-    }
-
-    @Test
-    public void test_getRestaurant_returnsRestaurantWithPhotos() throws Exception {
-        Restaurant afuriRestaurant = new Restaurant(
-                1,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "created-date",
-                "updated-date", 1,
-                0L,
-                0L
-        );
-        when(restaurantDataMapper.get(1)).thenReturn(
-                Optional.of(afuriRestaurant)
-        );
-        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                asList(new PhotoUrl(1, "Url1", 1), new PhotoUrl(2, "Url2", 1))
-        );
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(new User(1L, "hanako@email", "hanako"))
-        );
-        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
-                new PriceRange(0, "Not Specified")
-        );
-
-        mockMvc.perform(get("/restaurants/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(1)))
-                .andExpect(jsonPath("$.name", equalTo("Afuri")))
-                .andExpect(jsonPath("$.photo_urls[0].url", equalTo("Url1")))
-                .andExpect(jsonPath("$.photo_urls[1].url", equalTo("Url2")));
-    }
-
-    @Test
-    public void test_getRestaurant_returnsRestaurantWithLikeStatus() throws Exception {
-        Restaurant afuriRestaurant = new Restaurant(
-                1,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "created-date",
-                "updated-date", 1,
-                0L,
-                0L
-        );
-        when(restaurantDataMapper.get(1)).thenReturn(
-                Optional.of(afuriRestaurant)
-        );
-        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                emptyList()
-        );
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(new User(1L, "hanako@email", "hanako"))
-        );
-        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
-                singletonList(new Like(11L, 1L))
-        );
-        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
-                new PriceRange(0L, "Not Specified")
-        );
-
-        mockMvc.perform(get("/restaurants/1")
-                        .requestAttr("userId", 11L)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.liked", equalTo(true)));
-    }
-
-    @Test
-    public void test_getRestaurant_returnsRestaurantWithPriceRange() throws Exception {
-        Restaurant afuriRestaurant = new Restaurant(
-                1,
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "",
-                "created-date",
-                "updated-date", 1,
-                1L,
-                0L
-        );
-        when(restaurantDataMapper.get(1)).thenReturn(
-                Optional.of(afuriRestaurant)
-        );
-        when(photoDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                emptyList()
-        );
-        when(userDataMapper.get(anyLong())).thenReturn(
-                Optional.of(new User(1L, "hanako@email", "hanako"))
-        );
-        when(likeDataMapper.findForRestaurant(afuriRestaurant.getId())).thenReturn(
-                singletonList(new Like(11L, 1L))
-        );
-        when(priceRangeDataMapper.findForRestaurant(afuriRestaurant)).thenReturn(
-                new PriceRange(1, "~900")
-        );
-
-        mockMvc.perform(get("/restaurants/1")
-                .requestAttr("userId", 11L)
-        )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.price_range", equalTo("~900")));
-    }
-
-    @Test
-    public void test_getInvalidRestaurantId_throwsException() throws Exception {
-        when(restaurantDataMapper.get(1)).thenReturn(
-                Optional.empty()
-        );
-
-
-        mockMvc.perform(get("/restaurants/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("{\"error\":\"Invalid restaurant id.\"}"));
     }
 
     @Test
