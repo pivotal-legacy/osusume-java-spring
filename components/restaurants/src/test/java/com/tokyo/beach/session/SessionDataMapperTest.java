@@ -5,6 +5,7 @@ import com.tokyo.beach.restaurants.session.TokenGenerator;
 import com.tokyo.beach.restaurants.session.UserSession;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
-import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.TestDatabaseUtils.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -37,16 +36,15 @@ public class SessionDataMapperTest {
         this.jdbcTemplate = new JdbcTemplate(buildDataSource());
         this.sessionDataMapper = new SessionDataMapper(this.jdbcTemplate);
 
-        NewUser newUser = new NewUser(
-                "jmiller@gmail.com", "password", "Jim Miller"
-        );
         mockTokenGenerator = mock(TokenGenerator.class);
         when(mockTokenGenerator.nextToken()).thenReturn("new-token");
 
-        userId = insertUserIntoDatabase(jdbcTemplate, newUser).getId();
-        user = new User(
-                userId, newUser.getEmail(), newUser.getName()
-        );
+        user = new UserFixture()
+                .withEmail("jmiller@gmail.com")
+                .withName("Jim Miller")
+                .withPassword("password")
+                .persist(jdbcTemplate);
+        userId = user.getId();
     }
 
     @After
@@ -61,7 +59,6 @@ public class SessionDataMapperTest {
                 user
         );
 
-
         UserSession expectedUserSession = new UserSession(mockTokenGenerator, "jmiller@gmail.com", "Jim Miller", userId);
         assertEquals(actualUserSession, expectedUserSession);
     }
@@ -72,7 +69,6 @@ public class SessionDataMapperTest {
                 mockTokenGenerator,
                 user
         );
-
 
         String sql = "SELECT token FROM session WHERE user_id = ?";
         List<String> persistedTokens = jdbcTemplate.queryForList(
@@ -85,11 +81,13 @@ public class SessionDataMapperTest {
 
     @Test
     public void test_validateToken_returnsUserId() throws Exception {
-        insertSessionIntoDatabase("token-value", userId);
+        new SessionFixture()
+                .withTokenValue("token-value")
+                .withUserId(userId)
+                .persist(jdbcTemplate);
 
 
         Optional<Long> maybeUserId = sessionDataMapper.validateToken("token-value");
-
 
         assertEquals(userId, maybeUserId.get());
     }
@@ -98,17 +96,17 @@ public class SessionDataMapperTest {
     public void test_validateToken_returnsEmptyForInvalidCredentials() throws Exception {
         Optional<Long> maybeUserId = sessionDataMapper.validateToken("invalid-token");
 
-
         assertFalse(maybeUserId.isPresent());
     }
 
     @Test
     public void test_delete_removesSessionRecordForValidToken() throws Exception {
-        insertSessionIntoDatabase("token-value", userId.intValue());
-
+        new SessionFixture()
+                .withTokenValue("token-value")
+                .withUserId(userId)
+                .persist(jdbcTemplate);
 
         sessionDataMapper.delete("token-value");
-
 
         String sql = "SELECT count(*) FROM session WHERE token = ?";
         int count = jdbcTemplate.queryForObject(
@@ -117,17 +115,5 @@ public class SessionDataMapperTest {
                 Integer.class
         );
         assertThat(count, is(0));
-    }
-
-    private void insertSessionIntoDatabase(String token, long userId) {
-        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("session")
-                .usingColumns("token", "user_id");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("token", token);
-        params.put("user_id", userId);
-
-        insert.execute(params);
     }
 }

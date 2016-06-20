@@ -184,6 +184,22 @@ public class TestDatabaseUtils {
         );
     }
 
+    public static void insertSessionIntoDatabase(
+            JdbcTemplate jdbcTemplate,
+            String token,
+            long userId
+    ) {
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("session")
+                .usingColumns("token", "user_id");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("token", token);
+        params.put("user_id", userId);
+
+        insert.execute(params);
+    }
+
     public static void truncateAllTables(JdbcTemplate jdbcTemplate) {
         jdbcTemplate.update("TRUNCATE TABLE photo_url, restaurant, cuisine, session, users, comment, likes, price_range");
     }

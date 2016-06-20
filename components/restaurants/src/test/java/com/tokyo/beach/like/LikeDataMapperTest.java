@@ -6,6 +6,7 @@ import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
@@ -147,39 +148,20 @@ public class LikeDataMapperTest {
 
     @Test
     public void test_findForRestaurant_returnsLikeList() throws Exception {
-        long createdByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new NewUser("hiro@gmail.com", "password", "Hiro")
-        ).getId();
+        User user = new UserFixture().persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withUser(user)
+                .persist(jdbcTemplate);
 
-        long restaurantId = insertRestaurantIntoDatabase(jdbcTemplate,
-                new NewRestaurant(
-                        "restaurant_name",
-                        "address",
-                        "",
-                        0L,
-                        0L,
-                        emptyList()),
-                createdByUserId
-        ).getId();
-
-        Long likeByUserId = insertUserIntoDatabase(jdbcTemplate,
-                new NewUser("yuki@gmail.com", "password", "Yuki")
-        ).getId();
-
+        Like like = new LikeFixture()
+                .withRestaurantId(restaurant.getId())
+                .withUserId(user.getId())
+                .persist(jdbcTemplate);
 
         LikeDataMapper likeDataMapper = new LikeDataMapper(jdbcTemplate);
-        String sql = "INSERT INTO likes (user_id, restaurant_id) VALUES (?, ?) RETURNING *";
-        Like persistedLike = jdbcTemplate.queryForObject(
-                sql,
-                likeRowMapper,
-                likeByUserId.longValue(),
-                restaurantId
-        );
+        List<Like> likes = likeDataMapper.findForRestaurant(restaurant.getId());
 
-
-        List<Like> likes = likeDataMapper.findForRestaurant(restaurantId);
-
-        assertEquals(likes.get(0), persistedLike);
+        assertEquals(likes.get(0), like);
     }
 
     @Test

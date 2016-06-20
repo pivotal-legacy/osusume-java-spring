@@ -42,10 +42,10 @@ public class PhotoDataMapperTest {
 
     @Test
     public void test_findForRestaurants_returnsPhotoUrlList() throws Exception {
-        TestDatabaseUtils.insertPhotoUrlIntoDatabase(
-                jdbcTemplate,
-                new PhotoUrl(0, "http://some-url", 1)
-        );
+        PhotoUrl photoUrl  = new PhotoUrlFixture()
+                .withUrl("http://some-url")
+                .withRestaurantId(1)
+                .persist(jdbcTemplate);
 
         List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(1L));
 
@@ -53,7 +53,7 @@ public class PhotoDataMapperTest {
 
         PhotoUrl firstPhoto = photos.get(0);
 
-        assertThat(firstPhoto.getRestaurantId(), is(1L));
+        assertThat(firstPhoto.getRestaurantId(), is(photoUrl.getRestaurantId()));
     }
 
     @Test
@@ -81,14 +81,12 @@ public class PhotoDataMapperTest {
     @Test
     public void test_findForRestaurant_returnsPhotoUrlList() throws Exception {
         long restaurantId = 1;
-        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
-                jdbcTemplate,
-                new PhotoUrl(0, "http://some-url", restaurantId)
-        );
-
+        PhotoUrl photoUrl = new PhotoUrlFixture()
+                .withUrl("http://some-url")
+                .withRestaurantId(restaurantId)
+                .persist(jdbcTemplate);
 
         List<PhotoUrl> photos = photoDataMapper.findForRestaurant(restaurantId);
-
 
         assertThat(photos, hasSize(1));
         assertThat(photos.get(0).getRestaurantId(), is(restaurantId));
@@ -96,37 +94,32 @@ public class PhotoDataMapperTest {
     }
 
     @Test
-    public void test_getPhotoUrl_returnsPhotoUrl() throws Exception {
-        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
-                jdbcTemplate,
-                new PhotoUrl(0, "http://url.com", 10)
-        );
-
+    public void test_get_returnsPhotoUrl() throws Exception {
+        PhotoUrl photoUrl = new PhotoUrlFixture()
+                .withUrl("http://url.com")
+                .withRestaurantId(10L)
+                .persist(jdbcTemplate);
 
         Optional<PhotoUrl> actualPhotoUrl = photoDataMapper.get(photoUrl.getId());
-
 
         assertThat(actualPhotoUrl.get(), is(photoUrl));
     }
 
     @Test
-    public void test_getNonexistentPhotoUrl_returnsEmpty() throws Exception {
+    public void test_get_returnsEmptyWhenNonexistentPhotoUrl() throws Exception {
         Optional<PhotoUrl> actualPhotoUrl = photoDataMapper.get(99);
-
 
         assertFalse(actualPhotoUrl.isPresent());
     }
 
     @Test
     public void test_delete_deletesPhotoUrl() throws  Exception {
-        PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
-                jdbcTemplate,
-                new PhotoUrl(0, "http://url.com", 10)
-        );
-
+        PhotoUrl photoUrl = new PhotoUrlFixture()
+                .withUrl("http://url.com")
+                .withRestaurantId(10)
+                .persist(jdbcTemplate);
 
         photoDataMapper.delete(photoUrl.getId());
-
 
         int count = jdbcTemplate.queryForObject("SELECT count(*) FROM photo_url WHERE id = ?",
                 new Object[]{photoUrl.getId()},

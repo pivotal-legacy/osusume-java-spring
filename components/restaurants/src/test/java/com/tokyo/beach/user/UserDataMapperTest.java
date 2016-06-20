@@ -70,16 +70,14 @@ public class UserDataMapperTest {
 
     @Test
     public void test_getExistingUserWithCredentials_returnsUser() throws Exception {
-        NewUser newUser = new NewUser(
-                "user@gmail.com", "password", "Username"
-        );
-        insertUserIntoDatabase(jdbcTemplate, newUser);
-
+        User user = new UserFixture()
+                .withEmail("user@gmail.com")
+                .withPassword("password")
+                .persist(jdbcTemplate);
 
         Optional<User> maybeUser = userDataMapper.get(
-                new LogonCredentials(newUser.getEmail(), newUser.getPassword())
+                new LogonCredentials(user.getEmail(), "password")
         );
-
 
         assertTrue(maybeUser.get().getId() > 0);
         assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
@@ -87,15 +85,13 @@ public class UserDataMapperTest {
 
     @Test
     public void test_getExistingUser_isCaseInsenitive() throws Exception {
-        NewUser newUser = new NewUser(
-                "user@gmail.com", "password", "Username"
-        );
-        insertUserIntoDatabase(jdbcTemplate, newUser);
-
+        new UserFixture()
+                .withEmail("user@gmail.com")
+                .withPassword("password")
+                .persist(jdbcTemplate);
 
         LogonCredentials queryCredentials = new LogonCredentials("User@gMail.com", "password");
         Optional<User> maybeUser = userDataMapper.get(queryCredentials);
-
 
         assertTrue(maybeUser.isPresent());
     }
@@ -104,32 +100,27 @@ public class UserDataMapperTest {
     public void test_getNonExistentUser_returnsEmptyOptional() throws Exception {
         LogonCredentials credentials = new LogonCredentials("user@gmail.com", "password");
 
-
         Optional<User> maybeUser = userDataMapper.get(credentials);
-
 
         assertFalse(maybeUser.isPresent());
     }
 
     @Test
     public void test_getExistingUserWithUserId_returnsUser() throws Exception {
-        NewUser newUser = new NewUser(
-                "user@gmail.com", "password", "Username"
-        );
-        Number userId = insertUserIntoDatabase(jdbcTemplate, newUser).getId();
+        User user = new UserFixture()
+                .withEmail("user@gmail.com")
+                .withPassword("password")
+                .persist(jdbcTemplate);
 
+        Optional<User> maybeUser = userDataMapper.get(user.getId());
 
-        Optional<User> maybeUser = userDataMapper.get(userId.longValue());
-
-
-        assertTrue(maybeUser.get().getId() == userId.longValue());
-        assertThat(maybeUser.get().getEmail(), is("user@gmail.com"));
+        assertTrue(maybeUser.get().getId() == user.getId());
+        assertThat(maybeUser.get().getEmail(), is(user.getEmail()));
     }
 
     @Test
     public void test_getNonExistentUserWithUserId_returnsEmptyOptional() throws Exception {
         Optional<User> maybeUser = userDataMapper.get(999);
-
 
         assertFalse(maybeUser.isPresent());
     }

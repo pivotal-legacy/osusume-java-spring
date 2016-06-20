@@ -9,6 +9,7 @@ public class UserFixture {
     private long id = 0;
     private String name = "Not Specified";
     private String email = "Not Specified";
+    private String password = "Not Specified";
 
     public UserFixture withId(long id) {
         this.id = id;
@@ -25,6 +26,11 @@ public class UserFixture {
         return this;
     }
 
+    public UserFixture withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
     public User build() {
         return new User(
                 id,
@@ -36,7 +42,7 @@ public class UserFixture {
     public User persist(JdbcTemplate jdbcTemplate) {
         NewUser newUser = new NewUser(
                 email,
-                null,
+                password,
                 name
         );
 
