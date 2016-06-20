@@ -7,7 +7,7 @@ import java.util.List;
 
 public class NewRestaurantFixture {
     private Long priceRangeId = 0L;
-    private long cuisineId = 0;
+    private Long cuisineId = null;
     private String name = "Not Specified";
     private String address = "address";
     private List<NewPhotoUrl> photoUrls = null;

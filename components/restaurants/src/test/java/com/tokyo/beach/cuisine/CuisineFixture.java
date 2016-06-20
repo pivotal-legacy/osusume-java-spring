@@ -14,7 +14,7 @@ public class CuisineFixture {
     }
 
     public Cuisine build() {
-        return new Cuisine(name);
+        return new Cuisine(0L, name);
     }
 
     public Cuisine persist(JdbcTemplate jdbcTemplate) {

@@ -9,6 +9,7 @@ import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
+import com.tokyo.beach.restaurants.restaurant.RestaurantDataMapper;
 import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -18,6 +19,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tokyo.beach.restaurants.restaurant.RestaurantRowMapper.restaurantRowMapper;
 
 public class TestDatabaseUtils {
     public static DataSource buildDataSource() {
@@ -110,19 +113,7 @@ public class TestDatabaseUtils {
         long id = insert.executeAndReturnKey(params).longValue();
         return jdbcTemplate.queryForObject(
                 "SELECT * from restaurant where id = ?",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            id,
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id")
-                    );
-                },
+                restaurantRowMapper,
                 id
         );
     }

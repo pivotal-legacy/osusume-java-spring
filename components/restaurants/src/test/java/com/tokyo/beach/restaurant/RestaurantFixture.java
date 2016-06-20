@@ -14,7 +14,7 @@ public class RestaurantFixture {
     private String createdAt = "created-date";
     private String updatedAt = "updated-date";
     private String notes = "notes";
-    private Cuisine cuisine = new Cuisine("Not Specified");
+    private Cuisine cuisine = new Cuisine(0, "Not Specified");
     private PriceRange priceRange = new PriceRange(0, "Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
     private String address = "address";
@@ -79,12 +79,18 @@ public class RestaurantFixture {
     }
 
     public Restaurant persist(JdbcTemplate jdbcTemplate) {
-        NewRestaurant newRestaurant = new NewRestaurantFixture().
-                withCuisineId(cuisine.getId())
-                .withPriceRangeId(priceRange.getId())
+        NewRestaurantFixture fixture = new NewRestaurantFixture()
                 .withName(name)
                 .withAddress(address)
-                .withNotes(notes)
+                .withNotes(notes);
+
+        if (cuisine != null) {
+            fixture = fixture.withCuisineId(cuisine.getId());
+        }
+        if ( priceRange != null) {
+            fixture = fixture.withPriceRangeId(priceRange.getId());
+        }
+        NewRestaurant newRestaurant = fixture
                 .build();
 
         return TestDatabaseUtils.insertRestaurantIntoDatabase(

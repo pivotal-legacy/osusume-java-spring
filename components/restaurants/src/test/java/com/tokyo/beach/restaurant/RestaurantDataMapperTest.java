@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static com.tokyo.beach.restaurants.restaurant.RestaurantRowMapper.restaurantRowMapper;
 import static java.lang.Boolean.TRUE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -66,33 +67,11 @@ public class RestaurantDataMapperTest {
                 .withUpdatedAt("2016-01-02")
                 .persist(jdbcTemplate);
 
-
         List<Restaurant> restaurants = restaurantDataMapper.getAll();
 
-
         List<Restaurant> expectedRestaurants = asList(
-                new Restaurant(
-                        restaurant2.getId(),
-                        "Butagumi",
-                        "Roppongi",
-                        "notes",
-                        restaurant2.getCreatedDate(),
-                        restaurant2.getUpdatedDate(),
-                        user.getId(),
-                        0L,
-                        0L
-                ),
-                new Restaurant(
-                    restaurant1.getId(),
-                    "Afuri",
-                    "Roppongi",
-                    "notes",
-                    restaurant1.getCreatedDate(),
-                    restaurant1.getUpdatedDate(),
-                    user.getId(),
-                    0L,
-                    0L
-                )
+                restaurant2,
+                restaurant1
             );
 
         assertThat(restaurants, is(expectedRestaurants));
@@ -108,18 +87,16 @@ public class RestaurantDataMapperTest {
                 .withName("Fried Chicken")
                 .persist(jdbcTemplate);
 
-        NewRestaurant kfcNewRestaurant = new NewRestaurant(
-                "KFC",
-                "Shibuya",
-                "Notes",
-                cuisine.getId(),
-                priceRange.getId(),
-                emptyList()
-        );
+        NewRestaurant kfcNewRestaurant = new NewRestaurantFixture()
+                .withName("KFC")
+                .withAddress("Shibuya")
+                .withNotes("Notes")
+                .withCuisineId(cuisine.getId())
+                .withPriceRangeId(priceRange.getId())
+                .build();
 
 
         Restaurant createdRestaurant = restaurantDataMapper.createRestaurant(kfcNewRestaurant, user.getId());
-
 
         Map<String, Object> map = jdbcTemplate.queryForMap(
                 "SELECT * FROM restaurant WHERE id = ?",
@@ -138,29 +115,17 @@ public class RestaurantDataMapperTest {
 
     @Test
     public void testCreateRestaurant_withoutCuisineId() throws Exception {
-        NewRestaurant kfcNewRestaurant = new NewRestaurant(
-                "KFC",
-                "Shibuya",
-                "Notes",
-                null,
-                0L,
-                emptyList()
-        );
-
+        NewRestaurant kfcNewRestaurant = new NewRestaurantFixture()
+                .withName("KFC")
+                .withAddress("Shibuya")
+                .withNotes("Notes")
+                .build();
 
         Restaurant createdRestaurant = restaurantDataMapper.createRestaurant(kfcNewRestaurant, user.getId());
 
-
-        NewRestaurant actualRestaurant = jdbcTemplate.queryForObject(
+        Restaurant actualRestaurant = jdbcTemplate.queryForObject(
                 "SELECT * FROM restaurant WHERE id = ?",
-                (rs, rowNum) -> new NewRestaurant(
-                        rs.getString("name"),
-                        rs.getString("address"),
-                        rs.getString("notes"),
-                        rs.getLong("cuisine_id"),
-                        0L,
-                        emptyList()
-                ),
+                restaurantRowMapper,
                 createdRestaurant.getId()
         );
 
@@ -181,9 +146,7 @@ public class RestaurantDataMapperTest {
                 user.getId()
         );
 
-
         Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(id);
-
 
         assertThat(maybeRestaurant.get().getName(), is("Amazing Restaurant"));
         assertThat(maybeRestaurant.get().getUpdatedDate(), is("2016-01-01 00:00:00"));
@@ -192,7 +155,6 @@ public class RestaurantDataMapperTest {
     @Test
     public void test_get_returnsEmptyOptionalForInvalidRestaurantId() throws Exception {
         Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(999);
-
 
         assertFalse(maybeRestaurant.isPresent());
     }
@@ -240,16 +202,11 @@ public class RestaurantDataMapperTest {
                 .withUpdatedAt("2016-01-01 16:42:19.572569")
                 .persist(jdbcTemplate);
 
-
-        NewRestaurant updatedNewRestaurant = new NewRestaurant(
-                "Kentucky",
-                "East Shibuya",
-                "Actually, not really healthy...",
-                0L,
-                0L,
-                emptyList()
-        );
-
+        NewRestaurant updatedNewRestaurant = new NewRestaurantFixture()
+                .withName("Kentucky")
+                .withAddress("East Shibuya")
+                .withNotes("Actually, not really healthy...")
+                .build();
 
         Restaurant updatedRestaurant = restaurantDataMapper.updateRestaurant(
                 restaurant.getId(),

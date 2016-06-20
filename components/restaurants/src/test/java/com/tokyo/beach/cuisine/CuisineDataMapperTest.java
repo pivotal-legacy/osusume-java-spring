@@ -1,10 +1,13 @@
 package com.tokyo.beach.cuisine;
 
+import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.cuisine.NewCuisine;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
+import com.tokyo.beach.restaurants.user.User;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,67 +106,30 @@ public class CuisineDataMapperTest {
 
     @Test
     public void test_findForRestaurant_returnCuisine() {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("joe@pivotal.io", "password", "Joe")
-        ).getId();
+        User user = new UserFixture()
+                .persist(jdbcTemplate);
+        Cuisine cuisine = new CuisineFixture()
+                .withName("Cuisine Test1")
+                .persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withCuisine(cuisine)
+                .withUser(user)
+                .persist(jdbcTemplate);
 
-        Long cuisineId = jdbcTemplate.queryForObject(
-                "INSERT INTO cuisine (name) VALUES " +
-                        "('Cuisine Test1') RETURNING id",
-                (rs, rowNum) -> rs.getLong("id")
-        );
-        Restaurant restaurant = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, cuisine_id, created_by_user_id) VALUES " +
-                        "('TEST RESTAURANT', ?, ?) RETURNING *",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            0L,
-                            rs.getLong("cuisine_id")
-                    );
-                },
-                cuisineId,
-                userId
-        );
+        Cuisine foundCuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
 
-        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
-
-        assertThat(cuisine.getId(), is(cuisineId));
-        assertThat(cuisine.getName(), is("Cuisine Test1"));
+        assertThat(cuisine.getId(), is(foundCuisine.getId()));
+        assertThat(cuisine.getName(), is(foundCuisine.getName()));
     }
 
     @Test
     public void test_findForRestaurant_returnNotSpecified_whenCuisineTypeNotSpecified() {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("joe@pivotal.io", "password", "Joe")
-        ).getId();
-
-        Restaurant restaurant = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
-                        "('TEST RESTAURANT', ?) RETURNING *",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            0L,
-                            rs.getLong("cuisine_id")
-                    );
-                },
-                userId
-        );
+        User user = new UserFixture()
+                .persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withUser(user)
+                .withCuisine(null)
+                .persist(jdbcTemplate);
 
         Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
 
