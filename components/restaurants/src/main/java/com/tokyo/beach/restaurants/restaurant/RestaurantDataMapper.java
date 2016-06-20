@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,38 +21,18 @@ public class RestaurantDataMapper {
     }
 
     public List<Restaurant> getAll() {
-        return jdbcTemplate
-                .query("SELECT * FROM restaurant ORDER BY created_at DESC", (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id"));
-                });
+        return jdbcTemplate.query(
+                "SELECT * FROM restaurant ORDER BY created_at DESC",
+                RestaurantDataMapper::mapRow
+        );
     }
 
     public Optional<Restaurant> get(long id) {
-        List<Restaurant> restaurants = jdbcTemplate
-                .query("SELECT * FROM restaurant WHERE id = ?",
-                        (rs, rowNum) -> {
-                            return new Restaurant(
-                                    rs.getLong("id"),
-                                    rs.getString("name"),
-                                    rs.getString("address"),
-                                    rs.getString("notes"),
-                                    rs.getString("created_at"),
-                                    rs.getString("updated_at"),
-                                    rs.getLong("created_by_user_id"),
-                                    rs.getLong("price_range_id"),
-                                    rs.getLong("cuisine_id"));
-                        },
-                        id
-                );
+        List<Restaurant> restaurants = jdbcTemplate.query(
+                "SELECT * FROM restaurant WHERE id = ?",
+                RestaurantDataMapper::mapRow,
+                id
+        );
 
         if (restaurants.size() == 1) {
             return Optional.of(restaurants.get(0));
@@ -68,18 +50,7 @@ public class RestaurantDataMapper {
                         "RETURNING " +
                         "id, name, address, " +
                         "notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id"));
-                },
+                RestaurantDataMapper::mapRow,
                 newRestaurant.getName(),
                 newRestaurant.getAddress(),
                 newRestaurant.getNotes(),
@@ -90,19 +61,9 @@ public class RestaurantDataMapper {
     }
 
     public List<Restaurant> getRestaurantsPostedByUser(long userId) {
-        return jdbcTemplate.query("SELECT * FROM restaurant WHERE created_by_user_id = ?",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id"));
-                },
+        return jdbcTemplate.query(
+                "SELECT * FROM restaurant WHERE created_by_user_id = ?",
+                RestaurantDataMapper::mapRow,
                 userId
         );
     }
@@ -115,18 +76,7 @@ public class RestaurantDataMapper {
         return namedTemplate.query(
                 "SELECT * FROM restaurant WHERE id IN (:ids)",
                 parameters,
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id"));
-                }
+                RestaurantDataMapper::mapRow
         );
     }
 
@@ -137,18 +87,7 @@ public class RestaurantDataMapper {
                         "(?, ?, ?, now()) " +
                         "WHERE id = ? " +
                         "RETURNING id, name, address, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            rs.getLong("price_range_id"),
-                            rs.getLong("cuisine_id"));
-                },
+                RestaurantDataMapper::mapRow,
                 restaurant.getName(),
                 restaurant.getAddress(),
                 restaurant.getNotes(),
@@ -156,4 +95,17 @@ public class RestaurantDataMapper {
         );
     }
 
+    private static Restaurant mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new Restaurant(
+                rs.getLong("id"),
+                rs.getString("name"),
+                rs.getString("address"),
+                rs.getString("notes"),
+                rs.getString("created_at"),
+                rs.getString("updated_at"),
+                rs.getLong("created_by_user_id"),
+                rs.getLong("price_range_id"),
+                rs.getLong("cuisine_id")
+        );
+    }
 }

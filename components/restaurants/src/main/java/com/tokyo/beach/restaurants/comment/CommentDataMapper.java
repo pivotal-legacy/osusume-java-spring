@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,15 +23,7 @@ public class CommentDataMapper {
         String sql = "INSERT INTO comment (content, restaurant_id, created_by_user_id) VALUES (?, ?, ?) RETURNING *";
         return jdbcTemplate.queryForObject(
                 sql,
-                (rs, rowNum) -> {
-                    return new Comment(
-                            rs.getLong("id"),
-                            rs.getString("content"),
-                            rs.getString("created_at"),
-                            rs.getLong("restaurant_id"),
-                            rs.getLong("created_by_user_id")
-                    );
-                },
+                CommentDataMapper::mapRow,
                 newComment.getComment(),
                 restaurantId,
                 createdByUserId
@@ -42,7 +36,6 @@ public class CommentDataMapper {
                         "inner join users on comment.created_by_user_id = users.id " +
                         "where restaurant_id = ?",
                 (rs, rowNum) -> {
-
                     return new SerializedComment(
                             new Comment(
                                     rs.getLong("comment_id"),
@@ -66,15 +59,7 @@ public class CommentDataMapper {
     public Optional<Comment> get(long commentId) {
         List<Comment> comments = jdbcTemplate.query(
                 "SELECT * FROM comment WHERE id = ?",
-                (rs, rowNum) -> {
-                    return new Comment(
-                            rs.getLong("id"),
-                            rs.getString("content"),
-                            rs.getString("created_at"),
-                            rs.getLong("restaurant_id"),
-                            rs.getLong("created_by_user_id")
-                    );
-                },
+                CommentDataMapper::mapRow,
                 commentId
         );
 
@@ -89,5 +74,13 @@ public class CommentDataMapper {
         jdbcTemplate.update("DELETE FROM comment WHERE id = ?", commentId);
     }
 
-
+    private static Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new Comment(
+                rs.getLong("id"),
+                rs.getString("content"),
+                rs.getString("created_at"),
+                rs.getLong("restaurant_id"),
+                rs.getLong("created_by_user_id")
+        );
+    }
 }

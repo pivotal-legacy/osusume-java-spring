@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,12 +54,7 @@ public class LikeDataMapper {
     public List<Like> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT * FROM likes WHERE restaurant_id = ?",
-                (rs, rowNum) -> {
-                    return new Like(
-                            rs.getLong("user_id"),
-                            rs.getLong("restaurant_id")
-                    );
-                },
+                LikeDataMapper::mapRow,
                 restaurantId
         );
     }
@@ -83,12 +80,14 @@ public class LikeDataMapper {
         return namedTemplate.query(
                 "SELECT * FROM likes WHERE restaurant_id IN (:ids)",
                 parameters,
-                (rs, rowNum) -> {
-                    return new Like(
-                            rs.getLong("user_id"),
-                            rs.getLong("restaurant_id")
-                    );
-                }
+                LikeDataMapper::mapRow
+        );
+    }
+
+    private static Like mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new Like(
+                rs.getLong("user_id"),
+                rs.getLong("restaurant_id")
         );
     }
 }

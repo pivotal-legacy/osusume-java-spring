@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,13 +44,7 @@ public class UserDataMapper {
         String sql = "SELECT id, email, name FROM users WHERE lower(email) = ? AND password = ?";
         List<User> users = jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> {
-                    return new User(
-                            rs.getLong("id"),
-                            rs.getString("email"),
-                            rs.getString("name")
-                    );
-                },
+                UserDataMapper::mapRow,
                 credentials.getEmail().toLowerCase(),
                 credentials.getPassword()
         );
@@ -64,13 +60,7 @@ public class UserDataMapper {
         String sql = "SELECT id, email, name FROM users WHERE id = ?";
         List<User> users = jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> {
-                    return new User(
-                            rs.getLong("id"),
-                            rs.getString("email"),
-                            rs.getString("name")
-                    );
-                },
+                UserDataMapper::mapRow,
                 userId
         );
 
@@ -89,12 +79,7 @@ public class UserDataMapper {
         return namedTemplate.query(
                 "SELECT * FROM users WHERE id IN (:ids)",
                 parameters,
-                (rs, rowNum) -> {
-                    return new User(
-                            rs.getLong("id"),
-                            rs.getString("email"),
-                            rs.getString("name"));
-                }
+                UserDataMapper::mapRow
         );
     }
 
@@ -102,14 +87,16 @@ public class UserDataMapper {
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM users WHERE id = " +
                         "(SELECT created_by_user_id FROM restaurant WHERE id = ?)",
-                (rs, rowNum) -> {
-                    return new User(
-                            rs.getLong("id"),
-                            rs.getString("email"),
-                            rs.getString("name")
-                    );
-                },
+                UserDataMapper::mapRow,
                 restaurantId
+        );
+    }
+
+    private static User mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
+                rs.getLong("id"),
+                rs.getString("email"),
+                rs.getString("name")
         );
     }
 }

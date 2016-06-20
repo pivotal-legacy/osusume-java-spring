@@ -39,10 +39,9 @@ public class SessionDataMapper {
     public Optional<Long> validateToken(String token) {
         List<Long> userIds = jdbcTemplate.query(
                 "SELECT user_id FROM session where token = ?",
-               (rs, rowNum) -> {
-                   return  rs.getLong("user_id");
-               },
-               token);
+               (rs, rowNum) -> rs.getLong("user_id"),
+               token
+        );
 
         if (userIds.size() == 1) {
             return Optional.of(userIds.get(0));
