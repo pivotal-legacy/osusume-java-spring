@@ -1,8 +1,6 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.TestDatabaseUtils;
-import com.tokyo.beach.cuisine.CuisineFixture;
-import com.tokyo.beach.pricerange.PriceRangeFixture;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
@@ -71,9 +69,6 @@ public class RestaurantFixture {
                 id,
                 name,
                 address,
-                false,
-                true,
-                false,
                 notes,
                 createdAt,
                 updatedAt,

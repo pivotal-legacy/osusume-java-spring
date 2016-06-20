@@ -25,9 +25,6 @@ public class RestaurantDataMapper {
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
@@ -45,9 +42,6 @@ public class RestaurantDataMapper {
                                     rs.getLong("id"),
                                     rs.getString("name"),
                                     rs.getString("address"),
-                                    rs.getBoolean("offers_english_menu"),
-                                    rs.getBoolean("walk_ins_ok"),
-                                    rs.getBoolean("accepts_credit_cards"),
                                     rs.getString("notes"),
                                     rs.getString("created_at"),
                                     rs.getString("updated_at"),
@@ -68,20 +62,17 @@ public class RestaurantDataMapper {
     public Restaurant createRestaurant(NewRestaurant newRestaurant, Long createdByUserId) {
         return jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (" +
-                        "name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, " +
+                        "name, address, " +
                         "notes, cuisine_id, price_range_id, created_by_user_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                        "VALUES (?, ?, ?, ?, ?, ?) " +
                         "RETURNING " +
-                        "id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, " +
+                        "id, name, address, " +
                         "notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
@@ -91,9 +82,6 @@ public class RestaurantDataMapper {
                 },
                 newRestaurant.getName(),
                 newRestaurant.getAddress(),
-                newRestaurant.getOffersEnglishMenu(),
-                newRestaurant.getWalkInsOk(),
-                newRestaurant.getAcceptsCreditCards(),
                 newRestaurant.getNotes(),
                 newRestaurant.getCuisineId(),
                 newRestaurant.getPriceRangeId(),
@@ -108,9 +96,6 @@ public class RestaurantDataMapper {
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
@@ -135,9 +120,6 @@ public class RestaurantDataMapper {
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
@@ -151,18 +133,15 @@ public class RestaurantDataMapper {
     public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
         return jdbcTemplate.queryForObject(
                 "UPDATE restaurant SET " +
-                        "(name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, updated_at) =" +
-                        "(?, ?, ?, ?, ?, ?, now()) " +
+                        "(name, address, notes, updated_at) =" +
+                        "(?, ?, ?, now()) " +
                         "WHERE id = ? " +
-                        "RETURNING id, name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
+                        "RETURNING id, name, address, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 (rs, rowNum) -> {
                     return new Restaurant(
                             rs.getLong("id"),
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
@@ -172,9 +151,6 @@ public class RestaurantDataMapper {
                 },
                 restaurant.getName(),
                 restaurant.getAddress(),
-                restaurant.getOffersEnglishMenu(),
-                restaurant.getWalkInsOk(),
-                restaurant.getAcceptsCreditCards(),
                 restaurant.getNotes(),
                 restaurantId
         );

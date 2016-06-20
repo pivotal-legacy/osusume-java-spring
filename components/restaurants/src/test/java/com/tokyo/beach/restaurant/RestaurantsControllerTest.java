@@ -84,9 +84,6 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(20)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Swedish")))
-                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
-                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
-                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].photo_urls[0].id", equalTo(999)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
@@ -126,9 +123,6 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.address", equalTo("Roppongi")))
                 .andExpect(jsonPath("$.cuisine.id", equalTo(20)))
                 .andExpect(jsonPath("$.cuisine.name", equalTo("Swedish")))
-                .andExpect(jsonPath("$.offers_english_menu", equalTo(false)))
-                .andExpect(jsonPath("$.walk_ins_ok", equalTo(true)))
-                .andExpect(jsonPath("$.accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$.notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$.photo_urls[0].id", equalTo(999)))
                 .andExpect(jsonPath("$.photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
@@ -193,9 +187,6 @@ public class RestaurantsControllerTest {
             "{" +
             "\"name\":\"Afuri\", " +
             "\"address\": \"Roppongi\", " +
-            "\"offers_english_menu\": false, " +
-            "\"walk_ins_ok\": true, " +
-            "\"accepts_credit_cards\": false, " +
             "\"notes\": \"soooo goood\", " +
             "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
             "\"cuisine_id\": \"2\", " +
@@ -213,9 +204,6 @@ public class RestaurantsControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.name", is("Afuri")))
         .andExpect(jsonPath("$.address", is("Roppongi")))
-        .andExpect(jsonPath("$.offers_english_menu", is(false)))
-        .andExpect(jsonPath("$.walk_ins_ok", is(true)))
-        .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
         .andExpect(jsonPath("$.notes", is("soooo goood")))
         .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
         .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
@@ -259,9 +247,6 @@ public class RestaurantsControllerTest {
         String updatedRestaurantPayload = "{\"restaurant\": " +
                 "{\"name\":\"Updated Name\", " +
                 "\"address\": \"Updated Address\", " +
-                "\"offers_english_menu\": false, " +
-                "\"walk_ins_ok\": true, " +
-                "\"accepts_credit_cards\": false, " +
                 "\"notes\": \"\"," +
                 "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
                 "\"cuisine_id\": \"2\"}" +
@@ -276,9 +261,6 @@ public class RestaurantsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Updated Name")))
                 .andExpect(jsonPath("$.address", is("Updated Address")))
-                .andExpect(jsonPath("$.offers_english_menu", is(false)))
-                .andExpect(jsonPath("$.walk_ins_ok", is(true)))
-                .andExpect(jsonPath("$.accepts_credit_cards", is(false)))
                 .andExpect(jsonPath("$.notes", is("")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))

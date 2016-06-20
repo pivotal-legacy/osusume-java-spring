@@ -164,9 +164,6 @@ public class LikeDataMapperTest {
                 new NewRestaurant(
                         "restaurant_name",
                         "address",
-                        true,
-                        true,
-                        true,
                         "",
                         0L,
                         0L,

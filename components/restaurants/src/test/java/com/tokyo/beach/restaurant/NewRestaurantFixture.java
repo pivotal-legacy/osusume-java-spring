@@ -47,9 +47,6 @@ public class NewRestaurantFixture {
         return new NewRestaurant(
                 name,
                 address,
-                false,
-                true,
-                false,
                 notes,
                 cuisineId,
                 priceRangeId,

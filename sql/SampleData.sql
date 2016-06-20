@@ -63,19 +63,19 @@ BEGIN
 
   -- Restaurants
 
-  INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
-    ('Butagumi', 'Roppongi Station underground', TRUE, TRUE, TRUE, 'Juicy tonkatsu!', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
+    ('Butagumi', 'Roppongi Station underground', 'Juicy tonkatsu!', dannyUserId);
 
-  INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
-    ('Afuri', 'Roppongi Station underground', FALSE, TRUE, FALSE , 'Light yuzu ramen', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
+    ('Afuri', 'Roppongi Station underground', 'Light yuzu ramen', dannyUserId);
 
-  INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
-    ('Pizzakaya', 'Down the street', TRUE, TRUE, TRUE, '', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
+    ('Pizzakaya', 'Down the street', '', dannyUserId);
 
-  INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
-    ('100 Birds', 'Bottom of the escalator', TRUE, TRUE, TRUE, 'Only non-smoking during lunch', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
+    ('100 Birds', 'Bottom of the escalator', 'Only non-smoking during lunch', dannyUserId);
 
-  INSERT INTO restaurant (name, address, offers_english_menu, walk_ins_ok, accepts_credit_cards, notes, created_by_user_id) VALUES
-    ('Kaiten Sushi', 'Bottom of the escalator', TRUE, TRUE, TRUE, 'Himawari lunch is cheap with lots of sushi', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
+    ('Kaiten Sushi', 'Bottom of the escalator', 'Himawari lunch is cheap with lots of sushi', dannyUserId);
 
 END $$;

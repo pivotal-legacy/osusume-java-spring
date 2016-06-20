@@ -73,9 +73,6 @@ public class ProfileControllerTest {
                         1,
                         "Afuri",
                         "Roppongi",
-                        false,
-                        true,
-                        false,
                         "とても美味しい",
                         "created-date",
                         "updated-date", 1,
@@ -108,14 +105,11 @@ public class ProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
-                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(10)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
-                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
-                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
                 .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
                 .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
@@ -142,9 +136,6 @@ public class ProfileControllerTest {
                         1,
                         "Afuri",
                         "Roppongi",
-                        false,
-                        true,
-                        false,
                         "とても美味しい",
                         "created-date",
                         "updated-date", 99,
@@ -177,14 +168,11 @@ public class ProfileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
-                .andExpect(jsonPath("$[0].accepts_credit_cards", equalTo(false)))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(10)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
-                .andExpect(jsonPath("$[0].offers_english_menu", equalTo(false)))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
-                .andExpect(jsonPath("$[0].walk_ins_ok", equalTo(true)))
                 .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
                 .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));

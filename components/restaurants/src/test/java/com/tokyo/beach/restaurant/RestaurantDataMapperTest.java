@@ -75,9 +75,6 @@ public class RestaurantDataMapperTest {
                         restaurant2.getId(),
                         "Butagumi",
                         "Roppongi",
-                        false,
-                        true,
-                        false,
                         "notes",
                         restaurant2.getCreatedDate(),
                         restaurant2.getUpdatedDate(),
@@ -89,9 +86,6 @@ public class RestaurantDataMapperTest {
                     restaurant1.getId(),
                     "Afuri",
                     "Roppongi",
-                    false,
-                    true,
-                    false,
                     "notes",
                     restaurant1.getCreatedDate(),
                     restaurant1.getUpdatedDate(),
@@ -117,9 +111,6 @@ public class RestaurantDataMapperTest {
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
-                TRUE,
-                TRUE,
-                TRUE,
                 "Notes",
                 cuisine.getId(),
                 priceRange.getId(),
@@ -138,9 +129,6 @@ public class RestaurantDataMapperTest {
         assertEquals(createdRestaurant.getId(), map.get("id"));
         assertEquals(createdRestaurant.getName(), "KFC");
         assertEquals(createdRestaurant.getAddress(), "Shibuya");
-        assertEquals(createdRestaurant.getOffersEnglishMenu(), true);
-        assertEquals(createdRestaurant.getWalkInsOk(), true);
-        assertEquals(createdRestaurant.getAcceptsCreditCards(), true);
         assertEquals(createdRestaurant.getNotes(), "Notes");
         assertEquals(createdRestaurant.getCreatedByUserId(), user.getId());
         assertEquals(createdRestaurant.getCuisineId().longValue(), cuisine.getId());
@@ -153,9 +141,6 @@ public class RestaurantDataMapperTest {
         NewRestaurant kfcNewRestaurant = new NewRestaurant(
                 "KFC",
                 "Shibuya",
-                TRUE,
-                TRUE,
-                TRUE,
                 "Notes",
                 null,
                 0L,
@@ -171,9 +156,6 @@ public class RestaurantDataMapperTest {
                 (rs, rowNum) -> new NewRestaurant(
                         rs.getString("name"),
                         rs.getString("address"),
-                        rs.getBoolean("offers_english_menu"),
-                        rs.getBoolean("walk_ins_ok"),
-                        rs.getBoolean("accepts_credit_cards"),
                         rs.getString("notes"),
                         rs.getLong("cuisine_id"),
                         0L,
@@ -262,9 +244,6 @@ public class RestaurantDataMapperTest {
         NewRestaurant updatedNewRestaurant = new NewRestaurant(
                 "Kentucky",
                 "East Shibuya",
-                Boolean.FALSE,
-                Boolean.FALSE,
-                Boolean.FALSE,
                 "Actually, not really healthy...",
                 0L,
                 0L,
@@ -286,9 +265,6 @@ public class RestaurantDataMapperTest {
         assertEquals(map.get("id"), updatedRestaurant.getId());
         assertEquals(map.get("name"), updatedRestaurant.getName());
         assertEquals(map.get("address"), updatedRestaurant.getAddress());
-        assertEquals(map.get("offers_english_menu"), updatedRestaurant.getOffersEnglishMenu());
-        assertEquals(map.get("walk_ins_ok"), updatedRestaurant.getWalkInsOk());
-        assertEquals(map.get("accepts_credit_cards"), updatedRestaurant.getAcceptsCreditCards());
         assertEquals(map.get("notes"), updatedRestaurant.getNotes());
         assertEquals(map.get("created_by_user_id"), user.getId());
         assertEquals(map.get("cuisine_id"), 0L);

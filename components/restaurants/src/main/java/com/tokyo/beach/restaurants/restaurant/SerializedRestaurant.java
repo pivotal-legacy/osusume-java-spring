@@ -8,7 +8,6 @@ import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.user.User;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.tokyo.beach.restaurants.DateFormatter.formatDateForSerialization;
 
@@ -57,21 +56,6 @@ public class SerializedRestaurant {
     @SuppressWarnings("unused")
     public String getAddress() {
         return restaurant.getAddress();
-    }
-
-    @JsonProperty("offers_english_menu")
-    public Boolean getOffersEnglishMenu() {
-        return restaurant.getOffersEnglishMenu();
-    }
-
-    @JsonProperty("walk_ins_ok")
-    public Boolean getWalkInsOk() {
-        return restaurant.getWalkInsOk();
-    }
-
-    @JsonProperty("accepts_credit_cards")
-    public Boolean getAcceptsCreditCards() {
-        return restaurant.getAcceptsCreditCards();
     }
 
     @SuppressWarnings("unused")
@@ -137,6 +121,7 @@ public class SerializedRestaurant {
         if (photoUrls != null ? !photoUrls.equals(that.photoUrls) : that.photoUrls != null) return false;
         if (cuisine != null ? !cuisine.equals(that.cuisine) : that.cuisine != null) return false;
         if (priceRange != null ? !priceRange.equals(that.priceRange) : that.priceRange != null) return false;
+        //noinspection SimplifiableIfStatement
         if (createdByUser != null ? !createdByUser.equals(that.createdByUser) : that.createdByUser != null)
             return false;
         return comments != null ? comments.equals(that.comments) : that.comments == null;

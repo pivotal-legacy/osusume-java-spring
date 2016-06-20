@@ -95,17 +95,13 @@ public class TestDatabaseUtils {
     ) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("restaurant")
-                .usingColumns("name", "address", "offers_english_menu", "walk_ins_ok",
-                        "accepts_credit_cards", "notes",
+                .usingColumns("name", "address", "notes",
                         "cuisine_id", "created_by_user_id", "price_range_id")
                 .usingGeneratedKeyColumns("id");
 
         Map<String, Object> params = new HashMap<>();
         params.put("name", newRestaurant.getName());
         params.put("address", newRestaurant.getAddress());
-        params.put("offers_english_menu", newRestaurant.getOffersEnglishMenu());
-        params.put("walk_ins_ok", newRestaurant.getWalkInsOk());
-        params.put("accepts_credit_cards", newRestaurant.getAcceptsCreditCards());
         params.put("notes", newRestaurant.getNotes());
         params.put("cuisine_id", newRestaurant.getCuisineId());
         params.put("created_by_user_id", userId);
@@ -119,9 +115,6 @@ public class TestDatabaseUtils {
                             id,
                             rs.getString("name"),
                             rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
                             rs.getString("notes"),
                             rs.getString("created_at"),
                             rs.getString("updated_at"),
