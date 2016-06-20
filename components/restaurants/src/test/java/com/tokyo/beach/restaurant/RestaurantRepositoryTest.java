@@ -251,18 +251,24 @@ public class RestaurantRepositoryTest {
                 .withPriceRangeId(priceRange.getId())
                 .build();
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
+        List<SerializedComment> comments = singletonList(
+                new SerializedComment(
+                        new CommentFixture().build(),
+                        user.get()
+                )
+        );
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 updatedRestaurant,
                 photoUrls,
                 cuisine,
                 Optional.of(priceRange),
                 user,
-                emptyList(),
-                false,
-                0L
+                comments,
+                true,
+                2L
         );
 
-        when(restaurantDataMapper.updateRestaurant(1L, newRestaurant)).thenReturn(
+        when(restaurantDataMapper.updateRestaurant(updatedRestaurant.getId(), newRestaurant)).thenReturn(
                 updatedRestaurant
         );
         when(photoDataMapper.findForRestaurant(updatedRestaurant))
@@ -275,7 +281,16 @@ public class RestaurantRepositoryTest {
         when(userDataMapper.get(anyLong())).thenReturn(
                 user
         );
-        assertThat(repository.update(1L, newRestaurant),
+        when(commentDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+                comments
+        );
+        when(likeDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+                asList(
+                        new Like(user.get().getId(), updatedRestaurant.getId()),
+                        new Like(12L, updatedRestaurant.getId())
+                )
+        );
+        assertThat(repository.update(updatedRestaurant.getId(), newRestaurant),
                 equalTo(serializedRestaurant));
     }
 }

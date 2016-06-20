@@ -169,6 +169,13 @@ public class RestaurantRepository {
         List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
         Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(newRestaurant.getCuisineId().toString());
         PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
+        List<SerializedComment> comments = commentDataMapper.findForRestaurant(restaurant.getId());
+
+        List<Like> likes = likeDataMapper.findForRestaurant(restaurant.getId());
+        boolean currentUserLikesRestaurant = likes
+                .stream()
+                .map(Like::getUserId)
+                .anyMatch(Predicate.isEqual(createdByUser.get().getId()));
 
         return new SerializedRestaurant(
                 restaurant,
@@ -176,9 +183,9 @@ public class RestaurantRepository {
                 maybeCuisine,
                 Optional.of(priceRange),
                 createdByUser,
-                emptyList(),
-                false,
-                0L
+                comments,
+                currentUserLikesRestaurant,
+                likes.size()
         );
     }
 }
