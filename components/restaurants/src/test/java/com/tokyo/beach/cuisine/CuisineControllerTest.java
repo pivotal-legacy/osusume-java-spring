@@ -57,7 +57,7 @@ public class CuisineControllerTest {
 
     @Test
     public void testGetCuisine() throws Exception {
-        when(cuisineDataMapper.getCuisine("1")).thenReturn(
+        when(cuisineDataMapper.getCuisine(1)).thenReturn(
                 Optional.of(
                         new Cuisine(
                                 1,

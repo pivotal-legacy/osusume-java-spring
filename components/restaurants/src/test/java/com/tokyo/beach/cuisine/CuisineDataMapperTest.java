@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static com.tokyo.beach.restaurants.cuisine.CuisineRowMapper.cuisineRowMapper;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -40,50 +41,33 @@ public class CuisineDataMapperTest {
 
     @Test
     public void testGetAll() {
-        Long cuisine1Id = jdbcTemplate.queryForObject(
-                "INSERT INTO cuisine " +
-                        "(name)" +
-                        "VALUES ('Test Cuisine1')" +
-                        "RETURNING *",
-                (rs, rowNum) -> rs.getLong("id")
-        );
-        Long cuisine2Id = jdbcTemplate.queryForObject(
-                "INSERT INTO cuisine " +
-                        "(name)" +
-                        "VALUES ('Test Cuisine2')" +
-                        "RETURNING *",
-                (rs, rowNum) -> rs.getLong("id")
-        );
+        Cuisine cuisine1 = new CuisineFixture()
+                .withName("Test Cuisine1")
+                .persist(jdbcTemplate);
+        Cuisine cuisine2 = new CuisineFixture()
+                .withName("Test Cuisine2")
+                .persist(jdbcTemplate);
 
         List<Cuisine> cuisines = cuisineDataMapper.getAll();
-        Cuisine exceptCuisine = new Cuisine(0L, "Not Specified");
-        Cuisine expectedCuisine1 = new Cuisine(cuisine1Id, "Test Cuisine1");
-        Cuisine expectedCuisine2 = new Cuisine(cuisine2Id, "Test Cuisine2");
 
-        assertTrue(cuisines.contains(exceptCuisine));
-        assertTrue(cuisines.contains(expectedCuisine1));
-        assertTrue(cuisines.contains(expectedCuisine2));
+        assertTrue(cuisines.contains(cuisine1));
+        assertTrue(cuisines.contains(cuisine2));
     }
 
     @Test
     public void testGetCuisine() {
-        Long cuisineId = jdbcTemplate.queryForObject(
-                "INSERT INTO cuisine " +
-                        "(name) " +
-                        "VALUES ('Cuisine Test1') " +
-                        "RETURNING id",
-                (rs, rowNum) -> rs.getLong("id")
-        );
+        Cuisine cuisine = new CuisineFixture()
+                .withName("Cuisine Test1")
+                .persist(jdbcTemplate);
 
-        Cuisine cuisine = cuisineDataMapper.getCuisine(String.valueOf(cuisineId)).orElse(null);
-        Cuisine expectedCuisine = new Cuisine(cuisineId, "Cuisine Test1");
+        Cuisine foundCuisine = cuisineDataMapper.getCuisine(cuisine.getId()).get();
 
-        assertThat(cuisine, is(expectedCuisine));
+        assertThat(cuisine, is(foundCuisine));
     }
 
     @Test
     public void testGetCuisine_withInvalidId() {
-        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine("1");
+        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(1);
 
         assertFalse(maybeCuisine.isPresent());
     }
@@ -96,9 +80,7 @@ public class CuisineDataMapperTest {
 
         Cuisine actualCuisine = jdbcTemplate.queryForObject("SELECT * FROM cuisine WHERE name=?",
                 new Object[]{"Test Cuisine"},
-                (rs, rowNum) -> {
-                    return new Cuisine(rs.getLong("id"), rs.getString("name"));
-                }
+                cuisineRowMapper
         );
 
         assertThat(actualCuisine.getName(), is("Test Cuisine"));

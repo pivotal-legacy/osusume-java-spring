@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
+
+import static com.tokyo.beach.restaurants.cuisine.CuisineRowMapper.cuisineRowMapper;
 
 @Repository
 public class CuisineDataMapper {
@@ -22,14 +22,14 @@ public class CuisineDataMapper {
     public List<Cuisine> getAll() {
         return jdbcTemplate.query(
                 "SELECT * FROM cuisine",
-                CuisineDataMapper::mapRow
+                cuisineRowMapper
         );
     }
 
-    public Optional<Cuisine> getCuisine(String id) {
+    public Optional<Cuisine> getCuisine(long id) {
         List<Cuisine> cuisines = jdbcTemplate.query("SELECT * FROM cuisine where id = ?",
-                new Object[]{id}, new int[]{Types.BIGINT},
-                CuisineDataMapper::mapRow
+                cuisineRowMapper,
+                id
         );
 
         if ( cuisines.size() != 1 ) {
@@ -44,22 +44,17 @@ public class CuisineDataMapper {
         return jdbcTemplate.queryForObject(
                 "INSERT INTO cuisine (name) VALUES (?) RETURNING *",
                 new Object[]{newCuisine.getName()}, new int[]{Types.VARCHAR},
-                CuisineDataMapper::mapRow
+                cuisineRowMapper
         );
     }
 
     public Cuisine findForRestaurant(long restaurantId) {
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM cuisine WHERE id = (SELECT cuisine_id FROM restaurant WHERE id = ?)",
-                CuisineDataMapper::mapRow,
+                cuisineRowMapper,
                 restaurantId
         );
     }
 
-    private static Cuisine mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Cuisine(
-                rs.getLong("id"),
-                rs.getString("name")
-        );
-    }
+
 }

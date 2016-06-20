@@ -6,7 +6,6 @@ import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
-import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static com.tokyo.beach.restaurants.comment.CommentRowMapper.commentRowMapper;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -53,15 +53,7 @@ public class CommentDataMapperTest {
 
         Comment actualComment = jdbcTemplate.queryForObject(
                 "SELECT * FROM comment WHERE id=?",
-                (rs, rowNum) -> {
-                    return new Comment(
-                            rs.getLong("id"),
-                            rs.getString("content"),
-                            rs.getString("created_at"),
-                            rs.getLong("restaurant_id"),
-                            rs.getLong("created_by_user_id")
-                    );
-                },
+                commentRowMapper,
                 createdComment.getId()
         );
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.tokyo.beach.restaurants.like.LikeRowMapper.likeRowMapper;
 import static java.util.stream.Collectors.toList;
 
 @Repository
@@ -54,7 +55,7 @@ public class LikeDataMapper {
     public List<Like> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT * FROM likes WHERE restaurant_id = ?",
-                LikeDataMapper::mapRow,
+                likeRowMapper,
                 restaurantId
         );
     }
@@ -80,14 +81,7 @@ public class LikeDataMapper {
         return namedTemplate.query(
                 "SELECT * FROM likes WHERE restaurant_id IN (:ids)",
                 parameters,
-                LikeDataMapper::mapRow
-        );
-    }
-
-    private static Like mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Like(
-                rs.getLong("user_id"),
-                rs.getLong("restaurant_id")
+                likeRowMapper
         );
     }
 }

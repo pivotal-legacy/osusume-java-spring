@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.tokyo.beach.restaurants.comment.CommentRowMapper.commentRowMapper;
 
 @Repository
 public class CommentDataMapper {
@@ -23,7 +23,7 @@ public class CommentDataMapper {
         String sql = "INSERT INTO comment (content, restaurant_id, created_by_user_id) VALUES (?, ?, ?) RETURNING *";
         return jdbcTemplate.queryForObject(
                 sql,
-                CommentDataMapper::mapRow,
+                commentRowMapper,
                 newComment.getComment(),
                 restaurantId,
                 createdByUserId
@@ -59,7 +59,7 @@ public class CommentDataMapper {
     public Optional<Comment> get(long commentId) {
         List<Comment> comments = jdbcTemplate.query(
                 "SELECT * FROM comment WHERE id = ?",
-                CommentDataMapper::mapRow,
+                commentRowMapper,
                 commentId
         );
 
@@ -72,15 +72,5 @@ public class CommentDataMapper {
 
     public void delete(long commentId) {
         jdbcTemplate.update("DELETE FROM comment WHERE id = ?", commentId);
-    }
-
-    private static Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Comment(
-                rs.getLong("id"),
-                rs.getString("content"),
-                rs.getString("created_at"),
-                rs.getLong("restaurant_id"),
-                rs.getLong("created_by_user_id")
-        );
     }
 }

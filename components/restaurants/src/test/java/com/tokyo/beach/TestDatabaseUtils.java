@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tokyo.beach.restaurants.comment.CommentRowMapper.commentRowMapper;
+import static com.tokyo.beach.restaurants.photos.PhotoUrlRowMapper.photoUrlRowMapper;
 import static com.tokyo.beach.restaurants.restaurant.RestaurantRowMapper.restaurantRowMapper;
 
 public class TestDatabaseUtils {
@@ -152,13 +154,7 @@ public class TestDatabaseUtils {
 
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM photo_url WHERE id = ?",
-                (rs, rownum) -> {
-                    return new PhotoUrl(
-                            id,
-                            rs.getString("url"),
-                            rs.getLong("restaurant_id")
-                    );
-                },
+                photoUrlRowMapper,
                 id
         );
     }
@@ -183,15 +179,7 @@ public class TestDatabaseUtils {
 
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM comment WHERE id = ?",
-                (rs, rowNum) -> {
-                    return new Comment(
-                            id,
-                            rs.getString("content"),
-                            rs.getString("created_at"),
-                            rs.getLong("restaurant_id"),
-                            rs.getLong("created_by_user_id")
-                    );
-                },
+                commentRowMapper,
                 id
         );
     }
