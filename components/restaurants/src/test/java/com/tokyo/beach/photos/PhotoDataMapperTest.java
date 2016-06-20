@@ -1,7 +1,5 @@
 package com.tokyo.beach.photos;
 
-import com.tokyo.beach.TestDatabaseUtils;
-import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
@@ -13,16 +11,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static com.tokyo.beach.restaurants.photos.PhotoUrlRowMapper.photoUrlRowMapper;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 public class PhotoDataMapperTest {
 
@@ -31,7 +26,7 @@ public class PhotoDataMapperTest {
 
     @Before
     public void setUp() throws Exception {
-        jdbcTemplate = new JdbcTemplate(TestDatabaseUtils.buildDataSource());
+        jdbcTemplate = new JdbcTemplate(buildDataSource());
         photoDataMapper = new PhotoDataMapper(jdbcTemplate);
     }
 
