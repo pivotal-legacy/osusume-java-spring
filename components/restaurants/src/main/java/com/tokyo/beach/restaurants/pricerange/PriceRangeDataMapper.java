@@ -53,7 +53,7 @@ public class PriceRangeDataMapper {
     }
 
     public PriceRange findForRestaurant(Restaurant restaurant) {
-        List<PriceRange> priceRanges = jdbcTemplate.query(
+        return jdbcTemplate.queryForObject(
                 "SELECT * FROM price_range WHERE id = " +
                         "(SELECT price_range_id FROM restaurant WHERE id = ?)",
                 (rs, rowNum) -> {
@@ -64,7 +64,5 @@ public class PriceRangeDataMapper {
                 },
                 restaurant.getId()
         );
-
-        return priceRanges.get(0);
     }
 }

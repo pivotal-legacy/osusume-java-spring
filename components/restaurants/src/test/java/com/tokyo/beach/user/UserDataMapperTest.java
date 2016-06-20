@@ -1,5 +1,9 @@
 package com.tokyo.beach.user;
 
+import com.tokyo.beach.cuisine.CuisineFixture;
+import com.tokyo.beach.pricerange.PriceRangeFixture;
+import com.tokyo.beach.restaurant.RestaurantFixture;
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.NewUser;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
@@ -143,5 +147,18 @@ public class UserDataMapperTest {
 
         User user = users.get(0);
         assertEquals(user.getName(), "jiro");
+    }
+
+    @Test
+    public void test_findForRestaurant_returnsTheUserThatCreatedTheRestaurant() throws Exception {
+        User user = new UserFixture().persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withPriceRange(new PriceRangeFixture().persist(jdbcTemplate))
+                .withCuisine(new CuisineFixture().persist(jdbcTemplate))
+                .withUser(user)
+                .persist(jdbcTemplate);
+
+        User foundUser = userDataMapper.findForRestaurantId(restaurant.getId());
+        assertEquals(foundUser, user);
     }
 }

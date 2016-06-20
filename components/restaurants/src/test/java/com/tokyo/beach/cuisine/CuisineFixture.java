@@ -23,5 +23,4 @@ public class CuisineFixture {
                 new NewCuisine(name)
         );
     }
-
 }

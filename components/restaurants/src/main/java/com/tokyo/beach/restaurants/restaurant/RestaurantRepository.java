@@ -91,9 +91,9 @@ public class RestaurantRepository {
                 .map((restaurant) -> new SerializedRestaurant(
                         restaurant,
                         restaurantPhotos.get(restaurant.getId()),
-                        Optional.of(cuisineMap.get(restaurant.getCuisineId())),
-                        Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
-                        Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
+                        cuisineMap.get(restaurant.getCuisineId()),
+                        priceRangeMap.get(restaurant.getPriceRangeId()),
+                        createdByUsers.get(restaurant.getCreatedByUserId()),
                         emptyList(),
                         restaurantLikes.get(restaurant.getId()) == null ? false : restaurantLikes.get(restaurant.getId()).contains(new Like(userId.longValue(), restaurant.getId())),
                         restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
@@ -107,11 +107,10 @@ public class RestaurantRepository {
         if (maybeRestaurant.isPresent()) {
 
             Restaurant retrievedRestaurant = maybeRestaurant.get();
-            Optional<User> createdByUser = userDataMapper.get(
-                    retrievedRestaurant.getCreatedByUserId()
-            );
+            User createdByUser = userDataMapper.findForRestaurantId(retrievedRestaurant.getId());
+
             List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(retrievedRestaurant);
-            Optional<Cuisine> cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
+            Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
             PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant);
 
             List<SerializedComment> comments = commentDataMapper.findForRestaurant(retrievedRestaurant.getId());
@@ -126,7 +125,7 @@ public class RestaurantRepository {
                     retrievedRestaurant,
                     photosForRestaurant,
                     cuisineForRestaurant,
-                    Optional.of(priceRange),
+                    priceRange,
                     createdByUser,
                     comments,
                     currentUserLikesRestaurant,
@@ -141,19 +140,19 @@ public class RestaurantRepository {
         Restaurant restaurant = restaurantDataMapper.createRestaurant(
                 newRestaurant, userId.longValue()
         );
-        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
+        User createdByUser = userDataMapper.findForRestaurantId(restaurant.getId());
         List<PhotoUrl> photosForRestaurant = photoDataMapper.createPhotosForRestaurant(
                 restaurant.getId(),
                 newRestaurant.getPhotoUrls()
         );
-        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(newRestaurant.getCuisineId().toString());
-        Optional<PriceRange> maybePriceRange = priceRangeDataMapper.getPriceRange(newRestaurant.getPriceRangeId());
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
+        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
 
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
-                maybeCuisine,
-                maybePriceRange,
+                cuisine,
+                priceRange,
                 createdByUser,
                 emptyList(),
                 false,
@@ -165,9 +164,9 @@ public class RestaurantRepository {
                 restaurantId,
                 newRestaurant
         );
-        Optional<User> createdByUser = userDataMapper.get(restaurant.getCreatedByUserId());
+        User createdByUser = userDataMapper.findForRestaurantId(restaurant.getId());
         List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
-        Optional<Cuisine> maybeCuisine = cuisineDataMapper.getCuisine(newRestaurant.getCuisineId().toString());
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
         PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
         List<SerializedComment> comments = commentDataMapper.findForRestaurant(restaurant.getId());
 
@@ -175,13 +174,13 @@ public class RestaurantRepository {
         boolean currentUserLikesRestaurant = likes
                 .stream()
                 .map(Like::getUserId)
-                .anyMatch(Predicate.isEqual(createdByUser.get().getId()));
+                .anyMatch(Predicate.isEqual(createdByUser.getId()));
 
         return new SerializedRestaurant(
                 restaurant,
                 photosForRestaurant,
-                maybeCuisine,
-                Optional.of(priceRange),
+                cuisine,
+                priceRange,
                 createdByUser,
                 comments,
                 currentUserLikesRestaurant,

@@ -68,9 +68,9 @@ public class RestaurantsControllerTest {
                 new SerializedRestaurant(
                         restaurant,
                         singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
-                        Optional.of(new Cuisine(20L, "Swedish")),
-                        Optional.of(new PriceRange(1L, "100yen")),
-                        Optional.of(new User(1L, "taro@email.com", "taro")),
+                        new Cuisine(20L, "Swedish"),
+                        new PriceRange(1L, "100yen"),
+                        new User(1L, "taro@email.com", "taro"),
                         emptyList(),
                         true,
                         2
@@ -111,9 +111,9 @@ public class RestaurantsControllerTest {
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
             restaurant,
             singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
-            Optional.of(new Cuisine(20L, "Swedish")),
-            Optional.of(new PriceRange(1L, "100yen")),
-            Optional.of(new User(1L, "taro@email.com", "taro")),
+            new Cuisine(20L, "Swedish"),
+            new PriceRange(1L, "100yen"),
+            new User(1L, "taro@email.com", "taro"),
             emptyList(),
             true,
             2
@@ -154,8 +154,8 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_createsARestaurantAndReturnsIt() throws Exception {
-        Optional<Cuisine> cuisine = Optional.of(new Cuisine(2, "Ramen"));
-        Optional<PriceRange> priceRange = Optional.of(new PriceRange(1, "~900"));
+        Cuisine cuisine = new Cuisine(2, "Ramen");
+        PriceRange priceRange = new PriceRange(1, "~900");
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(1, "http://some-url", 1));
         List<NewPhotoUrl> newPhotoUrls = singletonList(new NewPhotoUrl("http://some-url"));
         Restaurant restaurant = new RestaurantFixture()
@@ -170,8 +170,8 @@ public class RestaurantsControllerTest {
                 .withName(restaurant.getName())
                 .withAddress(restaurant.getAddress())
                 .withNotes(restaurant.getNotes())
-                .withCuisineId(cuisine.get().getId())
-                .withPriceRangeId(priceRange.get().getId())
+                .withCuisineId(cuisine.getId())
+                .withPriceRangeId(priceRange.getId())
                 .withPhotoUrls(newPhotoUrls)
                 .build();
         Long userId = 99L;
@@ -180,7 +180,7 @@ public class RestaurantsControllerTest {
                 photoUrls,
                 cuisine,
                 priceRange,
-                Optional.of(new User(99, "email", "jiro")),
+                new User(userId, "email", "jiro"),
                 emptyList(),
                 false,
                 0
@@ -246,9 +246,9 @@ public class RestaurantsControllerTest {
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant,
                 singletonList(new PhotoUrl(1, "http://some-url", 1)),
-                Optional.of(new Cuisine(2, "Ramen")),
-                Optional.of(new PriceRange(1, "~900")),
-                Optional.of(new User(userId, "email", "jiro")),
+                new Cuisine(2, "Ramen"),
+                new PriceRange(1, "~900"),
+                new User(userId, "email", "jiro"),
                 emptyList(),
                 false,
                 0

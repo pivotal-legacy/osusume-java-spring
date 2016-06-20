@@ -33,22 +33,9 @@ public class SerializedRestaurantTest {
                 .withName("Afuri")
                 .build();
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                restaurant, null, Optional.of(cuisine), null, null, null, false, 0L
+                restaurant, null, cuisine, null, null, null, false, 0L
         );
 
         assertEquals(serializedRestaurant.getCuisine(), cuisine);
-    }
-
-    @Test
-    public void test_getCuisine_returnsNullWhenThereIsNoCuisine() {
-        Restaurant restaurant = new RestaurantFixture()
-                .withId(1L)
-                .withName("Afuri")
-                .build();
-        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                restaurant, null, Optional.empty(), null, null, null, false, 0L
-        );
-
-        assertEquals(serializedRestaurant.getCuisine(), null);
     }
 }

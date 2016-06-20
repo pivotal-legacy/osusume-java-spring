@@ -15,9 +15,9 @@ import static com.tokyo.beach.restaurants.DateFormatter.formatDateForSerializati
 public class SerializedRestaurant {
     private Restaurant restaurant;
     private List<PhotoUrl> photoUrls;
-    private Optional<Cuisine> cuisine;
-    private Optional<PriceRange> priceRange;
-    private Optional<User> createdByUser;
+    private Cuisine cuisine;
+    private PriceRange priceRange;
+    private User createdByUser;
     private List<SerializedComment> comments;
     private boolean currentUserLikesRestaurant;
     private long numberOfLikes;
@@ -25,9 +25,9 @@ public class SerializedRestaurant {
     public SerializedRestaurant(
             Restaurant restaurant,
             List<PhotoUrl> photoUrls,
-            Optional<Cuisine> cuisine,
-            Optional<PriceRange> priceRange,
-            Optional<User> createdByUser,
+            Cuisine cuisine,
+            PriceRange priceRange,
+            User createdByUser,
             List<SerializedComment> comments,
             boolean currentUserLikesRestaurant,
             long numberOfLikes) {
@@ -51,7 +51,7 @@ public class SerializedRestaurant {
 
     @JsonProperty("user")
     public User getCreatedByUser() {
-        return createdByUser.orElse(null);
+        return createdByUser;
     }
 
     @SuppressWarnings("unused")
@@ -81,12 +81,7 @@ public class SerializedRestaurant {
 
     @JsonProperty("created_by_user_name")
     public String getCreatedByUserName() {
-        String username = "";
-
-        if (createdByUser.isPresent()) {
-            username = createdByUser.get().getName();
-        }
-        return username;
+        return createdByUser.getName();
     }
 
     @JsonProperty("created_at")
@@ -111,17 +106,12 @@ public class SerializedRestaurant {
 
     @JsonProperty("cuisine")
     public Cuisine getCuisine() {
-        return cuisine.orElse(null);
+        return cuisine;
     }
 
     @JsonProperty("price_range")
     public String getPriceRange() {
-        String priceRangeRange = "";
-
-        if (priceRange.isPresent()) {
-            priceRangeRange = priceRange.get().getRange();
-        }
-        return priceRangeRange;
+        return priceRange.getRange();
     }
 
     @JsonProperty("liked")

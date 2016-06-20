@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PriceRangeFixture {
     private String range = "Price-Range Not Specified";
+    private long id = 0;
 
     public PriceRangeFixture withRange(String range) {
         this.range = range;
@@ -13,7 +14,7 @@ public class PriceRangeFixture {
     }
 
     public PriceRange build() {
-        return new PriceRange(range);
+        return new PriceRange(id, range);
     }
 
     public PriceRange persist(JdbcTemplate jdbcTemplate) {

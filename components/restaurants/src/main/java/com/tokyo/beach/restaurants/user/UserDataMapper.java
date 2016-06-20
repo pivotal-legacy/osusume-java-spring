@@ -97,4 +97,19 @@ public class UserDataMapper {
                 }
         );
     }
+
+    public User findForRestaurantId(long restaurantId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM users WHERE id = " +
+                        "(SELECT created_by_user_id FROM restaurant WHERE id = ?)",
+                (rs, rowNum) -> {
+                    return new User(
+                            rs.getLong("id"),
+                            rs.getString("email"),
+                            rs.getString("name")
+                    );
+                },
+                restaurantId
+        );
+    }
 }

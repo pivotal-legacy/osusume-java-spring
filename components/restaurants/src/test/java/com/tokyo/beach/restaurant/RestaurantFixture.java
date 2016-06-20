@@ -1,6 +1,8 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.TestDatabaseUtils;
+import com.tokyo.beach.cuisine.CuisineFixture;
+import com.tokyo.beach.pricerange.PriceRangeFixture;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
@@ -15,7 +17,7 @@ public class RestaurantFixture {
     private String updatedAt = "updated-date";
     private String notes = "notes";
     private Cuisine cuisine = new Cuisine("Not Specified");
-    private PriceRange priceRange = new PriceRange("Not Specified");
+    private PriceRange priceRange = new PriceRange(0, "Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
     private String address = "address";
 

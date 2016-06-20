@@ -59,8 +59,8 @@ public class CuisineDataMapper {
         );
     }
 
-    public Optional<Cuisine> findForRestaurant(Restaurant restaurant) {
-        List<Cuisine> cuisines = jdbcTemplate.query(
+    public Cuisine findForRestaurant(Restaurant restaurant) {
+        return jdbcTemplate.queryForObject(
                 "SELECT * FROM cuisine WHERE id = " +
                         "(SELECT cuisine_id FROM restaurant WHERE id = ?)",
                 (rs, rowNum) -> {
@@ -71,10 +71,6 @@ public class CuisineDataMapper {
                 },
                 restaurant.getId()
         );
-        if (cuisines.size() < 1) {
-            return getCuisine("0");
-        }
-        return Optional.of(cuisines.get(0));
     }
 
 }

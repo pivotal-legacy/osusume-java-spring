@@ -89,8 +89,8 @@ public class ProfileController {
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineDataMapper.findForRestaurant(restaurant),
-                                Optional.of(priceRangeMap.get(restaurant.getPriceRangeId())),
-                                maybeUser,
+                                priceRangeMap.get(restaurant.getPriceRangeId()),
+                                maybeUser.get(),
                                 emptyList(),
                                 false,
                                 restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size())
@@ -131,8 +131,8 @@ public class ProfileController {
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
         List<PriceRange> priceRangeList = priceRangeDataMapper.getAll();
-        Map<Long, PriceRange> priceRangeMape = new HashMap<>();
-        priceRangeList.forEach(priceRange -> priceRangeMape.put(priceRange.getId(), priceRange));
+        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
+        priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
 
         List<Like> likes = likeDataMapper.findForRestaurants(restaurantList);
         Map<Long, List<Like>> restaurantLikes = likes
@@ -146,8 +146,8 @@ public class ProfileController {
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
                                 cuisineDataMapper.findForRestaurant(restaurant),
-                                Optional.of(priceRangeMape.get(restaurant.getPriceRangeId())),
-                                Optional.of(createdByUsers.get(restaurant.getCreatedByUserId())),
+                                priceRangeMap.get(restaurant.getPriceRangeId()),
+                                createdByUsers.get(restaurant.getCreatedByUserId()),
                                 emptyList(),
                                 true,
                                 restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size())
