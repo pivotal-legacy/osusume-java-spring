@@ -49,7 +49,7 @@ public class CommentControllerTest {
         when(commentDataMapper.create(
                 anyObject(),
                 anyLong(),
-                anyString()
+                anyLong()
         )).thenReturn(
                 new CommentFixture().build()
         );
@@ -69,7 +69,7 @@ public class CommentControllerTest {
     public void test_create_createsComment() throws Exception {
         ArgumentCaptor<NewComment> attributeNewComment = ArgumentCaptor.forClass(NewComment.class);
         ArgumentCaptor<Long> attributeCreatedByUserId = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<String> attributeRestaurantId = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Long> attributeRestaurantId = ArgumentCaptor.forClass(Long.class);
         when(userDataMapper.get(99))
                 .thenReturn(Optional.of(
                         new User(
@@ -106,8 +106,9 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.restaurant_id", is(88)))
                 .andExpect(jsonPath("$.user.name", is("user-name")));
 
+        assertEquals(new NewComment("New Comment Text"), attributeNewComment.getValue());
         assertEquals(99, attributeCreatedByUserId.getValue().longValue());
-        assertEquals("88", attributeRestaurantId.getValue());
+        assertEquals(88, attributeRestaurantId.getValue().longValue());
     }
 
     @Test

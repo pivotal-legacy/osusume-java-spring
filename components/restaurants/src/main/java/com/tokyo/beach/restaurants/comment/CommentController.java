@@ -38,7 +38,7 @@ public class CommentController {
         Comment persistedComment = commentDataMapper.create(
                 newComment,
                 userId.longValue(),
-                restaurantId
+                Long.parseLong(restaurantId)
         );
         User currentUser = userDataMapper.get(userId.longValue()).get();
         return new SerializedComment(persistedComment, currentUser);

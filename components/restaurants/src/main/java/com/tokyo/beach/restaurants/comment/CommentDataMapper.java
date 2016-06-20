@@ -1,6 +1,5 @@
 package com.tokyo.beach.restaurants.comment;
 
-import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +17,7 @@ public class CommentDataMapper {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Comment create(NewComment newComment, long createdByUserId, String restaurantId) {
+    public Comment create(NewComment newComment, long createdByUserId, long restaurantId) {
         String sql = "INSERT INTO comment (content, restaurant_id, created_by_user_id) VALUES (?, ?, ?) RETURNING *";
         return jdbcTemplate.queryForObject(
                 sql,
@@ -32,7 +31,7 @@ public class CommentDataMapper {
                     );
                 },
                 newComment.getComment(),
-                Long.parseLong(restaurantId),
+                restaurantId,
                 createdByUserId
         );
     }

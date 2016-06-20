@@ -41,26 +41,15 @@ public class CommentDataMapperTest {
 
     @Test
     public void test_create_createsAComment() throws Exception {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("joe@pivotal.io", "password", "Joe")
-        ).getId();
+        User user = new UserFixture().persist(jdbcTemplate);
 
-        long restaurantId = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
-                        "('TEST RESTAURANT', ?) RETURNING id",
-                (rs, rowNum) -> {
-                    return rs.getLong("id");
-                },
-                userId
-        );
+        Restaurant restaurant = new RestaurantFixture().withUser(user).persist(jdbcTemplate);
 
         Comment createdComment = commentDataMapper.create(
                 new NewComment("New Comment Content"),
-                userId.longValue(),
-                String.valueOf(restaurantId)
+                user.getId(),
+                restaurant.getId()
         );
-
 
         Comment actualComment = jdbcTemplate.queryForObject(
                 "SELECT * FROM comment WHERE id=?",
@@ -77,51 +66,26 @@ public class CommentDataMapperTest {
         );
 
         assertThat(actualComment.getComment(), is("New Comment Content"));
-        assertThat(actualComment.getCreatedByUserId(), is(userId.longValue()));
-        assertThat(actualComment.getRestaurantId(), is(restaurantId));
+        assertThat(actualComment.getCreatedByUserId(), is(user.getId()));
+        assertThat(actualComment.getRestaurantId(), is(restaurant.getId()));
     }
 
     @Test
     public void test_findForRestaurant_returnsCommentsOnRestaurant() throws Exception {
-        Number userId = insertUserIntoDatabase(
-                jdbcTemplate,
-                new NewUser("joe@pivotal.io", "password", "Joe")
-        ).getId();
-
-        Restaurant restaurant = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, created_by_user_id) VALUES " +
-                        "('TEST RESTAURANT', ?) RETURNING *",
-                (rs, rowNum) -> {
-                    return new Restaurant(
-                            rs.getLong("id"),
-                            rs.getString("name"),
-                            rs.getString("address"),
-                            rs.getBoolean("offers_english_menu"),
-                            rs.getBoolean("walk_ins_ok"),
-                            rs.getBoolean("accepts_credit_cards"),
-                            rs.getString("notes"),
-                            rs.getString("created_at"),
-                            rs.getString("updated_at"),
-                            rs.getLong("created_by_user_id"),
-                            0L,
-                            rs.getLong("cuisine_id")
-                    );
-                },
-                userId
-        );
+        User user = new UserFixture().persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture().withUser(user).persist(jdbcTemplate);
 
         Comment createdComment = commentDataMapper.create(
                 new NewComment("New Comment Content"),
-                userId.longValue(),
-                String.valueOf(restaurant.getId())
+                user.getId(),
+                restaurant.getId()
         );
-
 
         List<SerializedComment> actualComments = commentDataMapper.findForRestaurant(restaurant.getId());
         assertEquals(actualComments.size(), 1);
-        assertThat(actualComments.get(0).getComment(), is("New Comment Content"));
-        assertThat(actualComments.get(0).getUser().getId(), is(userId.longValue()));
-        assertThat(actualComments.get(0).getRestaurantId(), is(restaurant.getId()));
+        assertEquals(actualComments.get(0).getComment(), createdComment.getComment());
+        assertEquals(actualComments.get(0).getUser().getId(), createdComment.getCreatedByUserId());
+        assertEquals(actualComments.get(0).getRestaurantId(), createdComment.getRestaurantId());
     }
 
     @Test
@@ -159,7 +123,6 @@ public class CommentDataMapperTest {
                 .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
-
         Comment retrievedComment = commentDataMapper.get(persistedComment.getId()).get();
 
 
@@ -169,7 +132,6 @@ public class CommentDataMapperTest {
     @Test
     public void test_get_returnsEmptyOptionalWhenCommentDoesntExistWithId() throws Exception {
         Optional<Comment> retrievedComment = commentDataMapper.get(991);
-
 
         assertEquals(retrievedComment, Optional.empty());
     }
