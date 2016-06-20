@@ -56,22 +56,17 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_getAll_returnsAListOfRestaurants() throws Exception {
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withName("Afuri")
+                .withAddress("Roppongi")
+                .withNotes("とても美味しい")
+                .withCreatedAt("2016-04-13 16:01:21.094")
+                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .build();
         List<SerializedRestaurant> restaurants = singletonList(
                 new SerializedRestaurant(
-                        new Restaurant(
-                                1,
-                                "Afuri",
-                                "Roppongi",
-                                false,
-                                true,
-                                false,
-                                "とても美味しい",
-                                "2016-04-13 16:01:21.094",
-                                "2016-04-14 16:01:21.094",
-                                1,
-                                1L,
-                                20L
-                        ),
+                        restaurant,
                         singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
                         Optional.of(new Cuisine(20L, "Swedish")),
                         Optional.of(new PriceRange(1L, "100yen")),
@@ -105,21 +100,16 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_get_returnsARestaurant() throws Exception {
-        SerializedRestaurant restaurant = new SerializedRestaurant(
-            new Restaurant(
-                    1,
-                    "Afuri",
-                    "Roppongi",
-                    false,
-                    true,
-                    false,
-                    "とても美味しい",
-                    "2016-04-13 16:01:21.094",
-                    "2016-04-14 16:01:21.094",
-                    1,
-                    1L,
-                    20L
-            ),
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withName("Afuri")
+                .withAddress("Roppongi")
+                .withNotes("とても美味しい")
+                .withCreatedAt("2016-04-13 16:01:21.094")
+                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .build();
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+            restaurant,
             singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1)),
             Optional.of(new Cuisine(20L, "Swedish")),
             Optional.of(new PriceRange(1L, "100yen")),
@@ -128,7 +118,7 @@ public class RestaurantsControllerTest {
             true,
             2
         );
-        when(restaurantRepository.get(1L, 1L)).thenReturn(Optional.of(restaurant));
+        when(restaurantRepository.get(1L, 1L)).thenReturn(Optional.of(serializedRestaurant));
         mockMvc.perform(get("/restaurants/1").requestAttr("userId", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))
@@ -164,43 +154,37 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_create_createsARestaurantAndReturnsIt() throws Exception {
-        NewRestaurant newRestaurant = new NewRestaurant(
-                "Afuri",
-                "Roppongi",
-                false,
-                true,
-                false,
-                "soooo goood",
-                2L,
-                1L,
-                singletonList(new NewPhotoUrl("http://some-url"))
-                );
+        Optional<Cuisine> cuisine = Optional.of(new Cuisine(2, "Ramen"));
+        Optional<PriceRange> priceRange = Optional.of(new PriceRange(1, "~900"));
+        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(1, "http://some-url", 1));
+        List<NewPhotoUrl> newPhotoUrls = singletonList(new NewPhotoUrl("http://some-url"));
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withName("Afuri")
+                .withAddress("Roppongi")
+                .withNotes("soooo goood")
+                .withCreatedAt("2016-04-13 16:01:21.094")
+                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .build();
+        NewRestaurant newRestaurant = new NewRestaurantFixture()
+                .withRestaurant(restaurant)
+                .withCuisineId(cuisine.get().getId())
+                .withPriceRangeId(priceRange.get().getId())
+                .withPhotoUrls(newPhotoUrls)
+                .build();
         Long userId = 99L;
-        SerializedRestaurant restaurant = new SerializedRestaurant(
-                new Restaurant(
-                        1,
-                        newRestaurant.getName(),
-                        newRestaurant.getAddress(),
-                        newRestaurant.getOffersEnglishMenu(),
-                        newRestaurant.getWalkInsOk(),
-                        newRestaurant.getAcceptsCreditCards(),
-                        newRestaurant.getNotes(),
-                        "2016-04-13 16:01:21.094",
-                        "2016-04-14 16:01:21.094",
-                        userId,
-                        newRestaurant.getPriceRangeId(),
-                        newRestaurant.getCuisineId()
-                ),
-                singletonList(new PhotoUrl(1, "http://some-url", 1)),
-                Optional.of(new Cuisine(2, "Ramen")),
-                Optional.of(new PriceRange(1, "~900")),
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                restaurant,
+                photoUrls,
+                cuisine,
+                priceRange,
                 Optional.of(new User(99, "email", "jiro")),
                 emptyList(),
                 false,
                 0
         );
         when(restaurantRepository.create(newRestaurant, userId)).
-                thenReturn(restaurant);
+                thenReturn(serializedRestaurant);
         String payload =
             "{" +
             "\"restaurant\": " +
@@ -241,33 +225,22 @@ public class RestaurantsControllerTest {
 
     @Test
     public void test_update_updatesRestaurantInformation() throws Exception {
-        NewRestaurant newRestaurant = new NewRestaurant(
-                "Updated Name",
-                "Updated Address",
-                false,
-                true,
-                false,
-                "",
-                2L,
-                null,
-                singletonList(new NewPhotoUrl("http://some-url"))
-        );
+        List<NewPhotoUrl> newPhotoUrls = singletonList(new NewPhotoUrl("http://some-url"));
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(1)
+                .withName("Updated Name")
+                .withAddress("Updated Address")
+                .withNotes("")
+                .build();
+        NewRestaurant newRestaurant = new NewRestaurantFixture()
+                .withRestaurant(restaurant)
+                .withCuisineId(2)
+                .withPriceRangeId(null)
+                .withPhotoUrls(newPhotoUrls)
+                .build();
         Long userId = 99L;
-        SerializedRestaurant restaurant = new SerializedRestaurant(
-                new Restaurant(
-                        1,
-                        newRestaurant.getName(),
-                        newRestaurant.getAddress(),
-                        newRestaurant.getOffersEnglishMenu(),
-                        newRestaurant.getWalkInsOk(),
-                        newRestaurant.getAcceptsCreditCards(),
-                        newRestaurant.getNotes(),
-                        "2016-04-13 16:01:21.094",
-                        "2016-04-14 16:01:21.094",
-                        userId,
-                        0,
-                        newRestaurant.getCuisineId()
-                ),
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                restaurant,
                 singletonList(new PhotoUrl(1, "http://some-url", 1)),
                 Optional.of(new Cuisine(2, "Ramen")),
                 Optional.of(new PriceRange(1, "~900")),
@@ -278,7 +251,7 @@ public class RestaurantsControllerTest {
         );
 
         when(restaurantRepository.update(1L, newRestaurant)).
-                thenReturn(restaurant);
+                thenReturn(serializedRestaurant);
         String updatedRestaurantPayload = "{\"restaurant\": " +
                 "{\"name\":\"Updated Name\", " +
                 "\"address\": \"Updated Address\", " +

@@ -52,13 +52,17 @@ public class RestaurantDataMapperTest {
     public void test_getAll_returnsSortedList() {
         Restaurant restaurant1 = new RestaurantFixture()
                 .withName("Afuri")
+                .withAddress("Roppongi")
                 .withUser(user)
+                .withNotes("notes")
                 .withUpdatedAt("2016-01-01")
                 .persist(jdbcTemplate);
 
         Restaurant restaurant2 = new RestaurantFixture()
                 .withName("Butagumi")
+                .withAddress("Roppongi")
                 .withUser(user)
+                .withNotes("notes")
                 .withUpdatedAt("2016-01-02")
                 .persist(jdbcTemplate);
 
@@ -74,7 +78,7 @@ public class RestaurantDataMapperTest {
                         false,
                         true,
                         false,
-                        "",
+                        "notes",
                         restaurant2.getCreatedDate(),
                         restaurant2.getUpdatedDate(),
                         user.getId(),
@@ -88,7 +92,7 @@ public class RestaurantDataMapperTest {
                     false,
                     true,
                     false,
-                    "",
+                    "notes",
                     restaurant1.getCreatedDate(),
                     restaurant1.getUpdatedDate(),
                     user.getId(),

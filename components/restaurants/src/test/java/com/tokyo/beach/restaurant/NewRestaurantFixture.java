@@ -1,15 +1,19 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 
+import java.util.List;
+
 public class NewRestaurantFixture {
-    private long priceRangeId = 0;
+    private Long priceRangeId = 0L;
     private long cuisineId = 0;
     private Restaurant restaurant = null;
+    private List<NewPhotoUrl> photoUrls = null;
 
 
-    public NewRestaurantFixture withPriceRangeId(long priceRangeId) {
+    public NewRestaurantFixture withPriceRangeId(Long priceRangeId) {
         this.priceRangeId = priceRangeId;
         return this;
     }
@@ -25,6 +29,11 @@ public class NewRestaurantFixture {
         return this;
     }
 
+    public NewRestaurantFixture withPhotoUrls(List<NewPhotoUrl> photoUrls) {
+        this.photoUrls = photoUrls;
+        return this;
+    }
+
     public NewRestaurant build() {
         return new NewRestaurant(
                 restaurant.getName(),
@@ -35,7 +44,7 @@ public class NewRestaurantFixture {
                 restaurant.getNotes(),
                 cuisineId,
                 priceRangeId,
-                null
+                photoUrls
         );
     }
 }
