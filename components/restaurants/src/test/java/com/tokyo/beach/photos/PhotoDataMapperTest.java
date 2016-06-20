@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.restaurants.photos.PhotoUrlRowMapper.photoUrlRowMapper;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
@@ -67,13 +68,7 @@ public class PhotoDataMapperTest {
 
         List<PhotoUrl> photoUrls = jdbcTemplate.query(
                 "SELECT * FROM photo_url where restaurant_id = 789",
-                (rs, rowNum) -> {
-                    return new PhotoUrl(
-                            rs.getLong("id"),
-                            rs.getString("url"),
-                            rs.getLong("restaurant_id")
-                    );
-                }
+                photoUrlRowMapper
         );
 
         assertThat(photoUrls, notNullValue());

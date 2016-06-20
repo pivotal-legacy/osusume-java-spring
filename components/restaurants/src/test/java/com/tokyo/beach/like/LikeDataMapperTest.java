@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.List;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
+import static com.tokyo.beach.restaurants.like.LikeRowMapper.likeRowMapper;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
@@ -62,12 +63,7 @@ public class LikeDataMapperTest {
         String sql = "SELECT * FROM likes WHERE restaurant_id = ? AND user_id = ?";
         Like persistedLike = jdbcTemplate.queryForObject(
                 sql,
-                (rs, rowNum) -> {
-                    return new Like(
-                            rs.getLong("user_id"),
-                            rs.getLong("restaurant_id")
-                    );
-                },
+                likeRowMapper,
                 restaurantId,
                 likeByUserId.longValue()
         );
@@ -108,12 +104,7 @@ public class LikeDataMapperTest {
         List<Like> likes = namedTemplate.query(
                 sql,
                 parameters,
-                (rs, rowNum) -> {
-                    return new Like(
-                            rs.getLong("user_id"),
-                            rs.getLong("restaurant_id")
-                    );
-                }
+                likeRowMapper
         );
 
         assertEquals(1, likes.size());
@@ -180,12 +171,7 @@ public class LikeDataMapperTest {
         String sql = "INSERT INTO likes (user_id, restaurant_id) VALUES (?, ?) RETURNING *";
         Like persistedLike = jdbcTemplate.queryForObject(
                 sql,
-                (rs, rowNum) -> {
-                    return new Like(
-                            rs.getLong("user_id"),
-                            rs.getLong("restaurant_id")
-                    );
-                },
+                likeRowMapper,
                 likeByUserId.longValue(),
                 restaurantId
         );

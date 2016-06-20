@@ -2,8 +2,8 @@ package com.tokyo.beach.pricerange;
 
 import com.tokyo.beach.cuisine.CuisineFixture;
 import com.tokyo.beach.restaurant.RestaurantFixture;
-import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
+import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
@@ -16,8 +16,6 @@ import java.util.List;
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 
 public class PriceRangeDataMapperTest {
