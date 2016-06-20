@@ -85,7 +85,9 @@ public class RestaurantFixture {
         NewRestaurant newRestaurant = new NewRestaurantFixture().
                 withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
-                .withRestaurant(this.build())
+                .withName(name)
+                .withAddress(address)
+                .withNotes(notes)
                 .build();
 
         return TestDatabaseUtils.insertRestaurantIntoDatabase(

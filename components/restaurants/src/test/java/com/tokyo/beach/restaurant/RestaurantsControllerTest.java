@@ -167,7 +167,9 @@ public class RestaurantsControllerTest {
                 .withUpdatedAt("2016-04-14 16:01:21.094")
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withRestaurant(restaurant)
+                .withName(restaurant.getName())
+                .withAddress(restaurant.getAddress())
+                .withNotes(restaurant.getNotes())
                 .withCuisineId(cuisine.get().getId())
                 .withPriceRangeId(priceRange.get().getId())
                 .withPhotoUrls(newPhotoUrls)
@@ -233,7 +235,9 @@ public class RestaurantsControllerTest {
                 .withNotes("")
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withRestaurant(restaurant)
+                .withName(restaurant.getName())
+                .withAddress(restaurant.getAddress())
+                .withNotes(restaurant.getNotes())
                 .withCuisineId(2)
                 .withPriceRangeId(null)
                 .withPhotoUrls(newPhotoUrls)
@@ -244,7 +248,7 @@ public class RestaurantsControllerTest {
                 singletonList(new PhotoUrl(1, "http://some-url", 1)),
                 Optional.of(new Cuisine(2, "Ramen")),
                 Optional.of(new PriceRange(1, "~900")),
-                Optional.of(new User(99, "email", "jiro")),
+                Optional.of(new User(userId, "email", "jiro")),
                 emptyList(),
                 false,
                 0
@@ -265,7 +269,7 @@ public class RestaurantsControllerTest {
 
         mockMvc.perform(
                 patch("/restaurants/1")
-                        .requestAttr("userId", 99L)
+                        .requestAttr("userId", userId)
                         .contentType(APPLICATION_JSON_UTF8_VALUE)
                         .content(updatedRestaurantPayload)
         )
@@ -281,8 +285,6 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")))
                 .andExpect(jsonPath("$.price_range", is("~900")));
     }
-
-
 
     @Test
     public void test_delete_returnsOkHTTPStatus() throws Exception {

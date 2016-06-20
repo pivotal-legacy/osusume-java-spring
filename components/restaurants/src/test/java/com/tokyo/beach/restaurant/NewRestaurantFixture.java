@@ -2,16 +2,16 @@ package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
-import com.tokyo.beach.restaurants.restaurant.Restaurant;
 
 import java.util.List;
 
 public class NewRestaurantFixture {
     private Long priceRangeId = 0L;
     private long cuisineId = 0;
-    private Restaurant restaurant = null;
+    private String name = "Not Specified";
+    private String address = "address";
     private List<NewPhotoUrl> photoUrls = null;
-
+    private String notes = "notes";
 
     public NewRestaurantFixture withPriceRangeId(Long priceRangeId) {
         this.priceRangeId = priceRangeId;
@@ -23,9 +23,18 @@ public class NewRestaurantFixture {
         return this;
     }
 
+    public NewRestaurantFixture withName(String name) {
+        this.name = name;
+        return this;
+    }
 
-    public NewRestaurantFixture withRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public NewRestaurantFixture withNotes(String notes) {
+        this.notes = notes;
+        return this;
+    }
+
+    public NewRestaurantFixture withAddress(String address) {
+        this.address = address;
         return this;
     }
 
@@ -36,12 +45,12 @@ public class NewRestaurantFixture {
 
     public NewRestaurant build() {
         return new NewRestaurant(
-                restaurant.getName(),
-                restaurant.getAddress(),
-                restaurant.getOffersEnglishMenu(),
-                restaurant.getWalkInsOk(),
-                restaurant.getAcceptsCreditCards(),
-                restaurant.getNotes(),
+                name,
+                address,
+                false,
+                true,
+                false,
+                notes,
                 cuisineId,
                 priceRangeId,
                 photoUrls

@@ -203,7 +203,9 @@ public class RestaurantRepositoryTest {
                 .withUser(user.get())
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withRestaurant(restaurant)
+                .withName(restaurant.getName())
+                .withAddress(restaurant.getAddress())
+                .withNotes(restaurant.getNotes())
                 .withCuisineId(cuisine.get().getId())
                 .withPriceRangeId(priceRange.get().getId())
                 .build();
@@ -242,7 +244,9 @@ public class RestaurantRepositoryTest {
                 .withUser(user.get())
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withRestaurant(updatedRestaurant)
+                .withName(updatedRestaurant.getName())
+                .withAddress(updatedRestaurant.getAddress())
+                .withNotes(updatedRestaurant.getNotes())
                 .withCuisineId(cuisine.get().getId())
                 .withPriceRangeId(priceRange.getId())
                 .build();
