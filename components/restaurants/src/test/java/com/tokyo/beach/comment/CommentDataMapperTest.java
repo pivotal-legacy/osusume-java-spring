@@ -4,7 +4,6 @@ import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.NewComment;
-import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.user.UserFixture;
@@ -13,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
@@ -60,24 +58,6 @@ public class CommentDataMapperTest {
         assertThat(actualComment.getComment(), is("New Comment Content"));
         assertThat(actualComment.getCreatedByUserId(), is(user.getId()));
         assertThat(actualComment.getRestaurantId(), is(restaurant.getId()));
-    }
-
-    @Test
-    public void test_findForRestaurant_returnsCommentsOnRestaurant() throws Exception {
-        User user = new UserFixture().persist(jdbcTemplate);
-        Restaurant restaurant = new RestaurantFixture().withUser(user).persist(jdbcTemplate);
-
-        Comment createdComment = commentDataMapper.create(
-                new NewComment("New Comment Content"),
-                user.getId(),
-                restaurant.getId()
-        );
-
-        List<SerializedComment> actualComments = commentDataMapper.findForRestaurant(restaurant.getId());
-        assertEquals(actualComments.size(), 1);
-        assertEquals(actualComments.get(0).getComment(), createdComment.getComment());
-        assertEquals(actualComments.get(0).getUser().getId(), createdComment.getCreatedByUserId());
-        assertEquals(actualComments.get(0).getRestaurantId(), createdComment.getRestaurantId());
     }
 
     @Test

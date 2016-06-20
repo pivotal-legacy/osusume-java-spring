@@ -2,6 +2,7 @@ package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.comment.CommentFixture;
 import com.tokyo.beach.restaurants.comment.CommentDataMapper;
+import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
@@ -38,7 +39,7 @@ public class RestaurantRepositoryTest {
     private UserDataMapper userDataMapper;
     private LikeDataMapper likeDataMapper;
     private PriceRangeDataMapper priceRangeDataMapper;
-    private CommentDataMapper commentDataMapper;
+    private CommentRepository commentRepository;
     private RestaurantRepository repository;
 
     @Before
@@ -49,8 +50,8 @@ public class RestaurantRepositoryTest {
         userDataMapper = mock(UserDataMapper.class);
         likeDataMapper = mock(LikeDataMapper.class);
         priceRangeDataMapper = mock(PriceRangeDataMapper.class);
-        commentDataMapper = mock(CommentDataMapper.class);
-        repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper, commentDataMapper);
+        commentRepository = mock(CommentRepository.class);
+        repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper, commentRepository);
     }
 
     @Test
@@ -157,7 +158,7 @@ public class RestaurantRepositoryTest {
                 Optional.of(restaurant)
         );
         when(cuisineDataMapper.findForRestaurant(restaurant.getId())).thenReturn(cuisine);
-        when(commentDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
+        when(commentRepository.findForRestaurant(restaurant.getId())).thenReturn(
                 comments
         );
         when(likeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
@@ -279,7 +280,7 @@ public class RestaurantRepositoryTest {
                 .thenReturn(priceRange);
         when(userDataMapper.findForRestaurantId(updatedRestaurant.getId()))
                 .thenReturn(user);
-        when(commentDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+        when(commentRepository.findForRestaurant(updatedRestaurant.getId())).thenReturn(
                 comments
         );
         when(likeDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(

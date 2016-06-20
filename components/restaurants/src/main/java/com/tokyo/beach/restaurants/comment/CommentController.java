@@ -20,11 +20,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @CrossOrigin
 @RestController
 public class CommentController {
+    private final CommentRepository commentRepository;
     private CommentDataMapper commentDataMapper;
     private UserDataMapper userDataMapper;
 
     @Autowired
-    public CommentController(CommentDataMapper commentDataMapper, UserDataMapper userDataMapper) {
+    public CommentController(CommentRepository commentRepository, CommentDataMapper commentDataMapper, UserDataMapper userDataMapper) {
+        this.commentRepository = commentRepository;
         this.commentDataMapper = commentDataMapper;
         this.userDataMapper = userDataMapper;
     }
@@ -62,7 +64,7 @@ public class CommentController {
     @RequestMapping(value = "restaurants/{restaurantId}/comments", method = GET)
     @ResponseStatus(OK)
     public List<SerializedComment> get(@PathVariable String restaurantId) {
-        return commentDataMapper.findForRestaurant(Long.parseLong(restaurantId));
+        return commentRepository.findForRestaurant(Long.parseLong(restaurantId));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.tokyo.beach.restaurants.restaurant;
 
 import com.tokyo.beach.restaurants.comment.CommentDataMapper;
+import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
@@ -35,7 +36,7 @@ public class RestaurantRepository {
     private final PriceRangeDataMapper priceRangeDataMapper;
     private final LikeDataMapper likeDataMapper;
     private final CuisineDataMapper cuisineDataMapper;
-    private CommentDataMapper commentDataMapper;
+    private CommentRepository commentRepository;
 
     @Autowired
     public RestaurantRepository(RestaurantDataMapper restaurantDataMapper,
@@ -44,7 +45,7 @@ public class RestaurantRepository {
                                 PriceRangeDataMapper priceRangeDataMapper,
                                 LikeDataMapper likeDataMapper,
                                 CuisineDataMapper cuisineDataMapper,
-                                CommentDataMapper commentDataMapper
+                                CommentRepository commentRepository
                                  ) {
         this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
@@ -52,7 +53,7 @@ public class RestaurantRepository {
         this.priceRangeDataMapper = priceRangeDataMapper;
         this.likeDataMapper = likeDataMapper;
         this.cuisineDataMapper = cuisineDataMapper;
-        this.commentDataMapper = commentDataMapper;
+        this.commentRepository = commentRepository;
     }
 
     public List<SerializedRestaurant> getAll(Long userId) {
@@ -114,7 +115,7 @@ public class RestaurantRepository {
             Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant.getId());
             PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant.getId());
 
-            List<SerializedComment> comments = commentDataMapper.findForRestaurant(retrievedRestaurant.getId());
+            List<SerializedComment> comments = commentRepository.findForRestaurant(retrievedRestaurant.getId());
 
             List<Like> likes = likeDataMapper.findForRestaurant(retrievedRestaurant.getId());
             boolean currentUserLikesRestaurant = likes
@@ -169,7 +170,7 @@ public class RestaurantRepository {
         List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant.getId());
         Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
         PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant.getId());
-        List<SerializedComment> comments = commentDataMapper.findForRestaurant(restaurant.getId());
+        List<SerializedComment> comments = commentRepository.findForRestaurant(restaurant.getId());
 
         List<Like> likes = likeDataMapper.findForRestaurant(restaurant.getId());
         boolean currentUserLikesRestaurant = likes

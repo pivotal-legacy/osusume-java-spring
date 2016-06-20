@@ -28,13 +28,15 @@ public class CommentControllerTest {
     CommentDataMapper commentDataMapper;
     UserDataMapper userDataMapper;
     CommentController commentController;
+    CommentRepository commentRepository;
     MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
         commentDataMapper = mock(CommentDataMapper.class);
         userDataMapper = mock(UserDataMapper.class);
-        commentController = new CommentController(commentDataMapper, userDataMapper);
+        commentRepository = mock(CommentRepository.class);
+        commentController = new CommentController(commentRepository, commentDataMapper, userDataMapper);
         mockMvc = standaloneSetup(commentController).build();
     }
 
@@ -207,7 +209,7 @@ public class CommentControllerTest {
 
     @Test
     public void test_get_returnsCommentsForARestaurant() throws Exception {
-        when(commentDataMapper.findForRestaurant(1L))
+        when(commentRepository.findForRestaurant(1L))
                 .thenReturn(Arrays.asList(
                         new SerializedComment(
                                 new Comment(1L, "this is a comment", "2016-02-29 06:07:55.000000", 1L, 10L),
@@ -223,6 +225,6 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$[0].created_at", is("2016-02-29T06:07:55.000Z")))
                 .andExpect(jsonPath("$[0].restaurant_id", is(1)))
                 .andExpect(jsonPath("$[0].user.name", is("Danny")));
-        verify(commentDataMapper, times(1)).findForRestaurant(1L);
+        verify(commentRepository, times(1)).findForRestaurant(1L);
     }
 }
