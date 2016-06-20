@@ -77,7 +77,7 @@ public class PriceRangeDataMapperTest {
                 .persist(jdbcTemplate);
 
         PriceRange actualPriceRange = priceRangeDataMapper.findForRestaurant(
-                persistedRestaurant
+                persistedRestaurant.getId()
         );
 
         assertEquals(persistedPriceRange, actualPriceRange);

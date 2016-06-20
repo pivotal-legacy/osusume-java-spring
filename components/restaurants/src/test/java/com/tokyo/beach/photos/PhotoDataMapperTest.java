@@ -46,9 +46,7 @@ public class PhotoDataMapperTest {
                 new PhotoUrl(0, "http://some-url", 1)
         );
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(
-                new RestaurantFixture().withId(1L).build()
-        ));
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(1L));
 
         assertThat(photos, hasSize(1));
 
@@ -87,17 +85,19 @@ public class PhotoDataMapperTest {
 
     @Test
     public void test_findForRestaurant_returnsPhotoUrlList() throws Exception {
+        long restaurantId = 1;
         PhotoUrl photoUrl = TestDatabaseUtils.insertPhotoUrlIntoDatabase(
                 jdbcTemplate,
-                new PhotoUrl(0, "http://some-url", 1)
+                new PhotoUrl(0, "http://some-url", restaurantId)
         );
 
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurant(new RestaurantFixture().withId(1L).build());
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurant(restaurantId);
 
 
         assertThat(photos, hasSize(1));
-        assertThat(photos.get(0).getRestaurantId(), is(1L));
+        assertThat(photos.get(0).getRestaurantId(), is(restaurantId));
+        assertThat(photos.get(0).getUrl(), is(photoUrl.getUrl()));
     }
 
     @Test

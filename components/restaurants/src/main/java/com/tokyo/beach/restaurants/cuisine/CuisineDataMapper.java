@@ -59,7 +59,7 @@ public class CuisineDataMapper {
         );
     }
 
-    public Cuisine findForRestaurant(Restaurant restaurant) {
+    public Cuisine findForRestaurant(long restaurantId) {
         return jdbcTemplate.queryForObject(
                 "SELECT * FROM cuisine WHERE id = " +
                         "(SELECT cuisine_id FROM restaurant WHERE id = ?)",
@@ -69,7 +69,7 @@ public class CuisineDataMapper {
                             rs.getString("name")
                     );
                 },
-                restaurant.getId()
+                restaurantId
         );
     }
 

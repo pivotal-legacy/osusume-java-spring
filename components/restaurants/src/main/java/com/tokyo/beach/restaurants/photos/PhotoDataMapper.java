@@ -21,11 +21,10 @@ public class PhotoDataMapper {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<PhotoUrl> findForRestaurants(List<Restaurant> restaurants) {
-        List<Long> ids = restaurants.stream().map(Restaurant::getId).collect(toList());
+    public List<PhotoUrl> findForRestaurants(List<Long> restaurantIds) {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("ids", ids);
+        parameters.addValue("ids", restaurantIds);
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
 
         return namedTemplate.query(
@@ -57,10 +56,10 @@ public class PhotoDataMapper {
         return savedPhotos;
     }
 
-    public List<PhotoUrl> findForRestaurant(Restaurant restaurant) {
+    public List<PhotoUrl> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
                 "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                new Object[]{ restaurant.getId() },
+                new Object[]{ restaurantId },
                 (rs, rowNum) -> {
                     return new PhotoUrl(
                             rs.getLong("id"),

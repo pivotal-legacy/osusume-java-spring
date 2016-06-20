@@ -70,7 +70,8 @@ public class ProfileController {
             return emptyList();
         }
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(restaurantList);
+        List<Long> ids = restaurantList.stream().map(Restaurant::getId).collect(toList());
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(ids);
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
@@ -88,7 +89,7 @@ public class ProfileController {
                         .map((restaurant) -> new SerializedRestaurant(
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
-                                cuisineDataMapper.findForRestaurant(restaurant),
+                                cuisineDataMapper.findForRestaurant(restaurant.getId()),
                                 priceRangeMap.get(restaurant.getPriceRangeId()),
                                 maybeUser.get(),
                                 emptyList(),
@@ -126,7 +127,8 @@ public class ProfileController {
                         )
                 );
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(restaurantList);
+        List<Long> ids = restaurantList.stream().map(Restaurant::getId).collect(toList());
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(ids);
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
@@ -145,7 +147,7 @@ public class ProfileController {
                         .map((restaurant) -> new SerializedRestaurant(
                                 restaurant,
                                 restaurantPhotos.get(restaurant.getId()),
-                                cuisineDataMapper.findForRestaurant(restaurant),
+                                cuisineDataMapper.findForRestaurant(restaurant.getId()),
                                 priceRangeMap.get(restaurant.getPriceRangeId()),
                                 createdByUsers.get(restaurant.getCreatedByUserId()),
                                 emptyList(),

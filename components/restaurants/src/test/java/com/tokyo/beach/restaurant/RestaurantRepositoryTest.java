@@ -156,7 +156,7 @@ public class RestaurantRepositoryTest {
         when(restaurantDataMapper.get(1)).thenReturn(
                 Optional.of(restaurant)
         );
-        when(cuisineDataMapper.findForRestaurant(restaurant)).thenReturn(cuisine);
+        when(cuisineDataMapper.findForRestaurant(restaurant.getId())).thenReturn(cuisine);
         when(commentDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 comments
         );
@@ -166,10 +166,10 @@ public class RestaurantRepositoryTest {
                         new Like(12L, 1L)
                 )
         );
-        when(priceRangeDataMapper.findForRestaurant(anyObject())).thenReturn(
+        when(priceRangeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 priceRange
         );
-        when(photoDataMapper.findForRestaurant(restaurant)).thenReturn(photoUrls);
+        when(photoDataMapper.findForRestaurant(restaurant.getId())).thenReturn(photoUrls);
 
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant,
@@ -221,11 +221,11 @@ public class RestaurantRepositoryTest {
                 .thenReturn(restaurant);
         when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
                 .thenReturn(photoUrls);
-        when(cuisineDataMapper.findForRestaurant(restaurant)).thenReturn(cuisine);
+        when(cuisineDataMapper.findForRestaurant(restaurant.getId())).thenReturn(cuisine);
 
         when(userDataMapper.findForRestaurantId(restaurant.getId()))
                 .thenReturn(user);
-        when(priceRangeDataMapper.findForRestaurant(restaurant)).thenReturn(priceRange);
+        when(priceRangeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(priceRange);
 
         assertThat(repository.create(newRestaurant, userId),
                 equalTo(serializedRestaurant));
@@ -270,12 +270,12 @@ public class RestaurantRepositoryTest {
         when(restaurantDataMapper.updateRestaurant(updatedRestaurant.getId(), newRestaurant)).thenReturn(
                 updatedRestaurant
         );
-        when(photoDataMapper.findForRestaurant(updatedRestaurant))
+        when(photoDataMapper.findForRestaurant(updatedRestaurant.getId()))
                 .thenReturn(photoUrls);
-        when(cuisineDataMapper.findForRestaurant(updatedRestaurant)).thenReturn(
+        when(cuisineDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
                 cuisine
         );
-        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant))
+        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant.getId()))
                 .thenReturn(priceRange);
         when(userDataMapper.findForRestaurantId(updatedRestaurant.getId()))
                 .thenReturn(user);

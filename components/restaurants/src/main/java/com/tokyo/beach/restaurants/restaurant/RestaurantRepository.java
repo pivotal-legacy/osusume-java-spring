@@ -57,8 +57,9 @@ public class RestaurantRepository {
 
     public List<SerializedRestaurant> getAll(Long userId) {
         List<Restaurant> restaurantList = restaurantDataMapper.getAll();
+        List<Long> ids = restaurantList.stream().map(Restaurant::getId).collect(toList());
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(restaurantList);
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(ids);
         Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
                 .collect(groupingBy(PhotoUrl::getRestaurantId));
 
@@ -109,9 +110,9 @@ public class RestaurantRepository {
             Restaurant retrievedRestaurant = maybeRestaurant.get();
             User createdByUser = userDataMapper.findForRestaurantId(retrievedRestaurant.getId());
 
-            List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(retrievedRestaurant);
-            Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant);
-            PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant);
+            List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(retrievedRestaurant.getId());
+            Cuisine cuisineForRestaurant = cuisineDataMapper.findForRestaurant(retrievedRestaurant.getId());
+            PriceRange priceRange = priceRangeDataMapper.findForRestaurant(retrievedRestaurant.getId());
 
             List<SerializedComment> comments = commentDataMapper.findForRestaurant(retrievedRestaurant.getId());
 
@@ -145,8 +146,8 @@ public class RestaurantRepository {
                 restaurant.getId(),
                 newRestaurant.getPhotoUrls()
         );
-        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
-        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
+        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant.getId());
 
         return new SerializedRestaurant(
                 restaurant,
@@ -165,9 +166,9 @@ public class RestaurantRepository {
                 newRestaurant
         );
         User createdByUser = userDataMapper.findForRestaurantId(restaurant.getId());
-        List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant);
-        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant);
-        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant);
+        List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant.getId());
+        Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
+        PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant.getId());
         List<SerializedComment> comments = commentDataMapper.findForRestaurant(restaurant.getId());
 
         List<Like> likes = likeDataMapper.findForRestaurant(restaurant.getId());

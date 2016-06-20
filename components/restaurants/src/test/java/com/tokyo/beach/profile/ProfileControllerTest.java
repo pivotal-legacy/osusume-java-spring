@@ -92,7 +92,7 @@ public class ProfileControllerTest {
         when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
 
-        when(cuisineDataMapper.findForRestaurant(anyObject()))
+        when(cuisineDataMapper.findForRestaurant(1))
                 .thenReturn(new Cuisine(10L, "Japanese"));
 
         when(priceRangeDataMapper.getAll()).thenReturn(
@@ -137,7 +137,7 @@ public class ProfileControllerTest {
 
     @Test
     public void test_getUserLikes_returnsRestaurantList() throws Exception {
-        List<Restaurant> posts = singletonList(
+        List<Restaurant> restaurants = singletonList(
                 new Restaurant(
                         1,
                         "Afuri",
@@ -159,15 +159,15 @@ public class ProfileControllerTest {
         when(likeDataMapper.getLikesByUser(99L))
                 .thenReturn(likesList);
         when(restaurantDataMapper.getRestaurantsByIds(likesList))
-                .thenReturn(posts);
+                .thenReturn(restaurants);
         when(photoDataMapper.findForRestaurants(anyObject()))
                 .thenReturn(singletonList(new PhotoUrl(999, "photo-url", 1)));
-        when(cuisineDataMapper.findForRestaurant(anyObject()))
+        when(cuisineDataMapper.findForRestaurant(1))
                 .thenReturn(new Cuisine(10L, "Japanese"));
         when(priceRangeDataMapper.getAll()).thenReturn(
                 asList(new PriceRange(1L, "¥1000 ~ ¥2000"))
         );
-        when(likeDataMapper.findForRestaurants(posts)).thenReturn(
+        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
                 asList(new Like(99L, 1L), new Like(98L, 1L))
         );
 
