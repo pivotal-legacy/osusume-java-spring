@@ -110,7 +110,8 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
-                .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
+                .andExpect(jsonPath("$[0].price_range.id", equalTo(1)))
+                .andExpect(jsonPath("$[0].price_range.range", Matchers.equalTo("¥1000 ~ ¥2000")))
                 .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
     }
@@ -173,7 +174,8 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].user.name", equalTo("username")))
-                .andExpect(jsonPath("$[0].price_range", Matchers.equalTo("¥1000 ~ ¥2000")))
+                .andExpect(jsonPath("$[0].price_range.id", equalTo(1)))
+                .andExpect(jsonPath("$[0].price_range.range", Matchers.equalTo("¥1000 ~ ¥2000")))
                 .andExpect(jsonPath("$[0].num_likes", Matchers.equalTo(2)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("photo-url")));
     }

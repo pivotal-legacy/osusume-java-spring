@@ -80,13 +80,15 @@ public class RestaurantDataMapper {
     public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
         return jdbcTemplate.queryForObject(
                 "UPDATE restaurant SET " +
-                        "(name, address, notes, updated_at) =" +
-                        "(?, ?, ?, now()) " +
+                        "(name, address, cuisine_id, price_range_id, notes, updated_at) =" +
+                        "(?, ?, ?, ?, ?, now()) " +
                         "WHERE id = ? " +
                         "RETURNING id, name, address, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 restaurantRowMapper,
                 restaurant.getName(),
                 restaurant.getAddress(),
+                restaurant.getCuisineId(),
+                restaurant.getPriceRangeId(),
                 restaurant.getNotes(),
                 restaurantId
         );

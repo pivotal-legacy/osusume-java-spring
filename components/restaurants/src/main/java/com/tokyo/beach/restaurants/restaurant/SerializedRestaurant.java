@@ -94,9 +94,7 @@ public class SerializedRestaurant {
     }
 
     @JsonProperty("price_range")
-    public String getPriceRange() {
-        return priceRange.getRange();
-    }
+    public PriceRange getPriceRange() { return priceRange; }
 
     @JsonProperty("liked")
     public boolean isCurrentUserLikesRestaurant() {

@@ -87,7 +87,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$[0].photo_urls[0].id", equalTo(999)))
                 .andExpect(jsonPath("$[0].photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
-                .andExpect(jsonPath("$[0].price_range", equalTo("100yen")))
+                .andExpect(jsonPath("$[0].price_range.id", equalTo(1)))
+                .andExpect(jsonPath("$[0].price_range.range", equalTo("100yen")))
                 .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
                 .andExpect(jsonPath("$[0].liked", equalTo(true)))
                 .andExpect(jsonPath("$[0].created_at", equalTo("2016-04-13T16:01:21.094Z")))
@@ -126,7 +127,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.notes", equalTo("とても美味しい")))
                 .andExpect(jsonPath("$.photo_urls[0].id", equalTo(999)))
                 .andExpect(jsonPath("$.photo_urls[0].url", equalTo("http://www.cats.com/my-cat.jpg")))
-                .andExpect(jsonPath("$.price_range", equalTo("100yen")))
+                .andExpect(jsonPath("$.price_range.id", equalTo(1)))
+                .andExpect(jsonPath("$.price_range.range", equalTo("100yen")))
                 .andExpect(jsonPath("$.num_likes", equalTo(2)))
                 .andExpect(jsonPath("$.liked", equalTo(true)))
                 .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
@@ -207,7 +209,8 @@ public class RestaurantsControllerTest {
         .andExpect(jsonPath("$.notes", is("soooo goood")))
         .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
         .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
-        .andExpect(jsonPath("$.price_range", is("~900")))
+        .andExpect(jsonPath("$.price_range.id", equalTo(1)))
+        .andExpect(jsonPath("$.price_range.range", equalTo("~900")))
         .andExpect(jsonPath("$.created_at", Matchers.equalTo("2016-04-13T16:01:21.094Z")))
         .andExpect(jsonPath("$.updated_at", Matchers.equalTo("2016-04-14T16:01:21.094Z")))
         .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
@@ -265,7 +268,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")))
-                .andExpect(jsonPath("$.price_range", is("~900")));
+                .andExpect(jsonPath("$.price_range.id", equalTo(1)))
+                .andExpect(jsonPath("$.price_range.range", equalTo("~900")));
     }
 
     @Test

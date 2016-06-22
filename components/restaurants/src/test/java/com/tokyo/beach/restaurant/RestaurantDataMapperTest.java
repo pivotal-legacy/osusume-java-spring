@@ -198,14 +198,26 @@ public class RestaurantDataMapperTest {
     public void test_updateRestaurant_updatesRestaurant() throws Exception {
         Restaurant restaurant = new RestaurantFixture()
                 .withName("Afuri")
+                .withCuisine(new Cuisine(0L, "Not Specified"))
                 .withUser(user)
                 .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .persist(jdbcTemplate);
+
+
+        Cuisine cuisine = new CuisineFixture()
+                .withName("Beer")
+                .persist(jdbcTemplate);
+
+        PriceRange priceRange = new PriceRangeFixture()
+                .withRange("0-1000")
                 .persist(jdbcTemplate);
 
         NewRestaurant updatedNewRestaurant = new NewRestaurantFixture()
                 .withName("Kentucky")
                 .withAddress("East Shibuya")
                 .withNotes("Actually, not really healthy...")
+                .withCuisineId(cuisine.getId())
+                .withPriceRangeId(priceRange.getId())
                 .build();
 
         Restaurant updatedRestaurant = restaurantDataMapper.updateRestaurant(
@@ -213,18 +225,17 @@ public class RestaurantDataMapperTest {
                 updatedNewRestaurant
         );
 
-
         Map<String, Object> map = jdbcTemplate.queryForMap(
                 "SELECT * FROM restaurant WHERE id = ?",
                 restaurant.getId()
         );
 
-        assertEquals(map.get("id"), updatedRestaurant.getId());
-        assertEquals(map.get("name"), updatedRestaurant.getName());
-        assertEquals(map.get("address"), updatedRestaurant.getAddress());
-        assertEquals(map.get("notes"), updatedRestaurant.getNotes());
+        assertEquals(map.get("name"), updatedNewRestaurant.getName());
+        assertEquals(map.get("address"), updatedNewRestaurant.getAddress());
+        assertEquals(map.get("notes"), updatedNewRestaurant.getNotes());
         assertEquals(map.get("created_by_user_id"), user.getId());
-        assertEquals(map.get("cuisine_id"), 0L);
+        assertEquals(map.get("cuisine_id"), updatedNewRestaurant.getCuisineId());
+        assertEquals(map.get("price_range_id"), updatedNewRestaurant.getPriceRangeId());
         assertEquals(map.get("updated_at").toString(), updatedRestaurant.getUpdatedDate());
         assertNotEquals(updatedRestaurant.getUpdatedDate(), restaurant.getUpdatedDate());
     }
