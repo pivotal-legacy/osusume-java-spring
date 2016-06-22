@@ -19,7 +19,7 @@ dev-loadsampledata:
 alltests:
 	@./gradlew clean test build
 
-tests: alltests loadsampledata
+tests: alltests test-loadsampledata
 
 start:
 	@java -jar applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
