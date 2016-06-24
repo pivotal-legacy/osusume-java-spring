@@ -1,7 +1,6 @@
 package com.tokyo.beach.restaurants.restaurant_suggestions;
 
 import okhttp3.HttpUrl;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +25,11 @@ public class RestaurantSuggestionsController {
 
     @RequestMapping(value = "/restaurant_suggestions", method = POST)
     public List<RestaurantSuggestion> getAll(@RequestBody RestaurantSuggestionParams params) {
-        HttpUrl url = HttpUrl.parse("http://api.gnavi.co.jp/RestSearchAPI/20150630/?keyid=" + System.getenv("GNAVI_KEY") + "&format=json&name=" + params.getRestaurantName());
+        String baseUrl = "https://maps.googleapis.com";
+        String path = "/maps/api/place/textsearch/json";
+        String key = "?key=" + System.getenv("GOOGLE_PLACES_KEY");
+        String query = "&query=" + params.getRestaurantName();
+        HttpUrl url = HttpUrl.parse(baseUrl + path + key + query);
         return restaurantSuggestionRepository.getAll(url);
     }
 }

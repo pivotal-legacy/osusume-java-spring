@@ -34,7 +34,7 @@ public class RestaurantSuggestionRepository {
 
             List<RestaurantSuggestion> suggestions = new ArrayList<>();
 
-            ArrayNode restNodeArray = (ArrayNode) node.get("rest");
+            ArrayNode restNodeArray = (ArrayNode) node.get("results");
             for (Iterator<JsonNode> it = restNodeArray.elements(); it.hasNext();) {
                 suggestions.add(objectMapper.readValue(it.next().toString(), RestaurantSuggestion.class));
             }

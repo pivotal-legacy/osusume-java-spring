@@ -3,6 +3,7 @@ package com.tokyo.beach.restaurants.restaurant_suggestions;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import okhttp3.HttpUrl;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 import static com.tokyo.beach.restutils.ControllerTestingUtils.createControllerAdvice;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
@@ -31,16 +33,27 @@ public class RestaurantSuggestionsControllerTest {
         List<RestaurantSuggestion> suggestions = singletonList(
                 new RestaurantSuggestion("Afuri", "Roppongi")
         );
-        HttpUrl url = HttpUrl.parse("http://api.gnavi.co.jp/RestSearchAPI/20150630/?keyid=" + System.getenv("GNAVI_KEY") + "&format=json&name=Afuri");
-        when(restaurantSuggestionRepository.getAll(url)).thenReturn(suggestions);
 
-        String payload = "{\"restaurantName\":\"Afuri\"}";
+        ArgumentCaptor<HttpUrl> urlArgument = ArgumentCaptor.forClass(HttpUrl.class);
+        when(restaurantSuggestionRepository.getAll(urlArgument.capture()))
+                .thenReturn(suggestions);
+
+        String searchQuery = "Afuri Roppongi";
+        String baseUrl = "https://maps.googleapis.com";
+        String path = "/maps/api/place/textsearch/json";
+        String key = "?key=" + System.getenv("GOOGLE_PLACES_KEY");
+        String query = "&query=" + searchQuery;
+        HttpUrl url = HttpUrl.parse(baseUrl + path + key + query);
+
+        String payload = "{\"restaurantName\":\"" + searchQuery + "\"}";
         mockMvc.perform(
                 post("/restaurant_suggestions")
-                    .contentType(APPLICATION_JSON_UTF8_VALUE)
-                    .content(payload)
+                        .contentType(APPLICATION_JSON_UTF8_VALUE)
+                        .content(payload)
         ).andExpect(status().isOk())
-         .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
-         .andExpect(jsonPath("$[0].address", equalTo("Roppongi")));
+                .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
+                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")));
+
+        assertEquals(url, urlArgument.getValue());
     }
 }

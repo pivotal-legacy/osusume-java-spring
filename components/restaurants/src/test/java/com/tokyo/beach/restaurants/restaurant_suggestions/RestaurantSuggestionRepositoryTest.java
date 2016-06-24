@@ -14,22 +14,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RestaurantSuggestionRepositoryTest {
     @Test
-    public void test_getAll_ReturnsRestaurantSuggestions() throws IOException {
+    public void test_getAll_ReturnsRestaurantSuggestions() throws IOException, InterruptedException {
         MockWebServer server = new MockWebServer();
 
         server.enqueue(new MockResponse().setBody(
-                "{\"rest\": [{" +
+                "{\"results\": [{" +
                         "\"name\": \"ＡＦＵＲＩ \"," +
-                        "\"name_kana\": \"アフリ\"," +
-                        "\"latitude\": \"35.645028\"," +
-                        "\"longitude\": \"139.714144\"," +
-                        "\"address\": \"〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F\"}"
+                        "\"formatted_address\": \"〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F\"}"
                         + "]}"
         ));
 
         server.start();
 
         HttpUrl url = server.url("/");
+
         List<RestaurantSuggestion> restaurantSuggestions = singletonList(
                 new RestaurantSuggestion("ＡＦＵＲＩ ", "〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F")
         );

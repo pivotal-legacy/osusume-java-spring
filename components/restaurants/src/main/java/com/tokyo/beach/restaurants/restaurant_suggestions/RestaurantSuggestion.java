@@ -1,6 +1,7 @@
 package com.tokyo.beach.restaurants.restaurant_suggestions;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RestaurantSuggestion {
@@ -20,8 +21,14 @@ public class RestaurantSuggestion {
         return name;
     }
 
+    @JsonProperty("address")
     public String getAddress() {
         return address;
+    }
+
+    @JsonProperty("formatted_address")
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
