@@ -6,9 +6,9 @@ A environment variable for the database URL needs to be configured for PostgreSQ
 
 `OSUSUME_DATABASE_URL=jdbc:postgresql://pivotal:@localhost/osusume-dev`
 
-For accessing the Gurunavi API, an API is necessary:
+For accessing the Google Places API, an API is necessary:
 
-`GNAVI_KEY=<Gurunavi API Key>`
+`GOOGLE_PLACES_KEY=<Google Places API Key>`
 
 For accessing to AWS S3 bucket:
 
