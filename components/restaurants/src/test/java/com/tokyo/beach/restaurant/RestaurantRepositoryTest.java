@@ -1,7 +1,6 @@
 package com.tokyo.beach.restaurant;
 
 import com.tokyo.beach.comment.CommentFixture;
-import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
@@ -243,36 +242,30 @@ public class RestaurantRepositoryTest {
                 .withPriceRange(priceRange)
                 .withUser(user)
                 .build();
+
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(updatedRestaurant.getName())
                 .withAddress(updatedRestaurant.getAddress())
                 .withNotes(updatedRestaurant.getNotes())
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
+                .withPhotoUrls(emptyList())
                 .build();
-        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
+
         List<SerializedComment> comments = singletonList(
                 new SerializedComment(
                         new CommentFixture().build(),
                         user
                 )
         );
-        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                updatedRestaurant,
-                photoUrls,
-                cuisine,
-                priceRange,
-                user,
-                comments,
-                true,
-                2L
-        );
 
         when(restaurantDataMapper.updateRestaurant(updatedRestaurant.getId(), newRestaurant)).thenReturn(
                 updatedRestaurant
         );
+        when(photoDataMapper.createPhotosForRestaurant(updatedRestaurant.getId(), asList()))
+                .thenReturn(asList());
         when(photoDataMapper.findForRestaurant(updatedRestaurant.getId()))
-                .thenReturn(photoUrls);
+                .thenReturn(asList());
         when(cuisineDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
                 cuisine
         );
@@ -289,7 +282,77 @@ public class RestaurantRepositoryTest {
                         new Like(12L, updatedRestaurant.getId())
                 )
         );
+
+
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                updatedRestaurant,
+                asList(),
+                cuisine,
+                priceRange,
+                user,
+                comments,
+                true,
+                2L
+        );
         assertThat(repository.update(updatedRestaurant.getId(), newRestaurant),
                 equalTo(serializedRestaurant));
+    }
+
+    @Test
+    public void update_persistsTheRestaurant_addsOnlyNewPhotoUrls() {
+        long originalRestaurantId = 1;
+        Cuisine cuisine = new Cuisine(2, "Ramen");
+        PriceRange priceRange = new PriceRange(1, "900");
+        User user = new User(99L, "jiro@mail.com", "jiro");
+
+        NewRestaurant newRestaurant = new NewRestaurantFixture()
+                .withPhotoUrls(asList(
+                        new NewPhotoUrl("http://existing-url-one"),
+                        new NewPhotoUrl("http://existing-url-two"),
+                        new NewPhotoUrl("http://new-url-one"),
+                        new NewPhotoUrl("http://new-url-two")
+                ))
+                .build();
+
+        Restaurant existingRestaurant = new RestaurantFixture()
+                .withId(1)
+                .build();
+
+        when(photoDataMapper.findForRestaurant(originalRestaurantId))
+                .thenReturn(asList(
+                        new PhotoUrl(999, "http://existing-url-one", 1),
+                        new PhotoUrl(999, "http://existing-url-two", 1)
+                ));
+
+        when(photoDataMapper.createPhotosForRestaurant(originalRestaurantId, asList(
+                new NewPhotoUrl("http://new-url-one"),
+                new NewPhotoUrl("http://new-url-two")
+        )))
+                .thenReturn(asList(
+                        new PhotoUrl(999, "http://new-url-one", 1),
+                        new PhotoUrl(999, "http://new-url-two", 1)
+                ));
+
+        when(cuisineDataMapper.findForRestaurant(existingRestaurant.getId())).thenReturn(
+                cuisine
+        );
+        when(priceRangeDataMapper.findForRestaurant(existingRestaurant.getId()))
+                .thenReturn(priceRange);
+        when(userDataMapper.findForRestaurantId(existingRestaurant.getId()))
+                .thenReturn(user);
+
+        when(restaurantDataMapper.updateRestaurant(originalRestaurantId, newRestaurant))
+                .thenReturn(existingRestaurant);
+
+        SerializedRestaurant updatedSerializedRestaurant = repository.update(existingRestaurant.getId(), newRestaurant);
+        assertThat(
+                updatedSerializedRestaurant.getPhotoUrlList(),
+                equalTo(asList(
+                        new PhotoUrl(999, "http://existing-url-one", 1),
+                        new PhotoUrl(999, "http://existing-url-two", 1),
+                        new PhotoUrl(999, "http://new-url-one", 1),
+                        new PhotoUrl(999, "http://new-url-two", 1)
+                ))
+        );
     }
 }

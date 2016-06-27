@@ -1,12 +1,12 @@
 package com.tokyo.beach.restaurants.restaurant;
 
-import com.tokyo.beach.restaurants.comment.CommentDataMapper;
 import com.tokyo.beach.restaurants.comment.CommentRepository;
 import com.tokyo.beach.restaurants.comment.SerializedComment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
 import com.tokyo.beach.restaurants.cuisine.CuisineDataMapper;
 import com.tokyo.beach.restaurants.like.Like;
 import com.tokyo.beach.restaurants.like.LikeDataMapper;
+import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
@@ -16,13 +16,11 @@ import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
@@ -167,7 +165,20 @@ public class RestaurantRepository {
                 newRestaurant
         );
         User createdByUser = userDataMapper.findForRestaurantId(restaurant.getId());
-        List<PhotoUrl> photosForRestaurant = photoDataMapper.findForRestaurant(restaurant.getId());
+
+        List<PhotoUrl> existingPhotosForRestaurant = photoDataMapper.findForRestaurant(restaurant.getId());
+        List<NewPhotoUrl> onlyNewPhotos = newRestaurant.getPhotoUrls()
+                .stream()
+                .filter(newPhotoUrl -> !existingPhotosForRestaurant
+                        .stream()
+                        .map(photoUrl -> photoUrl.getUrl())
+                        .collect(toList())
+                        .contains(newPhotoUrl.getUrl())
+                ).collect(toList());
+        List<PhotoUrl> newPhotosPersisted = photoDataMapper.createPhotosForRestaurant(
+                restaurant.getId(),
+                onlyNewPhotos
+        );
         Cuisine cuisine = cuisineDataMapper.findForRestaurant(restaurant.getId());
         PriceRange priceRange = priceRangeDataMapper.findForRestaurant(restaurant.getId());
         List<SerializedComment> comments = commentRepository.findForRestaurant(restaurant.getId());
@@ -180,7 +191,10 @@ public class RestaurantRepository {
 
         return new SerializedRestaurant(
                 restaurant,
-                photosForRestaurant,
+                Stream.concat(
+                        existingPhotosForRestaurant.stream(),
+                        newPhotosPersisted.stream()
+                ).collect(Collectors.toList()),
                 cuisine,
                 priceRange,
                 createdByUser,
