@@ -73,6 +73,7 @@ public class ProfileControllerTest {
                         1,
                         "Afuri",
                         "Roppongi",
+                        "some-place-id",
                         "とても美味しい",
                         "created-date",
                         "updated-date", 1,
@@ -106,6 +107,7 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].place_id", equalTo("some-place-id")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(10)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
@@ -137,6 +139,7 @@ public class ProfileControllerTest {
                         1,
                         "Afuri",
                         "Roppongi",
+                        "some-place-id",
                         "とても美味しい",
                         "created-date",
                         "updated-date", 99,
@@ -170,6 +173,7 @@ public class ProfileControllerTest {
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].place_id", equalTo("some-place-id")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(10)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Japanese")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))

@@ -19,6 +19,7 @@ public class RestaurantSuggestionRepositoryTest {
 
         server.enqueue(new MockResponse().setBody(
                 "{\"results\": [{" +
+                        "\"place_id\" : \"ChIJ5_kEroKLGGARU4NlyGSJt8Y\"," +
                         "\"name\": \"ＡＦＵＲＩ \"," +
                         "\"formatted_address\": \"〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F\"}"
                         + "]}"
@@ -29,7 +30,7 @@ public class RestaurantSuggestionRepositoryTest {
         HttpUrl url = server.url("/");
 
         List<RestaurantSuggestion> restaurantSuggestions = singletonList(
-                new RestaurantSuggestion("ＡＦＵＲＩ ", "〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F")
+                new RestaurantSuggestion("ChIJ5_kEroKLGGARU4NlyGSJt8Y", "ＡＦＵＲＩ ", "〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F")
         );
         RestaurantSuggestionRepository repository = new RestaurantSuggestionRepository();
         assertThat(repository.getAll(url), is(restaurantSuggestions));

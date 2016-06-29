@@ -18,6 +18,7 @@ public class RestaurantFixture {
     private PriceRange priceRange = new PriceRange(0, "Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
     private String address = "address";
+    private String placeId = "place-id";
 
     public RestaurantFixture withId(long id) {
         this.id = id;
@@ -64,11 +65,17 @@ public class RestaurantFixture {
         return this;
     }
 
+    public RestaurantFixture withPlaceId(String placeId) {
+        this.placeId = placeId;
+        return this;
+    }
+
     public Restaurant build() {
         return new Restaurant(
                 id,
                 name,
                 address,
+                placeId,
                 notes,
                 createdAt,
                 updatedAt,

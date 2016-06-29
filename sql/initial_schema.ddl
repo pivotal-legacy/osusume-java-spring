@@ -38,6 +38,7 @@ CREATE TABLE restaurant (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
+    place_id VARCHAR(255),
     notes VARCHAR(1000),
     cuisine_id BIGINT REFERENCES cuisine(id) NOT NULL DEFAULT 0,
     price_range_id BIGINT REFERENCES price_range(id) NOT NULL DEFAULT 0,

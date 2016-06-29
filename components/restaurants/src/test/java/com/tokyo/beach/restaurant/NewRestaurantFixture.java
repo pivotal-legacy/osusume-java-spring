@@ -10,6 +10,7 @@ public class NewRestaurantFixture {
     private Long cuisineId = null;
     private String name = "Not Specified";
     private String address = "address";
+    private String placeId = "place-id";
     private List<NewPhotoUrl> photoUrls = null;
     private String notes = "notes";
 
@@ -38,6 +39,11 @@ public class NewRestaurantFixture {
         return this;
     }
 
+    public NewRestaurantFixture withPlaceId(String placeId) {
+        this.placeId = placeId;
+        return this;
+    }
+
     public NewRestaurantFixture withPhotoUrls(List<NewPhotoUrl> photoUrls) {
         this.photoUrls = photoUrls;
         return this;
@@ -47,6 +53,7 @@ public class NewRestaurantFixture {
         return new NewRestaurant(
                 name,
                 address,
+                placeId,
                 notes,
                 cuisineId,
                 priceRangeId,

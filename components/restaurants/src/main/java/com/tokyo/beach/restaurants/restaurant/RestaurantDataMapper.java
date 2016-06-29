@@ -42,15 +42,16 @@ public class RestaurantDataMapper {
     public Restaurant createRestaurant(NewRestaurant newRestaurant, Long createdByUserId) {
         return jdbcTemplate.queryForObject(
                 "INSERT INTO restaurant (" +
-                        "name, address, " +
+                        "name, address, place_id, " +
                         "notes, cuisine_id, price_range_id, created_by_user_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?) " +
                         "RETURNING " +
-                        "id, name, address, " +
+                        "id, name, address, place_id, " +
                         "notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 restaurantRowMapper,
                 newRestaurant.getName(),
                 newRestaurant.getAddress(),
+                newRestaurant.getPlaceId(),
                 newRestaurant.getNotes(),
                 newRestaurant.getCuisineId(),
                 newRestaurant.getPriceRangeId(),
@@ -80,13 +81,14 @@ public class RestaurantDataMapper {
     public Restaurant updateRestaurant(Long restaurantId, NewRestaurant restaurant) {
         return jdbcTemplate.queryForObject(
                 "UPDATE restaurant SET " +
-                        "(name, address, cuisine_id, price_range_id, notes, updated_at) =" +
-                        "(?, ?, ?, ?, ?, now()) " +
+                        "(name, address, place_id, cuisine_id, price_range_id, notes, updated_at) =" +
+                        "(?, ?, ?, ?, ?, ?, now()) " +
                         "WHERE id = ? " +
-                        "RETURNING id, name, address, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
+                        "RETURNING id, name, address, place_id, notes, cuisine_id, created_by_user_id, price_range_id, created_at, updated_at",
                 restaurantRowMapper,
                 restaurant.getName(),
                 restaurant.getAddress(),
+                restaurant.getPlaceId(),
                 restaurant.getCuisineId(),
                 restaurant.getPriceRangeId(),
                 restaurant.getNotes(),

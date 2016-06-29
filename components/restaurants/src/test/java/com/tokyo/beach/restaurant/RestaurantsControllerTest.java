@@ -12,6 +12,7 @@ import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -23,6 +24,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -161,6 +164,7 @@ public class RestaurantsControllerTest {
                 .withNotes("soooo goood")
                 .withCreatedAt("2016-04-13 16:01:21.094")
                 .withUpdatedAt("2016-04-14 16:01:21.094")
+                .withPlaceId("some-place-id")
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(restaurant.getName())
@@ -169,6 +173,7 @@ public class RestaurantsControllerTest {
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
                 .withPhotoUrls(newPhotoUrls)
+                .withPlaceId(restaurant.getPlaceId())
                 .build();
         Long userId = 99L;
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
@@ -181,7 +186,10 @@ public class RestaurantsControllerTest {
                 false,
                 0
         );
-        when(restaurantRepository.create(newRestaurant, userId)).
+        ArgumentCaptor<NewRestaurant> newRestaurantArgument = ArgumentCaptor.forClass(NewRestaurant.class);
+        ArgumentCaptor<Long> userIdArgument = ArgumentCaptor.forClass(Long.class);
+
+        when(restaurantRepository.create(newRestaurantArgument.capture(), userIdArgument.capture())).
                 thenReturn(serializedRestaurant);
         String payload =
             "{" +
@@ -189,6 +197,7 @@ public class RestaurantsControllerTest {
             "{" +
             "\"name\":\"Afuri\", " +
             "\"address\": \"Roppongi\", " +
+            "\"place_id\": \"some-place-id\", " +
             "\"notes\": \"soooo goood\", " +
             "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
             "\"cuisine_id\": \"2\", " +
@@ -206,6 +215,7 @@ public class RestaurantsControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.name", is("Afuri")))
         .andExpect(jsonPath("$.address", is("Roppongi")))
+        .andExpect(jsonPath("$.place_id", is("some-place-id")))
         .andExpect(jsonPath("$.notes", is("soooo goood")))
         .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
         .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
@@ -214,6 +224,9 @@ public class RestaurantsControllerTest {
         .andExpect(jsonPath("$.created_at", Matchers.equalTo("2016-04-13T16:01:21.094Z")))
         .andExpect(jsonPath("$.updated_at", Matchers.equalTo("2016-04-14T16:01:21.094Z")))
         .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
+
+        assertEquals(userId, userIdArgument.getValue());
+        assertEquals(newRestaurant, newRestaurantArgument.getValue());
     }
 
     @Test
@@ -223,11 +236,13 @@ public class RestaurantsControllerTest {
                 .withId(1)
                 .withName("Updated Name")
                 .withAddress("Updated Address")
+                .withPlaceId("updated-place-id")
                 .withNotes("")
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(restaurant.getName())
                 .withAddress(restaurant.getAddress())
+                .withPlaceId(restaurant.getPlaceId())
                 .withNotes(restaurant.getNotes())
                 .withCuisineId(2)
                 .withPriceRangeId(null)
@@ -250,6 +265,7 @@ public class RestaurantsControllerTest {
         String updatedRestaurantPayload = "{\"restaurant\": " +
                 "{\"name\":\"Updated Name\", " +
                 "\"address\": \"Updated Address\", " +
+                "\"place_id\": \"updated-place-id\", " +
                 "\"notes\": \"\"," +
                 "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
                 "\"cuisine_id\": \"2\"}" +
@@ -264,6 +280,7 @@ public class RestaurantsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Updated Name")))
                 .andExpect(jsonPath("$.address", is("Updated Address")))
+                .andExpect(jsonPath("$.place_id", is("updated-place-id")))
                 .andExpect(jsonPath("$.notes", is("")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))

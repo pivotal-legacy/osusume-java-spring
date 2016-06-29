@@ -12,6 +12,9 @@ public class NewRestaurant {
     private String address;
     private String notes;
 
+    @JsonProperty("place_id")
+    private String placeId;
+
     @JsonProperty("photo_urls")
     private List<NewPhotoUrl> photoUrls;
 
@@ -26,6 +29,7 @@ public class NewRestaurant {
 
     public NewRestaurant(String name,
                          String address,
+                         String placeId,
                          String notes,
                          Long cuisineId,
                          Long priceRangeId,
@@ -33,6 +37,7 @@ public class NewRestaurant {
     {
         this.name = name;
         this.address = address;
+        this.placeId = placeId;
         this.notes = notes;
         this.cuisineId = cuisineId;
         this.priceRangeId = priceRangeId;
@@ -46,6 +51,11 @@ public class NewRestaurant {
     @SuppressWarnings("WeakerAccess")
     public String getAddress() {
         return address;
+    }
+
+    @JsonProperty("place_id")
+    public String getPlaceId() {
+        return placeId;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -82,8 +92,8 @@ public class NewRestaurant {
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
+        if (placeId != null ? !placeId.equals(that.placeId) : that.placeId != null) return false;
         if (photoUrls != null ? !photoUrls.equals(that.photoUrls) : that.photoUrls != null) return false;
-        //noinspection SimplifiableIfStatement
         if (cuisineId != null ? !cuisineId.equals(that.cuisineId) : that.cuisineId != null) return false;
         return priceRangeId != null ? priceRangeId.equals(that.priceRangeId) : that.priceRangeId == null;
 
@@ -94,6 +104,7 @@ public class NewRestaurant {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (notes != null ? notes.hashCode() : 0);
+        result = 31 * result + (placeId != null ? placeId.hashCode() : 0);
         result = 31 * result + (photoUrls != null ? photoUrls.hashCode() : 0);
         result = 31 * result + (cuisineId != null ? cuisineId.hashCode() : 0);
         result = 31 * result + (priceRangeId != null ? priceRangeId.hashCode() : 0);
@@ -106,6 +117,7 @@ public class NewRestaurant {
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", notes='" + notes + '\'' +
+                ", placeId='" + placeId + '\'' +
                 ", photoUrls=" + photoUrls +
                 ", cuisineId=" + cuisineId +
                 ", priceRangeId=" + priceRangeId +

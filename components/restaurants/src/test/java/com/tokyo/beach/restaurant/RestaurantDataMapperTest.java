@@ -88,6 +88,7 @@ public class RestaurantDataMapperTest {
         NewRestaurant kfcNewRestaurant = new NewRestaurantFixture()
                 .withName("KFC")
                 .withAddress("Shibuya")
+                .withPlaceId("some-place-id")
                 .withNotes("Notes")
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
@@ -104,6 +105,7 @@ public class RestaurantDataMapperTest {
         assertEquals(createdRestaurant.getId(), map.get("id"));
         assertEquals(createdRestaurant.getName(), "KFC");
         assertEquals(createdRestaurant.getAddress(), "Shibuya");
+        assertEquals(createdRestaurant.getPlaceId(), "some-place-id");
         assertEquals(createdRestaurant.getNotes(), "Notes");
         assertEquals(createdRestaurant.getCreatedByUserId(), user.getId());
         assertEquals(createdRestaurant.getCuisineId().longValue(), cuisine.getId());

@@ -31,7 +31,7 @@ public class RestaurantSuggestionsControllerTest {
                 .build();
 
         List<RestaurantSuggestion> suggestions = singletonList(
-                new RestaurantSuggestion("Afuri", "Roppongi")
+                new RestaurantSuggestion("place-id", "Afuri", "Roppongi")
         );
 
         ArgumentCaptor<HttpUrl> urlArgument = ArgumentCaptor.forClass(HttpUrl.class);
@@ -52,7 +52,8 @@ public class RestaurantSuggestionsControllerTest {
                         .content(payload)
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
-                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")));
+                .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].place_id", equalTo("place-id")));
 
         assertEquals(url, urlArgument.getValue());
     }

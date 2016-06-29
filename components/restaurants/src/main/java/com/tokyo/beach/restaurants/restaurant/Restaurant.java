@@ -6,6 +6,7 @@ public class Restaurant {
     private final long id;
     private final String name;
     private String address;
+    private String placeId;
     private String notes;
     private String createdDate;
     private String updatedDate;
@@ -17,6 +18,7 @@ public class Restaurant {
             long id,
             String name,
             String address,
+            String placeId,
             String notes,
             String createdDate,
             String updatedDate,
@@ -26,6 +28,7 @@ public class Restaurant {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.placeId = placeId;
         this.notes = notes;
         this.createdDate = createdDate;
         this.createdByUserId = createdByUserId;
@@ -45,6 +48,10 @@ public class Restaurant {
     @SuppressWarnings("WeakerAccess")
     public String getAddress() {
         return address;
+    }
+
+    public String getPlaceId() {
+        return placeId;
     }
 
     @SuppressWarnings("WeakerAccess")
