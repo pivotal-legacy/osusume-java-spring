@@ -20,7 +20,6 @@ import java.util.List;
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static com.tokyo.beach.restaurants.like.LikeRowMapper.likeRowMapper;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

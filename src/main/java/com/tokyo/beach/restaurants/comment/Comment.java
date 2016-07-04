@@ -30,6 +30,7 @@ public class Comment {
         return comment;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @JsonProperty("created_at")
     public String getCreatedDate() {
         return createdDate;
@@ -55,6 +56,7 @@ public class Comment {
         if (id != comment.id) return false;
         if (restaurantId != comment.restaurantId) return false;
         if (createdByUserId != comment.createdByUserId) return false;
+        //noinspection SimplifiableIfStatement
         if (this.comment != null ? !this.comment.equals(comment.comment) : comment.comment != null) return false;
         return createdDate != null ? createdDate.equals(comment.createdDate) : comment.createdDate == null;
 

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.insertUserIntoDatabase;
 import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;

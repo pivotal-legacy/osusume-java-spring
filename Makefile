@@ -22,9 +22,9 @@ alltests:
 tests: alltests test-loadsampledata
 
 start:
-	@java -jar applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
+	@java -jar build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
 
 deploy: alltests justdeploy
 
 justdeploy:
-	@cf push osusume -p applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
+	@cf push osusume -p build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar

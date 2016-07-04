@@ -1,8 +1,6 @@
 package com.tokyo.beach.comment;
 
 import com.tokyo.beach.TestDatabaseUtils;
-import com.tokyo.beach.restaurant.NewRestaurantFixture;
-import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.NewComment;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
