@@ -63,19 +63,18 @@ BEGIN
 
   -- Restaurants
 
-  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
-    ('Butagumi', 'Roppongi Station underground', 'Juicy tonkatsu!', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id, place_id, latitude, longitude) VALUES
+    ('Butagumi', '2-24-9 Nishiazabu, Minato, Tokyo 106-0031, Japan', 'Juicy tonkatsu!', dannyUserId, 'ChIJ72OI0nqLGGARy5_3z1EihGk', 35.66096400000001, 139.7220907);
 
-  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
-    ('Afuri', 'Roppongi Station underground', 'Light yuzu ramen', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id, place_id, latitude, longitude) VALUES
+    ('AFURI 六本木ヒルズ', '6 Chome-2-31 Roppongi, Minato, Tokyo 106-0032, Japan', 'Light yuzu ramen', dannyUserId, 'ChIJP1lEhXeLGGARhk5zBfKyb_A', 35.661875, 139.730148);
 
-  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
-    ('Pizzakaya', 'Down the street', '', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id, place_id, latitude, longitude) VALUES
+    ('ピザカヤ PIZZAKAYA', 'Japan, 〒106-0031 Tokyo, Minato, Nishiazabu, 3 Chome−1−19, 小山ビル ２Ｆ', 'Excellent pizza and craft beer.', dannyUserId, 'ChIJHSGarXCLGGARKEzuSpVwYqs', 35.6605225, 139.7267254);
 
-  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
-    ('100 Birds', 'Bottom of the escalator', 'Only non-smoking during lunch', dannyUserId);
+  INSERT INTO restaurant (name, address, notes, created_by_user_id, place_id, latitude, longitude) VALUES
+    ('六本木百鳥', 'Japan, 〒106-0032 Tokyo, Minato, Roppongi, 6 Chome−4−1, 六本木ヒルズ メトロハット/ハリウッドプラザb2', 'Only non-smoking during lunch', dannyUserId, 'ChIJZ3WPl3eLGGAR4Vrt8aCUMYo', 35.66150390000001, 139.7296809);
 
-  INSERT INTO restaurant (name, address, notes, created_by_user_id) VALUES
-    ('Kaiten Sushi', 'Bottom of the escalator', 'Himawari lunch is cheap with lots of sushi', dannyUserId);
-
+  INSERT INTO restaurant (name, address, notes, created_by_user_id, place_id, latitude, longitude) VALUES
+    ('ぴんとこな 六本木ヒルズ店', 'Japan, 〒106-0032 Tokyo, 港区Roppongi, 6−4−1 六本木ヒルズメトロハットハリウッドプラザ', 'Himawari lunch is cheap with lots of sushi', dannyUserId, 'ChIJZ3WPl3eLGGARcE-WXnks-j4', 35.66154400000001, 139.729363);
 END $$;
