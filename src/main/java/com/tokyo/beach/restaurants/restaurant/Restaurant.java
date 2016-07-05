@@ -7,6 +7,8 @@ public class Restaurant {
     private final String name;
     private String address;
     private String placeId;
+    private Double latitude;
+    private Double longitude;
     private String notes;
     private String createdDate;
     private String updatedDate;
@@ -19,6 +21,8 @@ public class Restaurant {
             String name,
             String address,
             String placeId,
+            double latitude,
+            double longitude,
             String notes,
             String createdDate,
             String updatedDate,
@@ -29,6 +33,8 @@ public class Restaurant {
         this.name = name;
         this.address = address;
         this.placeId = placeId;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.notes = notes;
         this.createdDate = createdDate;
         this.createdByUserId = createdByUserId;
@@ -52,6 +58,14 @@ public class Restaurant {
 
     public String getPlaceId() {
         return placeId;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -78,54 +92,5 @@ public class Restaurant {
 
     public Long getCuisineId() {
         return cuisineId;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", notes='" + notes + '\'' +
-                ", createdDate='" + createdDate + '\'' +
-                ", updatedDate='" + updatedDate + '\'' +
-                ", createdByUserId=" + createdByUserId +
-                ", priceRangeId=" + priceRangeId +
-                ", cuisineId=" + cuisineId +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Restaurant that = (Restaurant) o;
-
-        if (id != that.id) return false;
-        if (createdByUserId != that.createdByUserId) return false;
-        if (priceRangeId != that.priceRangeId) return false;
-        if (cuisineId != that.cuisineId) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        if (notes != null ? !notes.equals(that.notes) : that.notes != null) return false;
-        //noinspection SimplifiableIfStatement
-        if (createdDate != null ? !createdDate.equals(that.createdDate) : that.createdDate != null) return false;
-        return updatedDate != null ? updatedDate.equals(that.updatedDate) : that.updatedDate == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (notes != null ? notes.hashCode() : 0);
-        result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
-        result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
-        result = 31 * result + (int) (createdByUserId ^ (createdByUserId >>> 32));
-        result = 31 * result + (int) (priceRangeId ^ (priceRangeId >>> 32));
-        result = 31 * result + (int) (cuisineId ^ (cuisineId >>> 32));
-        return result;
     }
 }

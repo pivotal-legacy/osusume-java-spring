@@ -1,22 +1,20 @@
 package com.tokyo.beach.restaurants.restaurant_suggestions;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class RestaurantSuggestion {
     private String placeId;
     private String name;
     private String address;
+    private Geometry geometry;
 
-    public RestaurantSuggestion() {
+    public RestaurantSuggestion() { }
 
-    }
-
-    public RestaurantSuggestion(String placeId, String name, String address) {
+    public RestaurantSuggestion(String placeId, String name, String address, Geometry geometry) {
         this.placeId = placeId;
         this.name = name;
         this.address = address;
+        this.geometry = geometry;
     }
 
     public String getName() {
@@ -33,29 +31,25 @@ public class RestaurantSuggestion {
         this.address = address;
     }
 
+    @JsonProperty("geometry")
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
+
     @JsonProperty("place_id")
     public String getPlaceId() {
         return placeId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RestaurantSuggestion that = (RestaurantSuggestion) o;
-
-        if (placeId != null ? !placeId.equals(that.placeId) : that.placeId != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return address != null ? address.equals(that.address) : that.address == null;
-
+    public double getLatitude() {
+        return geometry
+                .getLocation()
+                .getLatitude();
     }
 
-    @Override
-    public int hashCode() {
-        int result = placeId != null ? placeId.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        return result;
+    public double getLongitude() {
+        return geometry
+                .getLocation()
+                .getLongitude();
     }
 }

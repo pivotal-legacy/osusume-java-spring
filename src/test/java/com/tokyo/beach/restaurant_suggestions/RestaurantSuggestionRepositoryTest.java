@@ -1,14 +1,14 @@
-package com.tokyo.beach.restaurants.restaurant_suggestions;
+package com.tokyo.beach.restaurant_suggestions;
 
+import com.tokyo.beach.restaurants.restaurant_suggestions.RestaurantSuggestion;
+import com.tokyo.beach.restaurants.restaurant_suggestions.RestaurantSuggestionRepository;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -21,19 +21,29 @@ public class RestaurantSuggestionRepositoryTest {
                 "{\"results\": [{" +
                         "\"place_id\" : \"ChIJ5_kEroKLGGARU4NlyGSJt8Y\"," +
                         "\"name\": \"ＡＦＵＲＩ \"," +
-                        "\"formatted_address\": \"〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F\"}"
-                        + "]}"
+                        "\"formatted_address\": \"〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F\"," +
+                        "\"geometry\" : {" +
+                            "\"location\" : {" +
+                               "\"lat\" : 35.648355, \"lng\" : 139.710893" +
+                            "}," +
+                            "\"extra-field-we-do-not-use\": {}" +
+                        "}" +
+                        "}]}"
         ));
 
         server.start();
 
         HttpUrl url = server.url("/");
 
-        List<RestaurantSuggestion> restaurantSuggestions = singletonList(
-                new RestaurantSuggestion("ChIJ5_kEroKLGGARU4NlyGSJt8Y", "ＡＦＵＲＩ ", "〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F")
-        );
+
         RestaurantSuggestionRepository repository = new RestaurantSuggestionRepository();
-        assertThat(repository.getAll(url), is(restaurantSuggestions));
+        RestaurantSuggestion restaurantSuggestion = repository.getAll(url).get(0);
+
+        assertThat(restaurantSuggestion.getName(), is("ＡＦＵＲＩ "));
+        assertThat(restaurantSuggestion.getAddress(), is("〒150-0013 東京都渋谷区恵比寿1-1-7１１７ビル1F"));
+        assertThat(restaurantSuggestion.getPlaceId(), is("ChIJ5_kEroKLGGARU4NlyGSJt8Y"));
+        assertThat(restaurantSuggestion.getLatitude(), is(35.648355));
+        assertThat(restaurantSuggestion.getLongitude(), is(139.710893));
 
         server.shutdown();
     }

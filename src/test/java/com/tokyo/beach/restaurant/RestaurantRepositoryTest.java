@@ -86,49 +86,41 @@ public class RestaurantRepositoryTest {
                 asList(cuisine)
         );
 
-        List<SerializedRestaurant> serializedRestaurants = singletonList(
-                new SerializedRestaurant(restaurant, photoUrls, cuisine, priceRange, user, emptyList(), true, 2)
-        );
+        List<SerializedRestaurant> serializedRestaurants = repository.getAll(userId);
 
-        assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
+        assertThat(serializedRestaurants.size(), equalTo(1));
+
+        SerializedRestaurant serializedRestaurant = serializedRestaurants.get(0);
+
+        assertThat(serializedRestaurant.getId(), equalTo(1L));
+        assertThat(serializedRestaurant.getCreatedByUser().getId(), equalTo(userId));
+        assertThat(serializedRestaurant.getPhotoUrlList().size(), equalTo(1));
+        assertThat(serializedRestaurant.getPhotoUrlList().get(0).getId(), equalTo(999L));
+        assertThat(serializedRestaurant.getCuisine().getId(), equalTo(20L));
+        assertThat(serializedRestaurant.getPriceRange().getId(), equalTo(1L));
+        assertThat(serializedRestaurant.isCurrentUserLikesRestaurant(), equalTo(true));
+        assertThat(serializedRestaurant.getNumberOfLikes(), equalTo(2L));
     }
 
     @Test
     public void test_getAll_returnsRestaurantsWithoutLikes() throws Exception {
-        Long userId = 1L;
-        User user = new User(userId, "taro@email.com", "taro");
-        PriceRange priceRange = new PriceRange(1L, "100yen");
-        Cuisine cuisine = new Cuisine(20L, "Swedish");
-        Restaurant restaurant = new RestaurantFixture()
-                .withId(1)
-                .withCuisine(cuisine)
-                .withPriceRange(priceRange)
-                .withUser(user)
-                .build();
-        List<Restaurant> restaurants = singletonList(
-                restaurant
-        );
+        Restaurant restaurant = new RestaurantFixture().build();
+        List<Restaurant> restaurants = singletonList(restaurant);
         when(restaurantDataMapper.getAll()).thenReturn(restaurants);
-        List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://www.cats.com/my-cat.jpg", 1));
-        when(photoDataMapper.findForRestaurants(anyObject()))
-                .thenReturn(photoUrls);
-        when(userDataMapper.findForUserIds(anyList()))
-                .thenReturn(Arrays.asList(user));
-        when(priceRangeDataMapper.getAll()).thenReturn(
-                asList(priceRange)
-        );
-        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(
-                emptyList()
-        );
-        when(cuisineDataMapper.getAll()).thenReturn(
-                asList(cuisine)
-        );
+        when(photoDataMapper.findForRestaurants(anyObject())).thenReturn(emptyList());
+        when(userDataMapper.findForUserIds(anyList())).thenReturn(emptyList());
+        when(priceRangeDataMapper.getAll()).thenReturn(emptyList());
+        when(likeDataMapper.findForRestaurants(restaurants)).thenReturn(emptyList());
+        when(cuisineDataMapper.getAll()).thenReturn(emptyList());
 
-        List<SerializedRestaurant> serializedRestaurants = singletonList(
-                new SerializedRestaurant(restaurant, photoUrls, cuisine, priceRange, user, emptyList(), false, 0)
-        );
+        List<SerializedRestaurant> serializedRestaurants = repository.getAll(1L);
 
-        assertThat(repository.getAll(userId), equalTo(serializedRestaurants));
+        assertThat(serializedRestaurants.size(), equalTo(1));
+
+        SerializedRestaurant serializedRestaurant = serializedRestaurants.get(0);
+
+        assertThat(serializedRestaurant.isCurrentUserLikesRestaurant(), equalTo(false));
+        assertThat(serializedRestaurant.getNumberOfLikes(), equalTo(0L));
     }
 
     @Test
@@ -138,7 +130,7 @@ public class RestaurantRepositoryTest {
         User user = new User(userId, "hanako@email", "hanako");
         List<SerializedComment> comments = singletonList(
                 new SerializedComment(
-                        new CommentFixture().build(),
+                        new CommentFixture().withId(1).build(),
                         user
                 )
         );
@@ -171,19 +163,18 @@ public class RestaurantRepositoryTest {
         );
         when(photoDataMapper.findForRestaurant(restaurant.getId())).thenReturn(photoUrls);
 
-        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                restaurant,
-                photoUrls,
-                cuisine,
-                priceRange,
-                user,
-                comments,
-                true,
-                2L
-        );
+        SerializedRestaurant serializedRestaurant = repository.get(restaurant.getId(), userId).get();
 
-        assertThat(repository.get(restaurant.getId(), userId).get(),
-                equalTo(serializedRestaurant));
+        assertThat(serializedRestaurant.getId(), equalTo(1L));
+        assertThat(serializedRestaurant.getCreatedByUser().getId(), equalTo(userId));
+        assertThat(serializedRestaurant.getPhotoUrlList().size(), equalTo(2));
+        assertThat(serializedRestaurant.getPhotoUrlList().get(0).getId(), equalTo(1L));
+        assertThat(serializedRestaurant.getCuisine().getId(), equalTo(1L));
+        assertThat(serializedRestaurant.getPriceRange().getId(), equalTo(0L));
+        assertThat(serializedRestaurant.isCurrentUserLikesRestaurant(), equalTo(true));
+        assertThat(serializedRestaurant.getNumberOfLikes(), equalTo(2L));
+        assertThat(serializedRestaurant.getComments().size(), equalTo(1));
+        assertThat(serializedRestaurant.getComments().get(0).getId(), equalTo(1L));
     }
 
     @Test
@@ -191,7 +182,7 @@ public class RestaurantRepositoryTest {
         Long userId = 99L;
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(999, "http://some-url", 1));
         Cuisine cuisine = new Cuisine(2,"Ramen");
-        User user = new User(99L, "jiro@mail.com", "jiro");
+        User user = new User(userId, "jiro@mail.com", "jiro");
         PriceRange priceRange = new PriceRange(1, "~900");
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1)
@@ -206,17 +197,6 @@ public class RestaurantRepositoryTest {
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
                 .build();
-
-        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                restaurant,
-                photoUrls,
-                cuisine,
-                priceRange,
-                user,
-                emptyList(),
-                false,
-                0L
-        );
         when(restaurantDataMapper.createRestaurant(newRestaurant, userId))
                 .thenReturn(restaurant);
         when(photoDataMapper.createPhotosForRestaurant(anyLong(), anyListOf(NewPhotoUrl.class)))
@@ -227,8 +207,17 @@ public class RestaurantRepositoryTest {
                 .thenReturn(user);
         when(priceRangeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(priceRange);
 
-        assertThat(repository.create(newRestaurant, userId),
-                equalTo(serializedRestaurant));
+        SerializedRestaurant createdRestaurant = repository.create(newRestaurant, userId);
+
+        assertThat(createdRestaurant.getId(), equalTo(1L));
+        assertThat(createdRestaurant.getCreatedByUser().getId(), equalTo(userId));
+        assertThat(createdRestaurant.getPhotoUrlList().size(), equalTo(1));
+        assertThat(createdRestaurant.getPhotoUrlList().get(0).getId(), equalTo(999L));
+        assertThat(createdRestaurant.getCuisine().getId(), equalTo(2L));
+        assertThat(createdRestaurant.getPriceRange().getId(), equalTo(1L));
+        assertThat(createdRestaurant.isCurrentUserLikesRestaurant(), equalTo(false));
+        assertThat(createdRestaurant.getNumberOfLikes(), equalTo(0L));
+        assertThat(createdRestaurant.getComments().size(), equalTo(0));
     }
 
     @Test
@@ -236,7 +225,7 @@ public class RestaurantRepositoryTest {
         Cuisine cuisine = new Cuisine(2, "Ramen");
         PriceRange priceRange = new PriceRange(1, "900");
         User user = new User(99L, "jiro@mail.com", "jiro");
-        Restaurant updatedRestaurant = new RestaurantFixture()
+        Restaurant restaurant = new RestaurantFixture()
                 .withId(1)
                 .withCuisine(cuisine)
                 .withPriceRange(priceRange)
@@ -244,9 +233,9 @@ public class RestaurantRepositoryTest {
                 .build();
 
         NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withName(updatedRestaurant.getName())
-                .withAddress(updatedRestaurant.getAddress())
-                .withNotes(updatedRestaurant.getNotes())
+                .withName(restaurant.getName())
+                .withAddress(restaurant.getAddress())
+                .withNotes(restaurant.getNotes())
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
                 .withPhotoUrls(emptyList())
@@ -254,48 +243,46 @@ public class RestaurantRepositoryTest {
 
         List<SerializedComment> comments = singletonList(
                 new SerializedComment(
-                        new CommentFixture().build(),
+                        new CommentFixture().withId(1).build(),
                         user
                 )
         );
 
-        when(restaurantDataMapper.updateRestaurant(updatedRestaurant.getId(), newRestaurant)).thenReturn(
-                updatedRestaurant
+        when(restaurantDataMapper.updateRestaurant(restaurant.getId(), newRestaurant)).thenReturn(
+                restaurant
         );
-        when(photoDataMapper.createPhotosForRestaurant(updatedRestaurant.getId(), asList()))
+        when(photoDataMapper.createPhotosForRestaurant(restaurant.getId(), asList()))
                 .thenReturn(asList());
-        when(photoDataMapper.findForRestaurant(updatedRestaurant.getId()))
+        when(photoDataMapper.findForRestaurant(restaurant.getId()))
                 .thenReturn(asList());
-        when(cuisineDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+        when(cuisineDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 cuisine
         );
-        when(priceRangeDataMapper.findForRestaurant(updatedRestaurant.getId()))
+        when(priceRangeDataMapper.findForRestaurant(restaurant.getId()))
                 .thenReturn(priceRange);
-        when(userDataMapper.findForRestaurantId(updatedRestaurant.getId()))
+        when(userDataMapper.findForRestaurantId(restaurant.getId()))
                 .thenReturn(user);
-        when(commentRepository.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+        when(commentRepository.findForRestaurant(restaurant.getId())).thenReturn(
                 comments
         );
-        when(likeDataMapper.findForRestaurant(updatedRestaurant.getId())).thenReturn(
+        when(likeDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
                 asList(
-                        new Like(user.getId(), updatedRestaurant.getId()),
-                        new Like(12L, updatedRestaurant.getId())
+                        new Like(user.getId(), restaurant.getId()),
+                        new Like(12L, restaurant.getId())
                 )
         );
 
 
-        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
-                updatedRestaurant,
-                asList(),
-                cuisine,
-                priceRange,
-                user,
-                comments,
-                true,
-                2L
-        );
-        assertThat(repository.update(updatedRestaurant.getId(), newRestaurant),
-                equalTo(serializedRestaurant));
+        SerializedRestaurant updatedRestaurant = repository.update(restaurant.getId(), newRestaurant);
+        assertThat(updatedRestaurant.getId(), equalTo(1L));
+        assertThat(updatedRestaurant.getCreatedByUser().getId(), equalTo(99L));
+        assertThat(updatedRestaurant.getPhotoUrlList().size(), equalTo(0));
+        assertThat(updatedRestaurant.getCuisine().getId(), equalTo(2L));
+        assertThat(updatedRestaurant.getPriceRange().getId(), equalTo(1L));
+        assertThat(updatedRestaurant.isCurrentUserLikesRestaurant(), equalTo(true));
+        assertThat(updatedRestaurant.getNumberOfLikes(), equalTo(2L));
+        assertThat(updatedRestaurant.getComments().size(), equalTo(1));
+        assertThat(updatedRestaurant.getComments().get(0).getId(), equalTo(1L));
     }
 
     @Test

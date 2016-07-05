@@ -11,6 +11,8 @@ public class NewRestaurantFixture {
     private String name = "Not Specified";
     private String address = "address";
     private String placeId = "place-id";
+    private double latitude = 1.23;
+    private double longitude = 2.34;
     private List<NewPhotoUrl> photoUrls = null;
     private String notes = "notes";
 
@@ -44,6 +46,16 @@ public class NewRestaurantFixture {
         return this;
     }
 
+    public NewRestaurantFixture withLatitude(double latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    public NewRestaurantFixture withLongitude(double longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
     public NewRestaurantFixture withPhotoUrls(List<NewPhotoUrl> photoUrls) {
         this.photoUrls = photoUrls;
         return this;
@@ -54,6 +66,8 @@ public class NewRestaurantFixture {
                 name,
                 address,
                 placeId,
+                latitude,
+                longitude,
                 notes,
                 cuisineId,
                 priceRangeId,

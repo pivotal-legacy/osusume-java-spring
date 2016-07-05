@@ -1,5 +1,6 @@
-package com.tokyo.beach.restaurants.restaurant_suggestions;
+package com.tokyo.beach.restaurant_suggestions;
 
+import com.tokyo.beach.restaurants.restaurant_suggestions.*;
 import com.tokyo.beach.restutils.RestControllerExceptionHandler;
 import okhttp3.HttpUrl;
 import org.junit.Test;
@@ -30,8 +31,11 @@ public class RestaurantSuggestionsControllerTest {
                 .setControllerAdvice(createControllerAdvice(new RestControllerExceptionHandler()))
                 .build();
 
+
+        Coordinate location = new Coordinate(1.23, 2.34);
+        Geometry geometry = new Geometry(location);
         List<RestaurantSuggestion> suggestions = singletonList(
-                new RestaurantSuggestion("place-id", "Afuri", "Roppongi")
+                new RestaurantSuggestion("place-id", "Afuri", "Roppongi", geometry)
         );
 
         ArgumentCaptor<HttpUrl> urlArgument = ArgumentCaptor.forClass(HttpUrl.class);
@@ -53,7 +57,9 @@ public class RestaurantSuggestionsControllerTest {
         ).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
-                .andExpect(jsonPath("$[0].place_id", equalTo("place-id")));
+                .andExpect(jsonPath("$[0].place_id", equalTo("place-id")))
+                .andExpect(jsonPath("$[0].latitude", equalTo(1.23)))
+                .andExpect(jsonPath("$[0].longitude", equalTo(2.34)));
 
         assertEquals(url, urlArgument.getValue());
     }

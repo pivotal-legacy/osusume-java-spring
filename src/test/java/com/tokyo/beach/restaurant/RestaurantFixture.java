@@ -19,6 +19,8 @@ public class RestaurantFixture {
     private User user = new User(0, "email@email", "Not Specified");
     private String address = "address";
     private String placeId = "place-id";
+    private double longitude = 1.23;
+    private double latitude = 2.34;
 
     public RestaurantFixture withId(long id) {
         this.id = id;
@@ -70,12 +72,24 @@ public class RestaurantFixture {
         return this;
     }
 
+    public RestaurantFixture withLatitude(double latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    public RestaurantFixture withLongitude(double longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
     public Restaurant build() {
         return new Restaurant(
                 id,
                 name,
                 address,
                 placeId,
+                latitude,
+                longitude,
                 notes,
                 createdAt,
                 updatedAt,

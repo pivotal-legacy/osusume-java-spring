@@ -106,6 +106,9 @@ public class RestaurantsControllerTest {
                 .withName("Afuri")
                 .withAddress("Roppongi")
                 .withNotes("とても美味しい")
+                .withPlaceId("abcd")
+                .withLatitude(1.23)
+                .withLongitude(2.34)
                 .withCreatedAt("2016-04-13 16:01:21.094")
                 .withUpdatedAt("2016-04-14 16:01:21.094")
                 .build();
@@ -125,6 +128,9 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.id", equalTo(1)))
                 .andExpect(jsonPath("$.name", equalTo("Afuri")))
                 .andExpect(jsonPath("$.address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$.place_id", equalTo("abcd")))
+                .andExpect(jsonPath("$.latitude", equalTo(1.23)))
+                .andExpect(jsonPath("$.longitude", equalTo(2.34)))
                 .andExpect(jsonPath("$.cuisine.id", equalTo(20)))
                 .andExpect(jsonPath("$.cuisine.name", equalTo("Swedish")))
                 .andExpect(jsonPath("$.notes", equalTo("とても美味しい")))
@@ -165,6 +171,8 @@ public class RestaurantsControllerTest {
                 .withCreatedAt("2016-04-13 16:01:21.094")
                 .withUpdatedAt("2016-04-14 16:01:21.094")
                 .withPlaceId("some-place-id")
+                .withLatitude(1.23)
+                .withLongitude(2.34)
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(restaurant.getName())
@@ -174,6 +182,8 @@ public class RestaurantsControllerTest {
                 .withPriceRangeId(priceRange.getId())
                 .withPhotoUrls(newPhotoUrls)
                 .withPlaceId(restaurant.getPlaceId())
+                .withLatitude(restaurant.getLatitude())
+                .withLongitude(restaurant.getLongitude())
                 .build();
         Long userId = 99L;
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
@@ -198,6 +208,8 @@ public class RestaurantsControllerTest {
             "\"name\":\"Afuri\", " +
             "\"address\": \"Roppongi\", " +
             "\"place_id\": \"some-place-id\", " +
+            "\"latitude\": \"1.23\", " +
+            "\"longitude\": \"2.34\", " +
             "\"notes\": \"soooo goood\", " +
             "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
             "\"cuisine_id\": \"2\", " +
@@ -216,6 +228,8 @@ public class RestaurantsControllerTest {
         .andExpect(jsonPath("$.name", is("Afuri")))
         .andExpect(jsonPath("$.address", is("Roppongi")))
         .andExpect(jsonPath("$.place_id", is("some-place-id")))
+        .andExpect(jsonPath("$.latitude", is(1.23)))
+        .andExpect(jsonPath("$.longitude", is(2.34)))
         .andExpect(jsonPath("$.notes", is("soooo goood")))
         .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
         .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
@@ -226,7 +240,16 @@ public class RestaurantsControllerTest {
         .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
 
         assertEquals(userId, userIdArgument.getValue());
-        assertEquals(newRestaurant, newRestaurantArgument.getValue());
+        assertEquals("Afuri", newRestaurantArgument.getValue().getName());
+        assertEquals("Roppongi", newRestaurantArgument.getValue().getAddress());
+        assertEquals("some-place-id", newRestaurantArgument.getValue().getPlaceId());
+        assertThat(1.23, is(newRestaurantArgument.getValue().getLatitude()));
+        assertThat(2.34, is(newRestaurantArgument.getValue().getLongitude()));
+        assertEquals("soooo goood", newRestaurantArgument.getValue().getNotes());
+        assertEquals(1, newRestaurantArgument.getValue().getPhotoUrls().size());
+        assertEquals("http://some-url", newRestaurantArgument.getValue().getPhotoUrls().get(0).getUrl());
+        assertThat(2L, is(newRestaurantArgument.getValue().getCuisineId()));
+        assertThat(1L, is(newRestaurantArgument.getValue().getPriceRangeId()));
     }
 
     @Test
@@ -237,12 +260,16 @@ public class RestaurantsControllerTest {
                 .withName("Updated Name")
                 .withAddress("Updated Address")
                 .withPlaceId("updated-place-id")
+                .withLatitude(1.23)
+                .withLongitude(2.34)
                 .withNotes("")
                 .build();
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(restaurant.getName())
                 .withAddress(restaurant.getAddress())
                 .withPlaceId(restaurant.getPlaceId())
+                .withLatitude(restaurant.getLatitude())
+                .withLongitude(restaurant.getLongitude())
                 .withNotes(restaurant.getNotes())
                 .withCuisineId(2)
                 .withPriceRangeId(null)
@@ -260,13 +287,17 @@ public class RestaurantsControllerTest {
                 0
         );
 
-        when(restaurantRepository.update(1L, newRestaurant)).
+        ArgumentCaptor<Long> attributeRestaurantId = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<NewRestaurant> attributeNewRestaurant = ArgumentCaptor.forClass(NewRestaurant.class);
+        when(restaurantRepository.update(attributeRestaurantId.capture(), attributeNewRestaurant.capture())).
                 thenReturn(serializedRestaurant);
         String updatedRestaurantPayload = "{\"restaurant\": " +
                 "{\"name\":\"Updated Name\", " +
                 "\"address\": \"Updated Address\", " +
                 "\"place_id\": \"updated-place-id\", " +
-                "\"notes\": \"\"," +
+                "\"latitude\": \"1.23\", " +
+                "\"longitude\": \"2.34\", " +
+                "\"notes\": \"some notes\"," +
                 "\"photo_urls\": [{\"url\": \"http://some-url\"}], " +
                 "\"cuisine_id\": \"2\"}" +
                 "}";
@@ -281,12 +312,25 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.name", is("Updated Name")))
                 .andExpect(jsonPath("$.address", is("Updated Address")))
                 .andExpect(jsonPath("$.place_id", is("updated-place-id")))
+                .andExpect(jsonPath("$.latitude", is(1.23)))
+                .andExpect(jsonPath("$.longitude", is(2.34)))
                 .andExpect(jsonPath("$.notes", is("")))
                 .andExpect(jsonPath("$.photo_urls[0].url", is("http://some-url")))
                 .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
                 .andExpect(jsonPath("$.created_by_user_name", is("jiro")))
                 .andExpect(jsonPath("$.price_range.id", equalTo(1)))
                 .andExpect(jsonPath("$.price_range.range", equalTo("~900")));
+
+        assertEquals(attributeRestaurantId.getValue().longValue(), 1L);
+        assertEquals(attributeNewRestaurant.getValue().getName(), "Updated Name");
+        assertEquals(attributeNewRestaurant.getValue().getAddress(), "Updated Address");
+        assertEquals(attributeNewRestaurant.getValue().getPlaceId(), "updated-place-id");
+        assertThat(attributeNewRestaurant.getValue().getLatitude(), is(1.23));
+        assertThat(attributeNewRestaurant.getValue().getLongitude(), is(2.34));
+        assertEquals(attributeNewRestaurant.getValue().getNotes(), "some notes");
+        assertEquals(attributeNewRestaurant.getValue().getPhotoUrls().size(), 1);
+        assertEquals(attributeNewRestaurant.getValue().getPhotoUrls().get(0).getUrl(), "http://some-url");
+        assertEquals(attributeNewRestaurant.getValue().getCuisineId().longValue(), 2L);
     }
 
     @Test

@@ -14,13 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
 import static com.tokyo.beach.restaurants.restaurant.RestaurantRowMapper.restaurantRowMapper;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -48,31 +48,18 @@ public class RestaurantDataMapperTest {
     }
 
     @Test
-    public void test_getAll_returnsSortedList() {
+    public void test_getAll_returnsNewestCreatedRestaurantFirst() {
         Restaurant restaurant1 = new RestaurantFixture()
-                .withName("Afuri")
-                .withAddress("Roppongi")
                 .withUser(user)
-                .withNotes("notes")
-                .withUpdatedAt("2016-01-01")
                 .persist(jdbcTemplate);
-
         Restaurant restaurant2 = new RestaurantFixture()
-                .withName("Butagumi")
-                .withAddress("Roppongi")
                 .withUser(user)
-                .withNotes("notes")
-                .withUpdatedAt("2016-01-02")
                 .persist(jdbcTemplate);
 
         List<Restaurant> restaurants = restaurantDataMapper.getAll();
 
-        List<Restaurant> expectedRestaurants = asList(
-                restaurant2,
-                restaurant1
-            );
-
-        assertThat(restaurants, is(expectedRestaurants));
+        assertThat(restaurants.get(0).getId(), is(restaurant2.getId()));
+        assertThat(restaurants.get(1).getId(), is(restaurant1.getId()));
     }
 
     @Test
@@ -89,6 +76,8 @@ public class RestaurantDataMapperTest {
                 .withName("KFC")
                 .withAddress("Shibuya")
                 .withPlaceId("some-place-id")
+                .withLatitude(3.45)
+                .withLongitude(5.67)
                 .withNotes("Notes")
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
@@ -106,6 +95,8 @@ public class RestaurantDataMapperTest {
         assertEquals(createdRestaurant.getName(), "KFC");
         assertEquals(createdRestaurant.getAddress(), "Shibuya");
         assertEquals(createdRestaurant.getPlaceId(), "some-place-id");
+        assertThat(createdRestaurant.getLatitude(), is(3.45));
+        assertThat(createdRestaurant.getLongitude(), is(5.67));
         assertEquals(createdRestaurant.getNotes(), "Notes");
         assertEquals(createdRestaurant.getCreatedByUserId(), user.getId());
         assertEquals(createdRestaurant.getCuisineId().longValue(), cuisine.getId());
@@ -215,6 +206,9 @@ public class RestaurantDataMapperTest {
         NewRestaurant updatedNewRestaurant = new NewRestaurantFixture()
                 .withName("Kentucky")
                 .withAddress("East Shibuya")
+                .withPlaceId("updated-place-id")
+                .withLatitude(3.45)
+                .withLongitude(4.56)
                 .withNotes("Actually, not really healthy...")
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
@@ -232,6 +226,9 @@ public class RestaurantDataMapperTest {
 
         assertEquals(map.get("name"), updatedNewRestaurant.getName());
         assertEquals(map.get("address"), updatedNewRestaurant.getAddress());
+        assertEquals(map.get("place_id"), updatedNewRestaurant.getPlaceId());
+        assertThat(((BigDecimal)map.get("latitude")).doubleValue(), is(updatedNewRestaurant.getLatitude()));
+        assertThat(((BigDecimal)map.get("longitude")).doubleValue(), is(updatedNewRestaurant.getLongitude()));
         assertEquals(map.get("notes"), updatedNewRestaurant.getNotes());
         assertEquals(map.get("created_by_user_id"), user.getId());
         assertEquals(map.get("cuisine_id"), updatedNewRestaurant.getCuisineId());
