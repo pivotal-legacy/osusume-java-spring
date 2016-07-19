@@ -1,12 +1,16 @@
 ci: refreshdb tests
 
-refreshdb:
-	@dropdb -e osusume-dev
-	@createdb -e osusume-dev
-	@psql -d osusume-dev -f ./sql/initial_schema.ddl
+refreshdb: test-refreshdb dev-refreshdb
+
+test-refreshdb:
 	@dropdb -e osusume-test
 	@createdb -e osusume-test
 	@psql -d osusume-test -f ./sql/initial_schema.ddl
+
+dev-refreshdb:
+	@dropdb -e osusume-dev
+	@createdb -e osusume-dev
+	@psql -d osusume-dev -f ./sql/initial_schema.ddl
 
 loadsampledata: test-loadsampledata dev-loadsampledata
 
