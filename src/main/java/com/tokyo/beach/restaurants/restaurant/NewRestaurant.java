@@ -10,6 +10,7 @@ public class NewRestaurant {
 
     private String name;
     private String address;
+    private String nearestStation;
     private String notes;
 
     @JsonProperty("place_id")
@@ -32,6 +33,7 @@ public class NewRestaurant {
 
     public NewRestaurant(String name,
                          String address,
+                         String nearestStation,
                          String placeId,
                          double latitude,
                          double longitude,
@@ -42,6 +44,7 @@ public class NewRestaurant {
     {
         this.name = name;
         this.address = address;
+        this.nearestStation = nearestStation;
         this.placeId = placeId;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -58,6 +61,11 @@ public class NewRestaurant {
     @SuppressWarnings("WeakerAccess")
     public String getAddress() {
         return address;
+    }
+
+    @JsonProperty("nearest_station")
+    public String getNearestStation() {
+        return nearestStation;
     }
 
     @JsonProperty("place_id")

@@ -63,6 +63,7 @@ public class RestaurantsControllerTest {
                 .withId(1)
                 .withName("Afuri")
                 .withAddress("Roppongi")
+                .withNearestStation("Roppongi Station")
                 .withNotes("とても美味しい")
                 .withCreatedAt("2016-04-13 16:01:21.094")
                 .withUpdatedAt("2016-04-14 16:01:21.094")
@@ -85,6 +86,7 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].id", equalTo(1)))
                 .andExpect(jsonPath("$[0].name", equalTo("Afuri")))
                 .andExpect(jsonPath("$[0].address", equalTo("Roppongi")))
+                .andExpect(jsonPath("$[0].nearest_station", equalTo("Roppongi Station")))
                 .andExpect(jsonPath("$[0].cuisine.id", equalTo(20)))
                 .andExpect(jsonPath("$[0].cuisine.name", equalTo("Swedish")))
                 .andExpect(jsonPath("$[0].notes", equalTo("とても美味しい")))
@@ -162,28 +164,17 @@ public class RestaurantsControllerTest {
         Cuisine cuisine = new Cuisine(2, "Ramen");
         PriceRange priceRange = new PriceRange(1, "~900");
         List<PhotoUrl> photoUrls = singletonList(new PhotoUrl(1, "http://some-url", 1));
-        List<NewPhotoUrl> newPhotoUrls = singletonList(new NewPhotoUrl("http://some-url"));
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1)
                 .withName("Afuri")
                 .withAddress("Roppongi")
+                .withNearestStation("Roppongi Station")
                 .withNotes("soooo goood")
                 .withCreatedAt("2016-04-13 16:01:21.094")
                 .withUpdatedAt("2016-04-14 16:01:21.094")
                 .withPlaceId("some-place-id")
                 .withLatitude(1.23)
                 .withLongitude(2.34)
-                .build();
-        NewRestaurant newRestaurant = new NewRestaurantFixture()
-                .withName(restaurant.getName())
-                .withAddress(restaurant.getAddress())
-                .withNotes(restaurant.getNotes())
-                .withCuisineId(cuisine.getId())
-                .withPriceRangeId(priceRange.getId())
-                .withPhotoUrls(newPhotoUrls)
-                .withPlaceId(restaurant.getPlaceId())
-                .withLatitude(restaurant.getLatitude())
-                .withLongitude(restaurant.getLongitude())
                 .build();
         Long userId = 99L;
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
@@ -207,6 +198,7 @@ public class RestaurantsControllerTest {
             "{" +
             "\"name\":\"Afuri\", " +
             "\"address\": \"Roppongi\", " +
+            "\"nearest_station\": \"Roppongi Station\", " +
             "\"place_id\": \"some-place-id\", " +
             "\"latitude\": \"1.23\", " +
             "\"longitude\": \"2.34\", " +
@@ -227,6 +219,7 @@ public class RestaurantsControllerTest {
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.name", is("Afuri")))
         .andExpect(jsonPath("$.address", is("Roppongi")))
+        .andExpect(jsonPath("$.nearest_station", is("Roppongi Station")))
         .andExpect(jsonPath("$.place_id", is("some-place-id")))
         .andExpect(jsonPath("$.latitude", is(1.23)))
         .andExpect(jsonPath("$.longitude", is(2.34)))
@@ -242,6 +235,7 @@ public class RestaurantsControllerTest {
         assertEquals(userId, userIdArgument.getValue());
         assertEquals("Afuri", newRestaurantArgument.getValue().getName());
         assertEquals("Roppongi", newRestaurantArgument.getValue().getAddress());
+        assertEquals("Roppongi Station", newRestaurantArgument.getValue().getNearestStation());
         assertEquals("some-place-id", newRestaurantArgument.getValue().getPlaceId());
         assertThat(1.23, is(newRestaurantArgument.getValue().getLatitude()));
         assertThat(2.34, is(newRestaurantArgument.getValue().getLongitude()));

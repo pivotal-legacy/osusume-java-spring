@@ -10,6 +10,7 @@ public class NewRestaurantFixture {
     private Long cuisineId = null;
     private String name = "Not Specified";
     private String address = "address";
+    private String nearestStation = "nearestStation";
     private String placeId = "place-id";
     private double latitude = 1.23;
     private double longitude = 2.34;
@@ -41,6 +42,11 @@ public class NewRestaurantFixture {
         return this;
     }
 
+    public NewRestaurantFixture withNearestStation(String nearestStation) {
+        this.nearestStation = nearestStation;
+        return this;
+    }
+
     public NewRestaurantFixture withPlaceId(String placeId) {
         this.placeId = placeId;
         return this;
@@ -65,6 +71,7 @@ public class NewRestaurantFixture {
         return new NewRestaurant(
                 name,
                 address,
+                nearestStation,
                 placeId,
                 latitude,
                 longitude,

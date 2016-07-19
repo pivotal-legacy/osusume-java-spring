@@ -38,6 +38,7 @@ CREATE TABLE restaurant (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
+    nearest_station VARCHAR(255),
     place_id VARCHAR(255),
     latitude NUMERIC,
     longitude NUMERIC,

@@ -6,6 +6,7 @@ public class Restaurant {
     private final long id;
     private final String name;
     private String address;
+    private String nearestStation;
     private String placeId;
     private Double latitude;
     private Double longitude;
@@ -20,6 +21,7 @@ public class Restaurant {
             long id,
             String name,
             String address,
+            String nearestStation,
             String placeId,
             double latitude,
             double longitude,
@@ -32,6 +34,7 @@ public class Restaurant {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.nearestStation = nearestStation;
         this.placeId = placeId;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -92,5 +95,10 @@ public class Restaurant {
 
     public Long getCuisineId() {
         return cuisineId;
+    }
+
+    @JsonProperty("nearest_station")
+    public String getNearestStation() {
+        return nearestStation;
     }
 }

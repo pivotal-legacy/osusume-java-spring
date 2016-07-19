@@ -11,16 +11,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class RestaurantFixture {
     private long id = 0;
     private String name = "Not Specified";
-    private String createdAt = "created-date";
-    private String updatedAt = "updated-date";
+    private String address = "address";
+    private String nearestStation = "Roppongi";
+    private String placeId = "place-id";
+    private double longitude = 1.23;
+    private double latitude = 2.34;
     private String notes = "notes";
     private Cuisine cuisine = new Cuisine(0, "Not Specified");
     private PriceRange priceRange = new PriceRange(0, "Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
-    private String address = "address";
-    private String placeId = "place-id";
-    private double longitude = 1.23;
-    private double latitude = 2.34;
+    private String createdAt = "created-date";
+    private String updatedAt = "updated-date";
+
 
     public RestaurantFixture withId(long id) {
         this.id = id;
@@ -67,6 +69,11 @@ public class RestaurantFixture {
         return this;
     }
 
+    public RestaurantFixture withNearestStation(String nearestStation) {
+        this.nearestStation = nearestStation;
+        return this;
+    }
+
     public RestaurantFixture withPlaceId(String placeId) {
         this.placeId = placeId;
         return this;
@@ -87,6 +94,7 @@ public class RestaurantFixture {
                 id,
                 name,
                 address,
+                nearestStation,
                 placeId,
                 latitude,
                 longitude,

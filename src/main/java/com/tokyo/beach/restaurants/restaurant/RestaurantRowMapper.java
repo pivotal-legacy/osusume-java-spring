@@ -8,6 +8,7 @@ public class RestaurantRowMapper {
                 rs.getLong("id"),
                 rs.getString("name"),
                 rs.getString("address"),
+                rs.getString("nearest_station"),
                 rs.getString("place_id"),
                 rs.getDouble("latitude"),
                 rs.getDouble("longitude"),

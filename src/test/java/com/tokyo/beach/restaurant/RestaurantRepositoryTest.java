@@ -61,6 +61,7 @@ public class RestaurantRepositoryTest {
         User user = new User(userId, "taro@email.com", "taro");
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1)
+                .withNearestStation("Roppongi Station")
                 .withCuisine(cuisine)
                 .withPriceRange(priceRange)
                 .withUser(user)
@@ -93,6 +94,7 @@ public class RestaurantRepositoryTest {
         SerializedRestaurant serializedRestaurant = serializedRestaurants.get(0);
 
         assertThat(serializedRestaurant.getId(), equalTo(1L));
+        assertThat(serializedRestaurant.getNearestStation(), equalTo("Roppongi Station"));
         assertThat(serializedRestaurant.getCreatedByUser().getId(), equalTo(userId));
         assertThat(serializedRestaurant.getPhotoUrlList().size(), equalTo(1));
         assertThat(serializedRestaurant.getPhotoUrlList().get(0).getId(), equalTo(999L));
@@ -186,6 +188,7 @@ public class RestaurantRepositoryTest {
         PriceRange priceRange = new PriceRange(1, "~900");
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1)
+                .withNearestStation("Roppongi Station")
                 .withCuisine(cuisine)
                 .withPriceRange(priceRange)
                 .withUser(user)
@@ -193,6 +196,7 @@ public class RestaurantRepositoryTest {
         NewRestaurant newRestaurant = new NewRestaurantFixture()
                 .withName(restaurant.getName())
                 .withAddress(restaurant.getAddress())
+                .withNearestStation(restaurant.getNearestStation())
                 .withNotes(restaurant.getNotes())
                 .withCuisineId(cuisine.getId())
                 .withPriceRangeId(priceRange.getId())
@@ -210,6 +214,7 @@ public class RestaurantRepositoryTest {
         SerializedRestaurant createdRestaurant = repository.create(newRestaurant, userId);
 
         assertThat(createdRestaurant.getId(), equalTo(1L));
+        assertThat(createdRestaurant.getNearestStation(), equalTo("Roppongi Station"));
         assertThat(createdRestaurant.getCreatedByUser().getId(), equalTo(userId));
         assertThat(createdRestaurant.getPhotoUrlList().size(), equalTo(1));
         assertThat(createdRestaurant.getPhotoUrlList().get(0).getId(), equalTo(999L));

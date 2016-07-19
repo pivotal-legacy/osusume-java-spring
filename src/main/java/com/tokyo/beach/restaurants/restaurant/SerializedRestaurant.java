@@ -58,6 +58,12 @@ public class SerializedRestaurant {
         return restaurant.getAddress();
     }
 
+    @SuppressWarnings("unused")
+    @JsonProperty("nearest_station")
+    public String getNearestStation() {
+        return restaurant.getNearestStation();
+    }
+
     @JsonProperty("place_id")
     public String getPlaceId() {
         return restaurant.getPlaceId();

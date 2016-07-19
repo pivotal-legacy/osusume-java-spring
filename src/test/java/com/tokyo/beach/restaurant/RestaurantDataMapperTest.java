@@ -75,6 +75,7 @@ public class RestaurantDataMapperTest {
         NewRestaurant kfcNewRestaurant = new NewRestaurantFixture()
                 .withName("KFC")
                 .withAddress("Shibuya")
+                .withNearestStation("Shibuya Station")
                 .withPlaceId("some-place-id")
                 .withLatitude(3.45)
                 .withLongitude(5.67)
@@ -94,6 +95,7 @@ public class RestaurantDataMapperTest {
         assertEquals(createdRestaurant.getId(), map.get("id"));
         assertEquals(createdRestaurant.getName(), "KFC");
         assertEquals(createdRestaurant.getAddress(), "Shibuya");
+        assertEquals(createdRestaurant.getNearestStation(), "Shibuya Station");
         assertEquals(createdRestaurant.getPlaceId(), "some-place-id");
         assertThat(createdRestaurant.getLatitude(), is(3.45));
         assertThat(createdRestaurant.getLongitude(), is(5.67));
@@ -189,6 +191,7 @@ public class RestaurantDataMapperTest {
     public void test_updateRestaurant_updatesRestaurant() throws Exception {
         Restaurant restaurant = new RestaurantFixture()
                 .withName("Afuri")
+                .withNearestStation("Roppongi Station")
                 .withCuisine(new Cuisine(0L, "Not Specified"))
                 .withUser(user)
                 .withUpdatedAt("2016-01-01 16:42:19.572569")
@@ -206,6 +209,7 @@ public class RestaurantDataMapperTest {
         NewRestaurant updatedNewRestaurant = new NewRestaurantFixture()
                 .withName("Kentucky")
                 .withAddress("East Shibuya")
+                .withNearestStation("Shibuya Station")
                 .withPlaceId("updated-place-id")
                 .withLatitude(3.45)
                 .withLongitude(4.56)
@@ -226,6 +230,7 @@ public class RestaurantDataMapperTest {
 
         assertEquals(map.get("name"), updatedNewRestaurant.getName());
         assertEquals(map.get("address"), updatedNewRestaurant.getAddress());
+        assertEquals(map.get("nearest_station"), updatedNewRestaurant.getNearestStation());
         assertEquals(map.get("place_id"), updatedNewRestaurant.getPlaceId());
         assertThat(((BigDecimal)map.get("latitude")).doubleValue(), is(updatedNewRestaurant.getLatitude()));
         assertThat(((BigDecimal)map.get("longitude")).doubleValue(), is(updatedNewRestaurant.getLongitude()));
