@@ -328,7 +328,7 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void test_delete_returnsOkHTTPStatus() throws Exception {
+    public void test_deletePhoto_returnsOkHTTPStatus() throws Exception {
         when(photoDataMapper.get(
                 anyLong()
         )).thenReturn(Optional.empty());
@@ -343,7 +343,7 @@ public class RestaurantsControllerTest {
     }
 
     @Test
-    public void test_delete_deletesPhotoUrlMadeByCurrentUser() throws Exception {
+    public void test_deletePhoto_deletesPhotoUrlMadeByCurrentUser() throws Exception {
         when(photoDataMapper.get(10))
                 .thenReturn(Optional.of(
                         new PhotoUrl(
@@ -364,7 +364,7 @@ public class RestaurantsControllerTest {
 
 
     @Test
-    public void test_delete_doesntDeleteNonExistentPhotoUrl() throws Exception {
+    public void test_deletePhoto_doesntDeleteNonExistentPhotoUrl() throws Exception {
         when(photoDataMapper.get(10))
                 .thenReturn(Optional.empty()
                 );
@@ -376,5 +376,40 @@ public class RestaurantsControllerTest {
         verify(photoDataMapper, times(1)).get(10);
         verify(photoDataMapper, never()).delete(10);
         verify(s3StorageRepository, never()).deleteFile(anyString());
+    }
+
+    @Test
+    public void test_deleteRestaurant_returnsOk() throws Exception {
+        ResultActions result = mockMvc.perform(
+            delete("/restaurants/20").requestAttr("userId", 99)
+        );
+
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_deleteRestaurant_callsRestaurantRepositoryWithRestaurantIdAndUserId() throws Exception {
+        Restaurant restaurant = new RestaurantFixture()
+                .withId(20)
+                .withName("Afuri")
+                .build();
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+            restaurant,
+            emptyList(),
+            new Cuisine(0L, "Not Specified"),
+            new PriceRange(0L, "Not Specified"),
+            new User(10L, "taro@email.com", "taro"),
+            emptyList(),
+            false,
+            0
+        );
+        when(restaurantRepository.get(20L, 10L))
+                .thenReturn(Optional.of(serializedRestaurant));
+
+        ResultActions result = mockMvc.perform(delete("/restaurants/20")
+                .requestAttr("userId", 10));
+
+        result.andExpect(status().isOk());
+        verify(restaurantRepository, times(1)).delete(20L, 10L);
     }
 }

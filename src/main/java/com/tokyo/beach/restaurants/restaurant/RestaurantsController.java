@@ -82,6 +82,13 @@ public class RestaurantsController {
 
     }
 
+    @RequestMapping(value = "{restaurantId}", method = DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteRestaurant(@PathVariable String restaurantId) {
+        Number userId = getCurrentUserId(RequestContextHolder.getRequestAttributes());
+        restaurantRepository.delete(Long.parseLong(restaurantId), userId.longValue());
+    }
+
     private Number getCurrentUserId(RequestAttributes requestAttributes) {
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         return (Number) request.getAttribute("userId");

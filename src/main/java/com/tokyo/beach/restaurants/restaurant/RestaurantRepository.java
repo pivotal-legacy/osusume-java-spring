@@ -11,6 +11,7 @@ import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
+import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class RestaurantRepository {
     private final LikeDataMapper likeDataMapper;
     private final CuisineDataMapper cuisineDataMapper;
     private CommentRepository commentRepository;
+    private S3StorageRepository s3StorageRepository;
 
     @Autowired
     public RestaurantRepository(RestaurantDataMapper restaurantDataMapper,
@@ -43,7 +45,8 @@ public class RestaurantRepository {
                                 PriceRangeDataMapper priceRangeDataMapper,
                                 LikeDataMapper likeDataMapper,
                                 CuisineDataMapper cuisineDataMapper,
-                                CommentRepository commentRepository
+                                CommentRepository commentRepository,
+                                S3StorageRepository s3StorageRepository
                                  ) {
         this.restaurantDataMapper = restaurantDataMapper;
         this.photoDataMapper = photoDataMapper;
@@ -52,6 +55,7 @@ public class RestaurantRepository {
         this.likeDataMapper = likeDataMapper;
         this.cuisineDataMapper = cuisineDataMapper;
         this.commentRepository = commentRepository;
+        this.s3StorageRepository = s3StorageRepository;
     }
 
     public List<SerializedRestaurant> getAll(Long userId) {
@@ -202,5 +206,16 @@ public class RestaurantRepository {
                 currentUserLikesRestaurant,
                 likes.size()
         );
+    }
+
+    public void delete(Long restaurantId, Long userId) {
+        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(restaurantId);
+        if (maybeRestaurant.isPresent() && maybeRestaurant.get().getCreatedByUserId() == userId) {
+            List<PhotoUrl> photoUrls = photoDataMapper.findForRestaurant(restaurantId);
+            restaurantDataMapper.delete(restaurantId);
+            photoUrls.stream().forEach(photoUrl -> {
+                s3StorageRepository.deleteFile(photoUrl.getUrl());
+            });
+        }
     }
 }

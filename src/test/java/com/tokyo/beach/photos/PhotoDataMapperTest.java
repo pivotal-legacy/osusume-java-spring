@@ -1,8 +1,12 @@
 package com.tokyo.beach.photos;
 
+import com.tokyo.beach.restaurant.RestaurantFixture;
 import com.tokyo.beach.restaurants.photos.NewPhotoUrl;
 import com.tokyo.beach.restaurants.photos.PhotoDataMapper;
 import com.tokyo.beach.restaurants.photos.PhotoUrl;
+import com.tokyo.beach.restaurants.restaurant.Restaurant;
+import com.tokyo.beach.restaurants.user.User;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tokyo.beach.TestDatabaseUtils.buildDataSource;
-import static com.tokyo.beach.TestDatabaseUtils.truncateAllTables;
+import static com.tokyo.beach.TestDatabaseUtils.*;
 import static com.tokyo.beach.restaurants.photos.PhotoUrlRowMapper.photoUrlRowMapper;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -23,11 +26,18 @@ public class PhotoDataMapperTest {
 
     private PhotoDataMapper photoDataMapper;
     private JdbcTemplate jdbcTemplate;
+    private Restaurant restaurant;
 
     @Before
     public void setUp() throws Exception {
         jdbcTemplate = new JdbcTemplate(buildDataSource());
         photoDataMapper = new PhotoDataMapper(jdbcTemplate);
+        createDefaultCuisine(jdbcTemplate);
+        createDefaultPriceRange(jdbcTemplate);
+        User user = new UserFixture().persist(jdbcTemplate);
+        restaurant = new RestaurantFixture()
+                .withUser(user)
+                .persist(jdbcTemplate);
     }
 
     @After
@@ -39,10 +49,10 @@ public class PhotoDataMapperTest {
     public void test_findForRestaurants_returnsPhotoUrlList() throws Exception {
         PhotoUrl photoUrl  = new PhotoUrlFixture()
                 .withUrl("http://some-url")
-                .withRestaurantId(1)
+                .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(1L));
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurants(singletonList(restaurant.getId()));
 
         assertThat(photos, hasSize(1));
 
@@ -53,8 +63,9 @@ public class PhotoDataMapperTest {
 
     @Test
     public void test_createPhotosForRestaurant() throws Exception {
+
         photoDataMapper.createPhotosForRestaurant(
-                789,
+                restaurant.getId(),
                 asList(
                         new NewPhotoUrl("http://some-url"),
                         new NewPhotoUrl("http://another-url")
@@ -62,29 +73,29 @@ public class PhotoDataMapperTest {
         );
 
         List<PhotoUrl> photoUrls = jdbcTemplate.query(
-                "SELECT * FROM photo_url where restaurant_id = 789",
-                photoUrlRowMapper
+                "SELECT * FROM photo_url where restaurant_id = ?",
+                photoUrlRowMapper,
+                restaurant.getId()
         );
 
         assertThat(photoUrls, notNullValue());
         assertThat(photoUrls.get(0).getUrl(), is("http://some-url"));
-        assertThat(photoUrls.get(0).getRestaurantId(), is(789L));
+        assertThat(photoUrls.get(0).getRestaurantId(), is(restaurant.getId()));
         assertThat(photoUrls.get(1).getUrl(), is("http://another-url"));
-        assertThat(photoUrls.get(1).getRestaurantId(), is(789L));
+        assertThat(photoUrls.get(1).getRestaurantId(), is(restaurant.getId()));
     }
 
     @Test
     public void test_findForRestaurant_returnsPhotoUrlList() throws Exception {
-        long restaurantId = 1;
         PhotoUrl photoUrl = new PhotoUrlFixture()
                 .withUrl("http://some-url")
-                .withRestaurantId(restaurantId)
+                .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
-        List<PhotoUrl> photos = photoDataMapper.findForRestaurant(restaurantId);
+        List<PhotoUrl> photos = photoDataMapper.findForRestaurant(restaurant.getId());
 
         assertThat(photos, hasSize(1));
-        assertThat(photos.get(0).getRestaurantId(), is(restaurantId));
+        assertThat(photos.get(0).getRestaurantId(), is(restaurant.getId()));
         assertThat(photos.get(0).getUrl(), is(photoUrl.getUrl()));
     }
 
@@ -92,7 +103,7 @@ public class PhotoDataMapperTest {
     public void test_get_returnsPhotoUrl() throws Exception {
         PhotoUrl photoUrl = new PhotoUrlFixture()
                 .withUrl("http://url.com")
-                .withRestaurantId(10L)
+                .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
         Optional<PhotoUrl> actualPhotoUrl = photoDataMapper.get(photoUrl.getId());
@@ -111,7 +122,7 @@ public class PhotoDataMapperTest {
     public void test_delete_deletesPhotoUrl() throws  Exception {
         PhotoUrl photoUrl = new PhotoUrlFixture()
                 .withUrl("http://url.com")
-                .withRestaurantId(10)
+                .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
 
         photoDataMapper.delete(photoUrl.getId());

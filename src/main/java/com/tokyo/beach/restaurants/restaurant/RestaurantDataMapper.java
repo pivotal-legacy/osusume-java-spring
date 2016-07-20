@@ -101,4 +101,8 @@ public class RestaurantDataMapper {
                 restaurantId
         );
     }
+
+    public void delete(Long restaurantId) {
+        jdbcTemplate.update("DELETE FROM restaurant WHERE id = ?", restaurantId);
+    }
 }

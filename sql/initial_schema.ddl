@@ -56,7 +56,7 @@ CREATE TABLE restaurant (
 CREATE TABLE comment (
     id BIGSERIAL PRIMARY KEY NOT NULL,
     content VARCHAR(500) NOT NULL,
-    restaurant_id BIGINT REFERENCES restaurant(id) NOT NULL,
+    restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
     created_by_user_id BIGINT REFERENCES users(id) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
@@ -68,7 +68,7 @@ CREATE TABLE comment (
 CREATE TABLE photo_url (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   url VARCHAR(500) NOT NULL,
-  restaurant_id BIGINT,
+  restaurant_id BIGINT REFERENCES restaurant(id) ON DELETE CASCADE NOT NULL,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL,
   updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT current_timestamp NOT NULL
 );

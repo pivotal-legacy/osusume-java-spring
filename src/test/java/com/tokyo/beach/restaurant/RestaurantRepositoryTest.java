@@ -13,8 +13,10 @@ import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.pricerange.PriceRangeDataMapper;
 import com.tokyo.beach.restaurants.restaurant.*;
+import com.tokyo.beach.restaurants.s3.S3StorageRepository;
 import com.tokyo.beach.restaurants.user.User;
 import com.tokyo.beach.restaurants.user.UserDataMapper;
+import com.tokyo.beach.user.UserFixture;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,9 +29,11 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.*;
 
 public class RestaurantRepositoryTest {
     private RestaurantDataMapper restaurantDataMapper;
@@ -40,6 +44,7 @@ public class RestaurantRepositoryTest {
     private PriceRangeDataMapper priceRangeDataMapper;
     private CommentRepository commentRepository;
     private RestaurantRepository repository;
+    private S3StorageRepository s3StorageRepository;
 
     @Before
     public void setUp() {
@@ -50,7 +55,8 @@ public class RestaurantRepositoryTest {
         likeDataMapper = mock(LikeDataMapper.class);
         priceRangeDataMapper = mock(PriceRangeDataMapper.class);
         commentRepository = mock(CommentRepository.class);
-        repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper, commentRepository);
+        s3StorageRepository = mock(S3StorageRepository.class);
+        repository = new RestaurantRepository(restaurantDataMapper, photoDataMapper, userDataMapper, priceRangeDataMapper, likeDataMapper, cuisineDataMapper, commentRepository, s3StorageRepository);
     }
 
     @Test
@@ -346,5 +352,45 @@ public class RestaurantRepositoryTest {
                         new PhotoUrl(999, "http://new-url-two", 1)
                 ))
         );
+    }
+
+    @Test
+    public void test_delete_doesNotDeleteRestaurantIfUserIdNotMatch() {
+        User user = new UserFixture().withId(0L).build();
+        Restaurant restaurant = new RestaurantFixture().withUser(user).build();
+        doNothing().when(restaurantDataMapper).delete(restaurant.getId());
+        when(restaurantDataMapper.get(restaurant.getId())).thenReturn(Optional.of(restaurant));
+
+        repository.delete(restaurant.getId(), 1L);
+
+        verify(restaurantDataMapper, times(0)).delete(restaurant.getId());
+    }
+
+    @Test
+    public void test_delete_deleteRestaurantIfUserIdMatch() {
+        User user = new UserFixture().build();
+        Restaurant restaurant = new RestaurantFixture().withUser(user).build();
+        when(restaurantDataMapper.get(restaurant.getId())).thenReturn(Optional.of(restaurant));
+
+        repository.delete(restaurant.getId(), user.getId());
+
+        verify(restaurantDataMapper, times(1)).delete(restaurant.getId());
+    }
+
+    @Test
+    public void test_delete_callsPhotoRepositoryToDeletePhotos() {
+        Restaurant restaurant = new RestaurantFixture().build();
+        when(restaurantDataMapper.get(restaurant.getId())).thenReturn(Optional.of(restaurant));
+        when(photoDataMapper.findForRestaurant(restaurant.getId())).thenReturn(
+                asList(
+                        new PhotoUrl(0, "http://file1", restaurant.getId()),
+                        new PhotoUrl(1, "http://file2", restaurant.getId())
+                )
+        );
+
+        repository.delete(restaurant.getId(), restaurant.getCreatedByUserId());
+
+        verify(s3StorageRepository, times(1)).deleteFile("http://file1");
+        verify(s3StorageRepository, times(1)).deleteFile("http://file2");
     }
 }

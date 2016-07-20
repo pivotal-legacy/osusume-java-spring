@@ -1,8 +1,14 @@
 package com.tokyo.beach.restaurant;
 
+import com.tokyo.beach.comment.CommentFixture;
 import com.tokyo.beach.cuisine.CuisineFixture;
+import com.tokyo.beach.like.LikeFixture;
+import com.tokyo.beach.photos.PhotoUrlFixture;
 import com.tokyo.beach.pricerange.PriceRangeFixture;
+import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.cuisine.Cuisine;
+import com.tokyo.beach.restaurants.like.Like;
+import com.tokyo.beach.restaurants.photos.PhotoUrl;
 import com.tokyo.beach.restaurants.pricerange.PriceRange;
 import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
@@ -240,5 +246,55 @@ public class RestaurantDataMapperTest {
         assertEquals(map.get("price_range_id"), updatedNewRestaurant.getPriceRangeId());
         assertEquals(map.get("updated_at").toString(), updatedRestaurant.getUpdatedDate());
         assertNotEquals(updatedRestaurant.getUpdatedDate(), restaurant.getUpdatedDate());
+    }
+
+    @Test
+    public void test_delete_deletesRestaurant() throws Exception {
+        User user = new UserFixture().persist(jdbcTemplate);
+        Restaurant restaurant = new RestaurantFixture()
+                .withUser(user)
+                .persist(jdbcTemplate);
+        Comment comment = new CommentFixture()
+                .withRestaurantId(restaurant.getId())
+                .withCreatedByUserId(user.getId())
+                .persist(jdbcTemplate);
+        PhotoUrl photoUrl = new PhotoUrlFixture()
+                .withUrl("test")
+                .withRestaurantId(restaurant.getId())
+                .persist(jdbcTemplate);
+        Like like = new LikeFixture()
+                .withRestaurantId(restaurant.getId())
+                .withUserId(user.getId())
+                .persist(jdbcTemplate);
+
+        restaurantDataMapper.delete(restaurant.getId());
+
+        List<Long> restaurantIds = jdbcTemplate.queryForList(
+                "SELECT id FROM restaurant WHERE id = ?",
+                Long.class,
+                restaurant.getId()
+        );
+        assertEquals(0, restaurantIds.size());
+
+        List<Long> commentIds = jdbcTemplate.queryForList(
+                "SELECT id FROM comment WHERE restaurant_id = ?",
+                Long.class,
+                restaurant.getId()
+        );
+        assertEquals(0, commentIds.size());
+
+        List<Long> photoUrlIds = jdbcTemplate.queryForList(
+                "SELECT id FROM photo_url WHERE restaurant_id = ?",
+                Long.class,
+                restaurant.getId()
+        );
+        assertEquals(0, photoUrlIds.size());
+
+        List<Long> likeIds = jdbcTemplate.queryForList(
+                "SELECT id FROM likes WHERE restaurant_id = ?",
+                Long.class,
+                restaurant.getId()
+        );
+        assertEquals(0, likeIds.size());
     }
 }

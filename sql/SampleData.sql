@@ -1,6 +1,6 @@
 -- Delete existing data
 
-TRUNCATE TABLE restaurant, cuisine, session, comment, users, likes, price_range;
+TRUNCATE TABLE restaurant, cuisine, session, comment, users, likes, photo_url, price_range;
 
 
 -- Users
