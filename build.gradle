@@ -19,6 +19,8 @@ apply plugin: 'org.flywaydb.flyway'
 
 flyway {
     url = System.getenv("OSUSUME_DATABASE_URL")
+    user = System.getenv("OSUSUME_DATABASE_USER")
+    password = System.getenv("OSUSUME_DATABASE_PASSWORD")
 }
 
 jar {

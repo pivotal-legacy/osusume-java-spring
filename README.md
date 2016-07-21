@@ -35,7 +35,7 @@ The project is broken down into an "application" and a "components" directory, t
 ## Migrations
 To run migrations on Cloud Foundry:
 
-`OSUSUME_DATABASE_URL=<jdbc-url-for-elephant-sql> ./gradlew flywayMigrate`
+`OSUSUME_DATABASE_URL=<jdbc-url-cf-sql> OSUSUME_DATABASE_USER=<jdbc-user-cf-sql> OSUSUME_DATABASE_PASSWORD=<jdbc-password-cf-sql> ./gradlew flywayMigrate`
 
 `flywayInfo` can be used instead to show which migrations have been run.
 
