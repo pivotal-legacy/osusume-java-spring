@@ -4,7 +4,7 @@ Osusume back-end built in Java Spring Boot.
 ## Configuration
 A environment variable for the database URL needs to be configured for PostgreSQL, such as:
 
-`OSUSUME_DATABASE_URL=jdbc:postgresql://pivotal:@localhost/osusume-dev`
+`OSUSUME_DATABASE_URL=jdbc:postgresql://localhost/osusume-dev`
 
 For accessing the Google Places API, an API key is necessary (see https://console.developers.google.com/):
 
@@ -31,6 +31,13 @@ Please use the makefile which contains a few useful commands:
 The project is broken down into an "application" and a "components" directory, therefore to start the server please locate the jar under the 'applications' directory:
 
 `java -jar applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar`
+
+## Migrations
+To run migrations on Cloud Foundry:
+
+`OSUSUME_DATABASE_URL=<jdbc-url-for-elephant-sql> ./gradlew flywayMigrate`
+
+`flywayInfo` can be used instead to show which migrations have been run.
 
 ## Sample curl statements
 

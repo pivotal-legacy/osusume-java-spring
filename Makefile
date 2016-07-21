@@ -10,6 +10,12 @@ dev-refreshdb:
 	@dropdb -e osusume-dev
 	@createdb -e osusume-dev
 
+migrate:
+	@./gradlew flywayMigrate
+
+test-migrate:
+	@OSUSUME_DATABASE_URL=jdbc:postgresql://localhost/osusume-test ./gradlew flywayMigrate
+
 loadsampledata:
 	@psql -q -d osusume-dev -f ./sql/SampleData.sql
 
