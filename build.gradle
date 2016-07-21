@@ -28,6 +28,7 @@ dependencies {
     compile "ch.qos.logback:logback-classic:1.1.7"
     compile "com.zaxxer:HikariCP:2.4.4"
     compile "org.springframework:spring-webmvc:4.2.5.RELEASE"
+    compile "org.flywaydb:flyway-core:4.0.3"
 
     testCompile "junit:junit:4.+"
     testCompile "org.hamcrest:hamcrest-core:1.3"

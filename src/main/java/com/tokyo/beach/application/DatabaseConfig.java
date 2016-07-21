@@ -1,6 +1,7 @@
 package com.tokyo.beach.application;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -50,5 +51,12 @@ public class DatabaseConfig {
         throw new RuntimeException(
                 "A valid postgres DATABASE_URL environment variable must be present"
         );
+    }
+
+    @Bean(initMethod = "migrate")
+    Flyway flyway() {
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource());
+        return flyway;
     }
 }

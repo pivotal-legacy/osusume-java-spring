@@ -1,29 +1,23 @@
-ci: refreshdb tests
+ci: tests
 
 refreshdb: test-refreshdb dev-refreshdb
 
 test-refreshdb:
 	@dropdb -e osusume-test
 	@createdb -e osusume-test
-	@psql -d osusume-test -f ./sql/initial_schema.ddl
 
 dev-refreshdb:
 	@dropdb -e osusume-dev
 	@createdb -e osusume-dev
-	@psql -d osusume-dev -f ./sql/initial_schema.ddl
 
-loadsampledata: test-loadsampledata dev-loadsampledata
+loadsampledata:
+	@psql -q -d osusume-dev -f ./sql/SampleData.sql
 
 test-loadsampledata:
 	@psql -q -d osusume-test -f ./sql/SampleData.sql
 
-dev-loadsampledata:
-	@psql -q -d osusume-dev -f ./sql/SampleData.sql
-
-alltests:
+tests:
 	@./gradlew clean test build
-
-tests: alltests test-loadsampledata
 
 start:
 	@java -jar build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
