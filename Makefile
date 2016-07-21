@@ -22,7 +22,7 @@ tests:
 start:
 	@java -jar build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
 
-deploy: alltests justdeploy
+deploy: tests justdeploy
 
 justdeploy:
 	@cf push osusume -p build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar
