@@ -39,6 +39,10 @@ To run migrations on Cloud Foundry:
 
 `flywayInfo` can be used instead to show which migrations have been run.
 
+To run migrations on local:
+
+`OSUSUME_DATABASE_URL=jdbc:postgresql://localhost/osusume-test; make refreshdb; ./gradlew flywayMigrate`
+
 ## Sample curl statements
 
 Create a session (logon) and receive a token (please pass in a valid username and password):
