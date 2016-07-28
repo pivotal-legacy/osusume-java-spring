@@ -3,11 +3,11 @@ ci: tests
 refreshdb: test-refreshdb dev-refreshdb
 
 test-refreshdb:
-	@dropdb -e osusume-test
+	@dropdb --if-exists -e osusume-test
 	@createdb -e osusume-test
 
 dev-refreshdb:
-	@dropdb -e osusume-dev
+	@dropdb --if-exists -e osusume-dev
 	@createdb -e osusume-dev
 
 migrate:
