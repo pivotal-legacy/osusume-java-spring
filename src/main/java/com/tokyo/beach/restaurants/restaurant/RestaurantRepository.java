@@ -63,44 +63,43 @@ public class RestaurantRepository {
         List<Long> ids = restaurantList.stream().map(Restaurant::getId).collect(toList());
 
         List<PhotoUrl> photos = photoDataMapper.findForRestaurants(ids);
-        Map<Long, List<PhotoUrl>> restaurantPhotos = photos.stream()
-                .collect(groupingBy(PhotoUrl::getRestaurantId));
+        Map<Long, List<PhotoUrl>> restaurantPhotos = photos
+            .stream()
+            .collect(groupingBy(PhotoUrl::getRestaurantId));
 
         List<User> userList = userDataMapper.findForUserIds(
-                restaurantList.stream()
-                        .map(Restaurant::getCreatedByUserId)
-                        .collect(toList())
+            restaurantList
+                .stream()
+                .map(Restaurant::getCreatedByUserId)
+                .collect(toList())
         );
-        Map<Long, User> createdByUsers = userList.stream()
-                .collect(
-                        Collectors.toMap(
-                                User::getId, UnaryOperator.identity()
-                        )
-                );
-        List<PriceRange> priceRangeList = priceRangeDataMapper.getAll();
-        Map<Long, PriceRange> priceRangeMap = new HashMap<>();
-        priceRangeList.forEach(priceRange -> priceRangeMap.put(priceRange.getId(), priceRange));
+        Map<Long, User> createdByUsers = userList
+                .stream()
+                .collect(Collectors.toMap(User::getId, UnaryOperator.identity()));
 
-        List<Cuisine> cuisineList = cuisineDataMapper.getAll();
-        Map<Long, Cuisine> cuisineMap = new HashMap<>();
-        cuisineList.forEach(cuisine -> cuisineMap.put(cuisine.getId(), cuisine));
+        Map<Long, PriceRange> priceRangeMap = priceRangeDataMapper.getAll()
+                .stream()
+                .collect(Collectors.toMap(PriceRange::getId, UnaryOperator.identity()));
 
-        List<Like> likes = likeDataMapper.findForRestaurants(restaurantList);
-        Map<Long, List<Like>> restaurantLikes = likes
+        Map<Long, Cuisine> cuisineMap = cuisineDataMapper.getAll()
+                .stream()
+                .collect(Collectors.toMap(Cuisine::getId, UnaryOperator.identity()));
+
+        Map<Long, List<Like>> restaurantLikes = likeDataMapper.findForRestaurants(restaurantList)
                 .stream()
                 .collect(groupingBy(Like::getRestaurantId));
 
         return restaurantList
                 .stream()
                 .map((restaurant) -> new SerializedRestaurant(
-                        restaurant,
-                        restaurantPhotos.get(restaurant.getId()),
-                        cuisineMap.get(restaurant.getCuisineId()),
-                        priceRangeMap.get(restaurant.getPriceRangeId()),
-                        createdByUsers.get(restaurant.getCreatedByUserId()),
-                        emptyList(),
-                        restaurantLikes.get(restaurant.getId()) == null ? false : restaurantLikes.get(restaurant.getId()).contains(new Like(userId.longValue(), restaurant.getId())),
-                        restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
+                    restaurant,
+                    restaurantPhotos.get(restaurant.getId()),
+                    cuisineMap.get(restaurant.getCuisineId()),
+                    priceRangeMap.get(restaurant.getPriceRangeId()),
+                    createdByUsers.get(restaurant.getCreatedByUserId()),
+                    emptyList(),
+                    restaurantLikes.get(restaurant.getId()) == null ? false : restaurantLikes.get(restaurant.getId()).contains(new Like(userId.longValue(), restaurant.getId())),
+                    restaurantLikes.get(restaurant.getId()) == null ? 0 : restaurantLikes.get(restaurant.getId()).size()
                 ))
                 .collect(toList());
     }

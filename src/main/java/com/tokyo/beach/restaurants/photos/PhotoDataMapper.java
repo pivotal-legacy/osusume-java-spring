@@ -6,11 +6,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.tokyo.beach.restaurants.photos.PhotoUrlRowMapper.photoUrlRowMapper;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class PhotoDataMapper {
@@ -35,27 +35,19 @@ public class PhotoDataMapper {
     }
 
     public List<PhotoUrl> createPhotosForRestaurant(long restaurantId, List<NewPhotoUrl> photos) {
-        List<PhotoUrl> savedPhotos = new ArrayList<>();
-
-        for (NewPhotoUrl photo : photos) {
-            PhotoUrl photoUrl = jdbcTemplate.queryForObject(
-                    "INSERT INTO photo_url (url, restaurant_id) VALUES (?, ?) RETURNING *",
-                    photoUrlRowMapper,
-                    photo.getUrl(),
-                    restaurantId
-            );
-
-            savedPhotos.add(photoUrl);
-        }
-
-        return savedPhotos;
+        return photos.stream().map((photo) -> jdbcTemplate.queryForObject(
+            "INSERT INTO photo_url (url, restaurant_id) VALUES (?, ?) RETURNING *",
+            photoUrlRowMapper,
+            photo.getUrl(),
+            restaurantId
+        )).collect(toList());
     }
 
     public List<PhotoUrl> findForRestaurant(long restaurantId) {
         return jdbcTemplate.query(
-                "SELECT * FROM photo_url WHERE restaurant_id = ?",
-                new Object[]{ restaurantId },
-                photoUrlRowMapper
+            "SELECT * FROM photo_url WHERE restaurant_id = ?",
+            new Object[]{ restaurantId },
+            photoUrlRowMapper
         );
     }
 
