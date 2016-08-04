@@ -7,10 +7,15 @@ import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
 import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 public class CommentFixture {
     private long id = 0;
     private String content = "content";
-    private String createdDate = "created-date";
+    private ZonedDateTime createdDate = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"));
     private long restaurantId = 0;
     private long createdByUserId = 0;
 
@@ -24,7 +29,7 @@ public class CommentFixture {
         return this;
     }
 
-    public CommentFixture withCreatedDate(String createdDate) {
+    public CommentFixture withCreatedDate(ZonedDateTime createdDate) {
         this.createdDate = createdDate;
         return this;
     }

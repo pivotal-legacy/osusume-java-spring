@@ -2,6 +2,9 @@ package com.tokyo.beach.restaurants.restaurant;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 public class RestaurantRowMapper {
     public static RowMapper<Restaurant> restaurantRowMapper = (rs, i) ->
             new Restaurant(
@@ -13,8 +16,8 @@ public class RestaurantRowMapper {
                 rs.getDouble("latitude"),
                 rs.getDouble("longitude"),
                 rs.getString("notes"),
-                rs.getString("created_at"),
-                rs.getString("updated_at"),
+                ZonedDateTime.ofInstant(rs.getTimestamp("created_at").toInstant(), ZoneId.of("UTC")),
+                ZonedDateTime.ofInstant(rs.getTimestamp("updated_at").toInstant(), ZoneId.of("UTC")),
                 rs.getLong("created_by_user_id"),
                 rs.getLong("price_range_id"),
                 rs.getLong("cuisine_id")

@@ -2,16 +2,19 @@ package com.tokyo.beach.restaurants.comment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 public class Comment {
     private long id;
     private String comment;
-    private String createdDate;
+    private ZonedDateTime createdDate;
     private long restaurantId;
     private long createdByUserId;
 
     public Comment(long id,
                    String comment,
-                   String createdDate,
+                   ZonedDateTime createdDate,
                    long restaurantId,
                    long createdByUserId) {
         this.id = id;
@@ -32,7 +35,7 @@ public class Comment {
 
     @SuppressWarnings("WeakerAccess")
     @JsonProperty("created_at")
-    public String getCreatedDate() {
+    public ZonedDateTime getCreatedDate() {
         return createdDate;
     }
 

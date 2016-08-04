@@ -12,6 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
@@ -93,6 +96,7 @@ public class CommentDataMapperTest {
                 .withContent("content")
                 .withCreatedByUserId(user.getId())
                 .withRestaurantId(restaurant.getId())
+                .withCreatedDate(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .persist(jdbcTemplate);
 
         Comment retrievedComment = commentDataMapper.get(persistedComment.getId()).get();

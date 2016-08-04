@@ -19,6 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,8 +81,9 @@ public class ProfileControllerTest {
                         1.23,
                         2.34,
                         "とても美味しい",
-                        "created-date",
-                        "updated-date", 1,
+                        ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")),
+                        ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")),
+                        1,
                         1L,
                         10L
                 )
@@ -147,8 +151,9 @@ public class ProfileControllerTest {
                         1.23,
                         2.34,
                         "とても美味しい",
-                        "created-date",
-                        "updated-date", 99,
+                        ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")),
+                        ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")),
+                        99,
                         1L,
                         10L
                 )

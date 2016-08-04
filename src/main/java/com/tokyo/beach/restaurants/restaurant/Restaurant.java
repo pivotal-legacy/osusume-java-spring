@@ -2,6 +2,8 @@ package com.tokyo.beach.restaurants.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.ZonedDateTime;
+
 public class Restaurant {
     private final long id;
     private final String name;
@@ -11,8 +13,8 @@ public class Restaurant {
     private Double latitude;
     private Double longitude;
     private String notes;
-    private String createdDate;
-    private String updatedDate;
+    private ZonedDateTime createdDate;
+    private ZonedDateTime updatedDate;
     private long createdByUserId;
     private long priceRangeId;
     private long cuisineId;
@@ -26,8 +28,8 @@ public class Restaurant {
             double latitude,
             double longitude,
             String notes,
-            String createdDate,
-            String updatedDate,
+            ZonedDateTime createdDate,
+            ZonedDateTime updatedDate,
             long createdByUserId,
             long priceRangeId,
             long cuisineId) {
@@ -81,11 +83,11 @@ public class Restaurant {
     }
 
     @JsonProperty("created_at")
-    public String getCreatedDate() {
+    public ZonedDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public String getUpdatedDate() {
+    public ZonedDateTime getUpdatedDate() {
         return updatedDate;
     }
 

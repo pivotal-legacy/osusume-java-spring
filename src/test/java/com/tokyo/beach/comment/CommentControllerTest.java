@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -88,12 +91,11 @@ public class CommentControllerTest {
                 new Comment(
                         1,
                         "New Comment Text",
-                        "2016-02-29 06:07:55.000000",
+                        ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")),
                         88,
                         99
                 )
         );
-
 
         ResultActions result = mockMvc.perform(post("/restaurants/88/comments")
                 .requestAttr("userId", 99)
@@ -104,7 +106,7 @@ public class CommentControllerTest {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.comment", is("New Comment Text")))
-                .andExpect(jsonPath("$.created_at", is("2016-02-29T06:07:55.000Z")))
+                .andExpect(jsonPath("$.created_at", is("1970-01-01T00:00:00.000Z")))
                 .andExpect(jsonPath("$.restaurant_id", is(88)))
                 .andExpect(jsonPath("$.user.name", is("user-name")));
 
@@ -132,22 +134,12 @@ public class CommentControllerTest {
     public void test_delete_deletesCommentsMadeByCurrentUser() throws Exception {
         when(commentDataMapper.get(1))
                 .thenReturn(Optional.of(
-                        new Comment(
-                                1,
-                                "comment",
-                                "2016-02-29 06:07:55.000000",
-                                10L,
-                                99L
-                        )
+                    new CommentFixture().withCreatedByUserId(99L).withId(1L).build()
                 ));
         when(userDataMapper.get(99))
                 .thenReturn(Optional.of(
-                        new User(
-                                99,
-                                "user-email",
-                                "user-name"
-                        ))
-                );
+                    new UserFixture().withId(99L).build()
+                ));
         ResultActions result = mockMvc.perform(delete("/comments/1")
                 .requestAttr("userId", 99));
 
@@ -160,22 +152,12 @@ public class CommentControllerTest {
     public void test_delete_doesntDeleteCommentsMadeByADifferentUser() throws Exception {
         when(commentDataMapper.get(1))
                 .thenReturn(Optional.of(
-                        new Comment(
-                                1,
-                                "comment",
-                                "2016-02-29 06:07:55.000000",
-                                10L,
-                                100L
-                        )
+                        new CommentFixture().withCreatedByUserId(100L).withId(1L).build()
                 ));
         when(userDataMapper.get(99))
                 .thenReturn(Optional.of(
-                        new User(
-                                99,
-                                "user-email",
-                                "user-name"
-                        ))
-                );
+                    new UserFixture().withId(99L).build()
+                ));
         ResultActions result = mockMvc.perform(delete("/comments/1")
                 .requestAttr("userId", 99));
 
@@ -205,15 +187,16 @@ public class CommentControllerTest {
         verify(commentDataMapper, never()).delete(1);
     }
 
-
-
     @Test
     public void test_get_returnsCommentsForARestaurant() throws Exception {
+        Comment comment = new Comment(1L, "this is a comment", ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")), 1L, 10L);
+        User user = new User(10L, "danny@mail", "Danny");
+
         when(commentRepository.findForRestaurant(1L))
                 .thenReturn(Arrays.asList(
                         new SerializedComment(
-                                new Comment(1L, "this is a comment", "2016-02-29 06:07:55.000000", 1L, 10L),
-                                new User(10L, "danny@mail", "Danny")
+                                comment,
+                                user
                         )
                 ));
         ResultActions result = mockMvc.perform(get("/restaurants/1/comments")
@@ -222,7 +205,7 @@ public class CommentControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].comment", is("this is a comment")))
-                .andExpect(jsonPath("$[0].created_at", is("2016-02-29T06:07:55.000Z")))
+                .andExpect(jsonPath("$[0].created_at", is("1970-01-01T00:00:00.000Z")))
                 .andExpect(jsonPath("$[0].restaurant_id", is(1)))
                 .andExpect(jsonPath("$[0].user.name", is("Danny")));
         verify(commentRepository, times(1)).findForRestaurant(1L);

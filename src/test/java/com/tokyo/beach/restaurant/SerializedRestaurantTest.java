@@ -6,6 +6,10 @@ import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.restaurant.SerializedRestaurant;
 import org.junit.Test;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.assertEquals;
 
 public class SerializedRestaurantTest {
@@ -14,14 +18,14 @@ public class SerializedRestaurantTest {
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1L)
                 .withName("Afuri")
-                .withCreatedAt("2016-04-13 16:01:21.094")
+                .withCreatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .build();
 
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
                 restaurant, null, null, null, null, null, false, 0L
         );
 
-        assertEquals("2016-04-13T16:01:21.094Z", serializedRestaurant.getCreatedDate());
+        assertEquals("1970-01-01T00:00:00.000Z", serializedRestaurant.getCreatedDate());
     }
 
     @Test

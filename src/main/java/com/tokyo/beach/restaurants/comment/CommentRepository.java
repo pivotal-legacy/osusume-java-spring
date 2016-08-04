@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Repository
@@ -26,7 +28,7 @@ public class CommentRepository {
                             new Comment(
                                     rs.getLong("comment_id"),
                                     rs.getString("content"),
-                                    rs.getString("created_at"),
+                                    ZonedDateTime.ofInstant(rs.getTimestamp("created_at").toInstant(), ZoneId.of("UTC")),
                                     rs.getLong("restaurant_id"),
                                     rs.getLong("created_by_user_id")
                             ),

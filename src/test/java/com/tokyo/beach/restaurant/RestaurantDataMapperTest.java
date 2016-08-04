@@ -21,6 +21,10 @@ import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -109,7 +113,6 @@ public class RestaurantDataMapperTest {
         assertEquals(createdRestaurant.getCreatedByUserId(), user.getId());
         assertEquals(createdRestaurant.getCuisineId().longValue(), cuisine.getId());
         assertEquals(createdRestaurant.getPriceRangeId(), priceRange.getId());
-        assertEquals(createdRestaurant.getUpdatedDate(), map.get("updated_at").toString());
     }
 
     @Test
@@ -135,20 +138,16 @@ public class RestaurantDataMapperTest {
 
     @Test
     public void test_get_returnsRestaurant() throws Exception {
-        long id = jdbcTemplate.queryForObject(
-                "INSERT INTO restaurant (name, updated_at, created_by_user_id) " +
-                        "VALUES ('Amazing Restaurant', '2016-01-01', ?) " +
-                        "RETURNING id",
-                (rs, rowNum) -> {
-                    return rs.getLong("id");
-                },
-                user.getId()
-        );
+        Restaurant restaurant = new RestaurantFixture()
+            .withName("Amazing Restaurant")
+            .withUser(user)
+            .persist(jdbcTemplate);
 
-        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(id);
-
+        Optional<Restaurant> maybeRestaurant = restaurantDataMapper.get(restaurant.getId());
         assertThat(maybeRestaurant.get().getName(), is("Amazing Restaurant"));
-        assertThat(maybeRestaurant.get().getUpdatedDate(), is("2016-01-01 00:00:00"));
+
+        assertThat(maybeRestaurant.get().getCreatedDate(), is(restaurant.getCreatedDate()));
+        assertThat(maybeRestaurant.get().getUpdatedDate(), is(restaurant.getUpdatedDate()));
     }
 
     @Test
@@ -163,7 +162,7 @@ public class RestaurantDataMapperTest {
         Restaurant restaurant = new RestaurantFixture()
                 .withName("Afuri")
                 .withUser(user)
-                .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .withUpdatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .persist(jdbcTemplate);
 
 
@@ -180,7 +179,7 @@ public class RestaurantDataMapperTest {
         Restaurant restaurant = new RestaurantFixture()
                 .withName("Afuri")
                 .withUser(user)
-                .withUpdatedAt("2016-01-01 16:42:19.572569")
+                .withUpdatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .persist(jdbcTemplate);
 
 
@@ -200,9 +199,7 @@ public class RestaurantDataMapperTest {
                 .withNearestStation("Roppongi Station")
                 .withCuisine(new Cuisine(0L, "Not Specified"))
                 .withUser(user)
-                .withUpdatedAt("2016-01-01 16:42:19.572569")
                 .persist(jdbcTemplate);
-
 
         Cuisine cuisine = new CuisineFixture()
                 .withName("Beer")
@@ -244,7 +241,6 @@ public class RestaurantDataMapperTest {
         assertEquals(map.get("created_by_user_id"), user.getId());
         assertEquals(map.get("cuisine_id"), updatedNewRestaurant.getCuisineId());
         assertEquals(map.get("price_range_id"), updatedNewRestaurant.getPriceRangeId());
-        assertEquals(map.get("updated_at").toString(), updatedRestaurant.getUpdatedDate());
         assertNotEquals(updatedRestaurant.getUpdatedDate(), restaurant.getUpdatedDate());
     }
 
@@ -254,15 +250,15 @@ public class RestaurantDataMapperTest {
         Restaurant restaurant = new RestaurantFixture()
                 .withUser(user)
                 .persist(jdbcTemplate);
-        Comment comment = new CommentFixture()
+        new CommentFixture()
                 .withRestaurantId(restaurant.getId())
                 .withCreatedByUserId(user.getId())
                 .persist(jdbcTemplate);
-        PhotoUrl photoUrl = new PhotoUrlFixture()
+        new PhotoUrlFixture()
                 .withUrl("test")
                 .withRestaurantId(restaurant.getId())
                 .persist(jdbcTemplate);
-        Like like = new LikeFixture()
+        new LikeFixture()
                 .withRestaurantId(restaurant.getId())
                 .withUserId(user.getId())
                 .persist(jdbcTemplate);

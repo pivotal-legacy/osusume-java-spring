@@ -16,6 +16,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,8 +68,8 @@ public class RestaurantsControllerTest {
                 .withAddress("Roppongi")
                 .withNearestStation("Roppongi Station")
                 .withNotes("とても美味しい")
-                .withCreatedAt("2016-04-13 16:01:21.094")
-                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .withCreatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
+                .withUpdatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .build();
         List<SerializedRestaurant> restaurants = singletonList(
                 new SerializedRestaurant(
@@ -96,8 +99,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$[0].price_range.range", equalTo("100yen")))
                 .andExpect(jsonPath("$[0].num_likes", equalTo(2)))
                 .andExpect(jsonPath("$[0].liked", equalTo(true)))
-                .andExpect(jsonPath("$[0].created_at", equalTo("2016-04-13T16:01:21.094Z")))
-                .andExpect(jsonPath("$[0].updated_at", equalTo("2016-04-14T16:01:21.094Z")))
+                .andExpect(jsonPath("$[0].created_at", equalTo("1970-01-01T00:00:00.000Z")))
+                .andExpect(jsonPath("$[0].updated_at", equalTo("1970-01-01T00:00:00.000Z")))
                 .andExpect(jsonPath("$[0].created_by_user_name", equalTo("taro")));
     }
 
@@ -111,8 +114,8 @@ public class RestaurantsControllerTest {
                 .withPlaceId("abcd")
                 .withLatitude(1.23)
                 .withLongitude(2.34)
-                .withCreatedAt("2016-04-13 16:01:21.094")
-                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .withCreatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
+                .withUpdatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .build();
         SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
             restaurant,
@@ -142,8 +145,8 @@ public class RestaurantsControllerTest {
                 .andExpect(jsonPath("$.price_range.range", equalTo("100yen")))
                 .andExpect(jsonPath("$.num_likes", equalTo(2)))
                 .andExpect(jsonPath("$.liked", equalTo(true)))
-                .andExpect(jsonPath("$.created_at", equalTo("2016-04-13T16:01:21.094Z")))
-                .andExpect(jsonPath("$.updated_at", equalTo("2016-04-14T16:01:21.094Z")))
+                .andExpect(jsonPath("$.created_at", equalTo("1970-01-01T00:00:00.000Z")))
+                .andExpect(jsonPath("$.updated_at", equalTo("1970-01-01T00:00:00.000Z")))
                 .andExpect(jsonPath("$.created_by_user_name", equalTo("taro")));
     }
 
@@ -170,8 +173,8 @@ public class RestaurantsControllerTest {
                 .withAddress("Roppongi")
                 .withNearestStation("Roppongi Station")
                 .withNotes("soooo goood")
-                .withCreatedAt("2016-04-13 16:01:21.094")
-                .withUpdatedAt("2016-04-14 16:01:21.094")
+                .withCreatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
+                .withUpdatedAt(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
                 .withPlaceId("some-place-id")
                 .withLatitude(1.23)
                 .withLongitude(2.34)
@@ -228,8 +231,8 @@ public class RestaurantsControllerTest {
         .andExpect(jsonPath("$.cuisine.name", is("Ramen")))
         .andExpect(jsonPath("$.price_range.id", equalTo(1)))
         .andExpect(jsonPath("$.price_range.range", equalTo("~900")))
-        .andExpect(jsonPath("$.created_at", Matchers.equalTo("2016-04-13T16:01:21.094Z")))
-        .andExpect(jsonPath("$.updated_at", Matchers.equalTo("2016-04-14T16:01:21.094Z")))
+        .andExpect(jsonPath("$.created_at", Matchers.equalTo("1970-01-01T00:00:00.000Z")))
+        .andExpect(jsonPath("$.updated_at", Matchers.equalTo("1970-01-01T00:00:00.000Z")))
         .andExpect(jsonPath("$.created_by_user_name", is("jiro")));
 
         assertEquals(userId, userIdArgument.getValue());

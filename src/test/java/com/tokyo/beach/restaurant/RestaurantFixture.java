@@ -8,6 +8,10 @@ import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import com.tokyo.beach.restaurants.user.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 public class RestaurantFixture {
     private long id = 0;
     private String name = "Not Specified";
@@ -20,8 +24,8 @@ public class RestaurantFixture {
     private Cuisine cuisine = new Cuisine(0, "Not Specified");
     private PriceRange priceRange = new PriceRange(0, "Not Specified");
     private User user = new User(0, "email@email", "Not Specified");
-    private String createdAt = "created-date";
-    private String updatedAt = "updated-date";
+    private ZonedDateTime createdAt = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"));
+    private ZonedDateTime updatedAt = ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC"));
 
 
     public RestaurantFixture withId(long id) {
@@ -34,7 +38,7 @@ public class RestaurantFixture {
         return this;
     }
 
-    public RestaurantFixture withCreatedAt(String createdAt) {
+    public RestaurantFixture withCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
     }
@@ -54,7 +58,7 @@ public class RestaurantFixture {
         return this;
     }
 
-    public RestaurantFixture withUpdatedAt(String updatedAt) {
+    public RestaurantFixture withUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
         return this;
     }
