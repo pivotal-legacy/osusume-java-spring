@@ -3,14 +3,11 @@ package com.tokyo.beach.comment;
 import com.tokyo.beach.TestDatabaseUtils;
 import com.tokyo.beach.restaurants.comment.Comment;
 import com.tokyo.beach.restaurants.comment.NewComment;
-import com.tokyo.beach.restaurants.restaurant.NewRestaurant;
-import com.tokyo.beach.restaurants.restaurant.Restaurant;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class CommentFixture {
     private long id = 0;

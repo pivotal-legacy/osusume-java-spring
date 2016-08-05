@@ -10,6 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.tokyo.beach.TestDatabaseUtils.*;
@@ -36,20 +39,27 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    public void test_findForRestaurant_returnsCommentsOnRestaurant() throws Exception {
+    public void test_findForRestaurant_returnsCommentsOnRestaurantInOrder() throws Exception {
         User user = new UserFixture().persist(jdbcTemplate);
         Restaurant restaurant = new RestaurantFixture().withUser(user).persist(jdbcTemplate);
 
-        Comment createdComment = commentDataMapper.create(
-                new NewComment("New Comment Content"),
-                user.getId(),
-                restaurant.getId()
-        );
+        Comment olderComment = new CommentFixture()
+            .withCreatedByUserId(user.getId())
+            .withCreatedDate(ZonedDateTime.ofInstant(Instant.EPOCH, ZoneId.of("UTC")))
+            .withRestaurantId(restaurant.getId()).persist(jdbcTemplate);
+
+        Comment newerComment = new CommentFixture()
+            .withCreatedByUserId(user.getId())
+            .withCreatedDate(ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")))
+            .withRestaurantId(restaurant.getId()).persist(jdbcTemplate);
 
         List<SerializedComment> actualComments = commentRepository.findForRestaurant(restaurant.getId());
-        assertEquals(actualComments.size(), 1);
-        assertEquals(actualComments.get(0).getComment(), createdComment.getComment());
-        assertEquals(actualComments.get(0).getUser().getId(), createdComment.getCreatedByUserId());
-        assertEquals(actualComments.get(0).getRestaurantId(), createdComment.getRestaurantId());
+        assertEquals(actualComments.size(), 2);
+        assertEquals(actualComments.get(0).getComment(), newerComment.getComment());
+        assertEquals(actualComments.get(0).getUser().getId(), newerComment.getCreatedByUserId());
+        assertEquals(actualComments.get(0).getRestaurantId(), newerComment.getRestaurantId());
+        assertEquals(actualComments.get(0).getId(), newerComment.getId());
+
+        assertEquals(actualComments.get(1).getId(), olderComment.getId());
     }
 }
