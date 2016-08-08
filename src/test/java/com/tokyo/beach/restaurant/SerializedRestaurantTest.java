@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 
 public class SerializedRestaurantTest {
@@ -70,7 +71,7 @@ public class SerializedRestaurantTest {
     }
 
     @Test
-    public void test_getPriceRange_reutrnsNullWhenThereIsNoPriceRange() {
+    public void test_getPriceRange_returnsNullWhenThereIsNoPriceRange() {
         Restaurant restaurant = new RestaurantFixture()
                 .withId(1L)
                 .withName("Afuri")
@@ -80,5 +81,16 @@ public class SerializedRestaurantTest {
         );
 
         assertEquals(null, serializedRestaurant.getPriceRange());
+    }
+
+    @Test
+    public void test_getPhotoUrls_returnsAnEmptyList_whenThereAreNoPhotoUrls() {
+        Restaurant restaurant = new RestaurantFixture().build();
+
+        SerializedRestaurant serializedRestaurant = new SerializedRestaurant(
+                restaurant, null, null, null, null, null, false, 0L
+        );
+
+        assertEquals(emptyList(), serializedRestaurant.getPhotoUrlList());
     }
 }

@@ -10,6 +10,7 @@ import com.tokyo.beach.restaurants.user.User;
 import java.util.List;
 
 import static com.tokyo.beach.restaurants.DateFormatter.formatDateForSerialization;
+import static java.util.Collections.emptyList;
 
 public class SerializedRestaurant {
     private Restaurant restaurant;
@@ -101,7 +102,11 @@ public class SerializedRestaurant {
 
     @JsonProperty("photo_urls")
     public List<PhotoUrl> getPhotoUrlList() {
-        return photoUrls;
+        if (photoUrls == null) {
+            return emptyList();
+        } else {
+            return photoUrls;
+        }
     }
 
     @JsonProperty("comments")
