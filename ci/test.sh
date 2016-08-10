@@ -3,5 +3,5 @@
 set -e -x
 
 pushd osusume-java-spring
-    make tests
+    ./gradlew clean test build
 popd
