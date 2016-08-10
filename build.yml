@@ -3,8 +3,8 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: bankmonitor/spring-boot
-    tag: latest-war
+    repository: Bankmonitor/spring-boot
+    tag: latest
 
 inputs:
 - name: osusume-java-spring
