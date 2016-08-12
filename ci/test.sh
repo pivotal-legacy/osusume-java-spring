@@ -3,6 +3,7 @@
 set -e -x
 
 pushd osusume-java-spring
+    sudo -u postgres -i
     dropdb --if-exists -e osusume-test
     createdb -e osusume-test
     ./gradlew flywayMigrate
