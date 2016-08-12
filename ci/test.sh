@@ -3,9 +3,8 @@
 set -e -x
 
 pushd osusume-java-spring
-    su - postgres
     DATA_DIR=/var/lib/pgsql/data
-    pg_ctl -D $DATA_DIR -l ${DATA_DIR}/logfile start
+    su postgres -c "pg_ctl -D $DATA_DIR -l ${DATA_DIR}/logfile start"
     dropdb --if-exists -e osusume-test
     createdb -e osusume-test
     ./gradlew flywayMigrate
