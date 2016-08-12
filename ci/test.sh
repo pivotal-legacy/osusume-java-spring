@@ -4,6 +4,7 @@ set -e -x
 
 pushd osusume-java-spring
     DATA_DIR=/var/lib/pgsql/data
+    ls -la
     su postgres -c "pg_ctl -D $DATA_DIR -l ${DATA_DIR}/logfile start"
     sleep 10
     su postgres -c "dropdb --if-exists -e osusume-test"
