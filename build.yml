@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: pivotaliad/meeple-ci
+    repository: alinous/docker-java-postgresql
 
 inputs:
 - name: osusume-java-spring
