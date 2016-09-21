@@ -21,7 +21,9 @@ For accessing to AWS S3 bucket:
 ## Makefile
 Please use the makefile which contains a few useful commands:
 
-**refreshdb** Refreshes the database scheme. Run this to setup the DB for the first time or to wipe out all data.
+**refreshdb** Creates database. Run this to setup the DB for the first time or to wipe out all data.
+
+**migrate** Refreshes the database scheme. Run this to apply migrations to the database.
 
 **loadsampledata** Loads the base set of sample data that can be used with the application.
 
