@@ -29,10 +29,51 @@ Please use the makefile which contains a few useful commands:
 
 **tests** Runs all tests and then loads all sample data. ***Please note that this will remove all existing data and re-load the sample data!***
 
+## Setting up the Project
+1.) Set environment variables:
+
+  * OSUSUME_DATABASE_URL=`OSUSUME_DATABASE_URL=jdbc:postgresql://localhost/osusume-dev` #(reset to 'osusume-test' for tests)
+  * OSUSUME_DATABASE_USER
+  * OSUSUME_DATABASE_PASSWORD
+
+2.) Set up the development database:
+```
+# Create db
+make refreshdb
+
+# Run db migrations
+make migrate
+
+# Load sample data
+make loadsampledata
+```
+
+3.) Set up the test database. You will need to change the OSUSUME_DATABASE_URL to point at the test instance (i.e. osusume-test)
+```
+# Create db
+make refreshdb
+
+# Run db migrations
+make migrate
+
+# Load sample data
+make loadsampledata
+```
+
+4.) Build application. Tests will need to run and pass in order to successfully build the application.
+```
+make tests
+```
+
+5.) Change OSUSUME_DATABASE_URL to point back at the dev instance (i.e. osusume-dev). You can now start the application.
+```
+make start
+```
+
 ## Starting the Server
 The project is broken down into an "application" and a "components" directory, therefore to start the server please locate the jar under the 'applications' directory:
 
-`java -jar applications/api/build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar`
+`java -jar build/libs/osusume-java-spring-0.0.1-SNAPSHOT.jar`
 
 ## Migrations
 To run migrations on Cloud Foundry:
