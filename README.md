@@ -50,14 +50,11 @@ make loadsampledata
 
 3.) Set up the test database. You will need to change the OSUSUME_DATABASE_URL to point at the test instance (i.e. osusume-test)
 ```
-# Create db
-make refreshdb
-
 # Run db migrations
-make migrate
+make test-migrate
 
 # Load sample data
-make loadsampledata
+make test-loadsampledata
 ```
 
 4.) Build application. Tests will need to run and pass in order to successfully build the application.
