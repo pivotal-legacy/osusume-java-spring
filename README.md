@@ -96,3 +96,52 @@ Retrieve a list of restaurants (please replace `<token>` with a valid token):
 Retrieve details for a specific restaurant (please replace `<token>` with a valid token):
 
 `curl http://localhost:8080/restaurants/14 -H "Authorization: Bearer <token>" | jq .`
+
+## Docker
+
+### Docker Install
+
+For MacOS, we recommend brew
+```
+brew install docker 
+```
+
+You will also need to provision a Linux VM within docker-machine in order to run docker. Please make sure that you are running the latest version of Virtualbox.
+This step is not required if you are running docker directly in Linux. 
+```
+docker-machine create --driver virtualbox default
+```
+
+### Osusume Setup
+
+**macOS NOTE**: if you are running docker on macOS, then you will need to first run the following command in order to communicate with the docker daemon in the Linux VM in your shell session:
+```
+eval $(docker-machine env)
+```
+
+1.) Build image from project root.
+```
+docker build -f ./docker/Dockerfile -t osusume-java .
+```
+
+2.) Start container from image "osusume-java" and map container port 8080 to host 8080
+```
+docker run -p 8080:8080 osusume-java 
+```
+
+3.) Attach to running container
+```
+docker ps  # shows list of active containers by id
+docker exec -it <container id> /bin/bash
+```
+
+**macOS NOTE**: if you are running docker on macOS, then you need to remember that it is actually running on a small Linux VM. 
+This means that mapped ports from the container to the host must pass through the Linux VM on macOS.
+You can query the IP address for the VM as follows:
+```
+echo $DOCKER_HOST
+tcp://192.168.99.100:2376
+```
+
+Other applications/services could now access Osusume Java Spring on http://192.168.99.100:8080 (this is the IP address for the Linux VM, and the port that we mapped from the container into the host).
+This step is not required when running directly in Linux.
