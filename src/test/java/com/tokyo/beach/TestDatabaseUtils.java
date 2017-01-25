@@ -26,7 +26,9 @@ import static com.tokyo.beach.restaurants.restaurant.RestaurantRowMapper.restaur
 public class TestDatabaseUtils {
     public static DataSource buildDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost/osusume-test");
+        dataSource.setUrl(System.getenv("OSUSUME_DATABASE_URL"));
+        dataSource.setUser(System.getenv("OSUSUME_DATABASE_USER"));
+        dataSource.setPassword(System.getenv("OSUSUME_DATABASE_PASSWORD"));
         return dataSource;
     }
 
